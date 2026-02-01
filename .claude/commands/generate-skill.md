@@ -1,6 +1,6 @@
 ---
 name: generate-skill
-description: Generate a new skill using the cognitive-process-architect
+description: Generate a new skill using the advanced-skill-creator
 ---
 
 # Generate Skill Command
@@ -12,7 +12,7 @@ Create a new skill from templates.
 
 ## What This Does
 
-1. Invokes cognitive-process-architect skill
+1. Invokes advanced-skill-creator skill
 2. Analyzes your requirements
 3. Selects appropriate pattern and templates
 4. Generates complete SKILL.md

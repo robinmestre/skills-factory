@@ -4,7 +4,7 @@ AI skills factory with advanced reasoning techniques for research, evaluation, a
 
 ## Quick Reference
 
-- **Generate a skill:** Use cognitive-process-architect skill or `/generate-skill` command
+- **Generate a skill:** Use advanced-skill-creator skill or `/generate-skill` command
 - **Run expert panel:** Use expert-panel-deliberation skill or `/run-expert-panel` command
 - **Research workflow:** Use research-interviewer → create-research-brief → consolidate-research skills
 
@@ -19,7 +19,7 @@ Located in `core/`:
 ## Available Skills
 
 ### Meta
-- **cognitive-process-architect** — Generate domain-specific skills from templates
+- **advanced-skill-creator** — Generate domain-specific skills from templates
 
 ### Evaluation
 - **expert-panel-deliberation** — Multi-expert evaluation and consensus

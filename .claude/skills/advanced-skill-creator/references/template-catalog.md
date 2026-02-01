@@ -1,6 +1,6 @@
 # Template Catalog Reference
 
-Quick reference for available templates in the cognitive-process-architect.
+Quick reference for available templates in the advanced-skill-creator.
 
 ## Evaluation Templates
 

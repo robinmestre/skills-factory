@@ -4,7 +4,7 @@
   "description": "AI skills factory with meta-skill for generating domain-specific skills",
   "author": "Agentient",
   "skills": {
-    "cognitive-process-architect": ".claude/skills/cognitive-process-architect",
+    "advanced-skill-creator": ".claude/skills/advanced-skill-creator",
     "expert-panel-deliberation": ".claude/skills/expert-panel-deliberation",
     "create-research-brief": ".claude/skills/create-research-brief",
     "improve-prompt": ".claude/skills/improve-prompt"

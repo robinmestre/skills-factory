@@ -1,5 +1,5 @@
 ---
-name: cognitive-process-architect
+name: advanced-skill-creator
 description: >
   Meta-skill that generates domain-specific skills using advanced reasoning techniques.
   PROACTIVELY activate for: (1) Create/build/make skills, (2) Generate expert panels
@@ -11,7 +11,7 @@ description: >
   "new skill for", "skill template", "generate skill"
 ---
 
-# Cognitive Process Architect
+# Advanced Skill Creator
 
 Generate domain-specific skills and workflows using advanced reasoning techniques.
 
@@ -174,7 +174,7 @@ Before completing skill generation:
 
 **Example 1: Create evaluation skill**
 User: Create a skill for evaluating architecture proposals
-Cognitive Process Architect:
+Advanced Skill Creator:
 → Task type: Evaluation/Comparison
 → Pattern: MOE-EVALUATE
 → Domain: Architecture
@@ -187,7 +187,7 @@ Output: RANKED-SOLUTION-LIST contract
 
 **Example 2: Create research workflow**
 User: Build a workflow for competitive analysis
-Cognitive Process Architect:
+Advanced Skill Creator:
 → Task type: Research/Discovery
 → Pattern: RESEARCH-SYNTHESIZE
 → Domain: Competitive intelligence
