@@ -30,6 +30,18 @@ This skill has access to (load on demand):
 - `@core/artifact-contracts.yaml` — Standardized I/O schemas
 - `@core/scoring-rubrics.yaml` — Pluggable evaluation algorithms
 - `@core/skill-patterns.yaml` — Parameterized workflow patterns
+- `@core/checkpoint-patterns.yaml` — AskUserQuestion checkpoint patterns
+
+## Checkpoints
+
+This skill uses interactive checkpoints (see `references/checkpoints.yaml`) to resolve ambiguity:
+- **task_type_classification** — When request matches multiple patterns
+- **domain_selection** — When domain not specified
+- **stakeholder_selection** — When multiple stakeholder types could apply
+- **preset_conflict** — When user params conflict with presets
+- **anti_pattern_composition** — When composition matches known anti-pattern
+- **output_mode** — When output format not specified
+- **plugin_routing** — When skill could belong to multiple plugins
 
 ## Available Templates
 
@@ -59,13 +71,23 @@ When asked to create a skill or workflow:
    - Documentation → Use DIATAXIS pattern
    - Extraction → Use ELICIT-EXTRACT pattern
 
-2. **Determine parameters needed:**
+2. **CHECKPOINT: task_type_classification**
+   - If request matches multiple patterns (confidence < 0.7): **AskUserQuestion**
+   - Present top 2-3 matching patterns with descriptions
+   - Example: "Should this skill evaluate existing options or generate new ones?"
+
+3. **Determine parameters needed:**
    - Domain/context
    - Stakeholders
    - Quality dimensions
    - Output format
 
-3. **Check for existing skills that might compose:**
+4. **CHECKPOINT: domain_selection**
+   - If domain not specified and not inferable: **AskUserQuestion**
+   - Options: Architecture, Product, Strategy, Research, Custom
+   - Example: "What domain is this skill for?"
+
+5. **Check for existing skills that might compose:**
    - Can we chain existing skills?
    - What's missing that requires new skill?
 
@@ -98,7 +120,21 @@ skill_instantiation:
     # From artifact-contracts
 ```
 
+1. **CHECKPOINT: preset_conflict**
+   - If user params conflict with domain preset: **AskUserQuestion**
+   - Example: "You specified 6 experts, but 'product' preset uses 4. Which should we use?"
+
+2. **CHECKPOINT: anti_pattern_composition**
+   - If composition matches anti-pattern: **AskUserQuestion**
+   - Warn about the issue and offer alternatives
+   - Example: "Chaining ADVERSARIAL-VALIDATE → ADVERSARIAL-VALIDATE creates infinite loops"
+
 ### Phase 4: Output Generation
+
+1. **CHECKPOINT: output_mode**
+   - If output format not specified: **AskUserQuestion**
+   - Options: Executable SKILL.md, Portable prompt, Both
+   - Example: "Should this be an executable skill or a portable prompt?"
 
 Generate one of:
 
@@ -129,7 +165,11 @@ Generated skills MUST be placed in the correct plugin directory for marketplace 
    | Prompt optimization | `prompt-tools` |
    | Skill generation/Meta | `meta-tools` |
 
-2. **Create the skill directory structure:**
+2. **CHECKPOINT: plugin_routing**
+   - If skill matches criteria for 2+ plugins: **AskUserQuestion**
+   - Example: "This skill audits documentation. Should it go in evaluation-tools or documentation-tools?"
+
+3. **Create the skill directory structure:**
    ```
    plugins/<target-plugin>/skills/<skill-name>/
    ├── SKILL.md              ← Main skill definition (required)
@@ -137,7 +177,7 @@ Generated skills MUST be placed in the correct plugin directory for marketplace 
    └── templates/            ← Output templates (optional)
    ```
 
-3. **File naming conventions:**
+4. **File naming conventions:**
    - Skill directory: kebab-case (e.g., `architecture-evaluator`)
    - SKILL.md: Required, exact filename
    - References: descriptive kebab-case (e.g., `scoring-criteria.md`)
@@ -201,6 +241,7 @@ Before completing skill generation:
 - [ ] Triggers are specific and actionable
 - [ ] Description includes numbered use cases
 - [ ] Target plugin identified and skill saved to `plugins/<plugin>/skills/<skill-name>/`
+- [ ] All applicable checkpoints evaluated (ambiguity resolved via AskUserQuestion)
 
 ## Examples
 

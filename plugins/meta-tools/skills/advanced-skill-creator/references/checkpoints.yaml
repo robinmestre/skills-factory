@@ -1,0 +1,304 @@
+# Checkpoints for advanced-skill-creator
+# References: @core/checkpoint-patterns.yaml
+# Version: 1.0
+# Last Updated: 2026-02-01
+
+skill: advanced-skill-creator
+description: |
+  Defines AskUserQuestion checkpoints for the advanced-skill-creator workflow.
+  Each checkpoint triggers when ambiguity or conflicts are detected,
+  preventing cascading errors from wrong assumptions.
+
+# =============================================================================
+# SKILL CHECKPOINTS
+# =============================================================================
+
+checkpoints:
+
+  # ---------------------------------------------------------------------------
+  # Phase 1: Requirements Analysis
+  # ---------------------------------------------------------------------------
+
+  - id: task_type_classification
+    type: AMBIGUOUS_CLASSIFICATION
+    phase: 1
+    description: |
+      Triggers when the user's request matches multiple task type patterns
+      with similar confidence. Wrong classification cascades through the
+      entire workflow, producing wrong output.
+    trigger:
+      condition: "classification_confidence < 0.7 OR top_matches.length > 1"
+      signals:
+        - "Request mentions both evaluating AND generating"
+        - "Request uses ambiguous verbs (analyze, assess, review)"
+        - "Domain keywords match multiple patterns"
+    categories:
+      - id: MOE-EVALUATE
+        label: "Evaluate/Compare options"
+        description: "Compare 2-8 existing options using expert perspectives"
+        keywords: [evaluate, compare, assess, choose, select, rank]
+      - id: MOE-GENERATE
+        label: "Generate ideas"
+        description: "Create new options using diverse expert viewpoints"
+        keywords: [generate, create, brainstorm, ideate, propose]
+      - id: TOURNAMENT-RANK
+        label: "Rank many items"
+        description: "Statistical ranking of 5+ items via pairwise comparison"
+        keywords: [rank, prioritize, order, sort, top]
+      - id: ADVERSARIAL-VALIDATE
+        label: "Stress-test a decision"
+        description: "Red/blue team validation for high-stakes choices"
+        keywords: [validate, test, challenge, stress-test, verify]
+      - id: RESEARCH-SYNTHESIZE
+        label: "Synthesize research"
+        description: "Consolidate findings from multiple sources"
+        keywords: [research, synthesize, consolidate, summarize]
+      - id: GAP-AUDIT
+        label: "Check completeness"
+        description: "Audit document against standards for gaps"
+        keywords: [audit, check, complete, gaps, missing]
+      - id: ELICIT-EXTRACT
+        label: "Extract requirements"
+        description: "Transform unstructured input into structured output"
+        keywords: [extract, elicit, identify, capture, discover]
+    threshold: 0.7
+    example_questions:
+      - situation: "Create a skill for architecture options"
+        question: "Should this skill evaluate existing architecture options or generate new ones?"
+        options:
+          - "Evaluate existing options (MOE-EVALUATE)"
+          - "Generate new options (MOE-GENERATE)"
+          - "Generate first, then evaluate (MOE-GENERATE → MOE-EVALUATE)"
+
+  - id: domain_selection
+    type: MISSING_CRITICAL_PARAM
+    phase: 1
+    description: |
+      Triggers when domain/context is not specified. Domain affects
+      expert selection, terminology, evaluation criteria, and output format.
+    trigger:
+      condition: "domain NOT specified AND NOT inferable from request"
+      signals:
+        - "Generic request without domain keywords"
+        - "Request uses domain-agnostic language"
+    param: domain
+    param_description: |
+      Domain determines expert archetypes, evaluation criteria, and terminology.
+      Select the domain that best matches your use case.
+    valid_values:
+      - id: architecture
+        label: "Architecture/Technical"
+        description: "Software architecture, system design, infrastructure"
+      - id: product
+        label: "Product/Strategy"
+        description: "Product decisions, roadmap, market strategy"
+      - id: strategy
+        label: "Business/Strategy"
+        description: "Business strategy, organizational decisions"
+      - id: research
+        label: "Research/Academic"
+        description: "Research methodologies, academic rigor"
+      - id: custom
+        label: "Custom domain"
+        description: "Specify your own domain context"
+    example_questions:
+      - situation: "Create an expert panel skill"
+        question: "What domain is this expert panel for?"
+
+  - id: stakeholder_selection
+    type: MISSING_CRITICAL_PARAM
+    phase: 1
+    description: |
+      Triggers when multiple stakeholder types could apply and none specified.
+      Stakeholders affect expert perspectives and evaluation weighting.
+    trigger:
+      condition: "stakeholder_type ambiguous AND affects expert composition"
+      signals:
+        - "Request could serve developers, executives, or mixed audience"
+        - "Output format depends on consumer"
+    param: stakeholder
+    param_description: |
+      Who will consume the skill's output? This affects perspective balance
+      and how results are communicated.
+    valid_values:
+      - id: technical
+        label: "Technical team"
+        description: "Engineers, architects, developers"
+      - id: leadership
+        label: "Leadership"
+        description: "Executives, directors, decision-makers"
+      - id: mixed
+        label: "Mixed audience"
+        description: "Cross-functional teams"
+      - id: external
+        label: "External stakeholders"
+        description: "Customers, partners, vendors"
+
+  # ---------------------------------------------------------------------------
+  # Phase 3: Template Instantiation
+  # ---------------------------------------------------------------------------
+
+  - id: preset_conflict
+    type: PARAM_CONFLICT
+    phase: 3
+    description: |
+      Triggers when user-specified parameters conflict with domain preset
+      defaults. Silent override could produce unexpected results.
+    trigger:
+      condition: "user_param != preset_param AND both are specified"
+      watch_params:
+        - panel_size / expert_count
+        - iterations / rounds
+        - depth / thoroughness
+        - scoring_algorithm
+    conflict_resolution:
+      log_override: true
+      metadata_key: "parameter_overrides"
+    example_questions:
+      - situation: "6-expert panel for product domain (preset=4)"
+        question: |
+          You specified panel_size=6, but the 'product' domain preset uses
+          expert_count=4 for optimal deliberation. Which should we use?
+        options:
+          - "Use my value (6 experts)"
+          - "Use preset (4 experts)"
+          - "Explain the trade-off"
+
+  - id: anti_pattern_composition
+    type: ANTI_PATTERN_DETECTED
+    phase: 3
+    description: |
+      Triggers when requested pattern composition matches a known anti-pattern.
+      Allows user to proceed with acknowledgment or choose alternative.
+    trigger:
+      condition: "composition IN anti_patterns"
+    anti_patterns:
+      - pattern: "ADVERSARIAL-VALIDATE → ADVERSARIAL-VALIDATE"
+        reason: "Creates infinite validation regress without new information"
+        alternative: "Single ADVERSARIAL-VALIDATE with max_iterations=3-5"
+      - pattern: "MOE-EVALUATE → MOE-EVALUATE"
+        reason: "Recursively evaluating evaluations without synthesis"
+        alternative: "MOE-EVALUATE → RESEARCH-SYNTHESIZE for meta-analysis"
+      - pattern: "meta-skill → meta-skill"
+        reason: "Generating skill generators is unbounded recursion"
+        alternative: "Single advanced-skill-creator invocation with clear scope"
+    example_questions:
+      - situation: "Chain ADVERSARIAL-VALIDATE → ADVERSARIAL-VALIDATE"
+        question: |
+          Chaining two ADVERSARIAL-VALIDATE patterns creates infinite validation.
+          Would you like to:
+        options:
+          - "Use single ADVERSARIAL-VALIDATE with more rounds (Recommended)"
+          - "Chain ADVERSARIAL-VALIDATE → MOE-EVALUATE instead"
+          - "Proceed anyway (I understand the risk)"
+
+  # ---------------------------------------------------------------------------
+  # Phase 4: Output Generation
+  # ---------------------------------------------------------------------------
+
+  - id: output_mode
+    type: OUTPUT_FORMAT
+    phase: 4
+    description: |
+      Triggers when output format not specified. SKILL.md and portable prompt
+      have different capabilities and use cases.
+    trigger:
+      condition: "output_format NOT specified"
+    formats:
+      - id: skill
+        label: "Executable SKILL.md"
+        description: "Reusable skill in vibekit marketplace"
+        use_when: "Skill will be used repeatedly in this system"
+      - id: prompt
+        label: "Portable prompt"
+        description: "Self-contained prompt for any LLM"
+        use_when: "Need to use outside vibekit or share with others"
+      - id: both
+        label: "Both formats"
+        description: "Generate skill and portable prompt"
+        use_when: "Want reusability and portability"
+    default: skill
+    example_questions:
+      - situation: "Create an architecture evaluation workflow"
+        question: "How should this be delivered?"
+
+  # ---------------------------------------------------------------------------
+  # Phase 5: Skill Placement
+  # ---------------------------------------------------------------------------
+
+  - id: plugin_routing
+    type: ROUTING_AMBIGUOUS
+    phase: 5
+    description: |
+      Triggers when skill type could belong to multiple plugins.
+      Misplacement affects discoverability in the marketplace.
+    trigger:
+      condition: "skill matches criteria for 2+ plugins"
+      signals:
+        - "Skill name contains cross-cutting terms"
+        - "Primary action differs from primary domain"
+    destinations:
+      evaluation-tools:
+        criteria: "Primary action is evaluation, comparison, or ranking"
+        examples: ["architecture-evaluator", "proposal-ranker"]
+      research-tools:
+        criteria: "Primary action is research, discovery, or synthesis"
+        examples: ["competitive-analyzer", "literature-reviewer"]
+      documentation-tools:
+        criteria: "Primary domain is documentation or content"
+        examples: ["api-documenter", "tutorial-writer"]
+      prompt-tools:
+        criteria: "Optimizes or generates prompts"
+        examples: ["prompt-optimizer", "system-prompt-builder"]
+      meta-tools:
+        criteria: "Creates other skills or meta-workflows"
+        examples: ["skill-creator", "workflow-designer"]
+    example_questions:
+      - situation: "Skill that audits PRD completeness"
+        question: |
+          This skill audits documentation against standards. Where should it live?
+        options:
+          - "evaluation-tools (primary action is auditing/evaluation)"
+          - "documentation-tools (primary domain is documentation)"
+
+# =============================================================================
+# CHECKPOINT EXECUTION LOGIC
+# =============================================================================
+
+execution:
+
+  order: |
+    Checkpoints are evaluated in phase order. Within a phase, evaluate
+    all applicable checkpoints before proceeding. If multiple checkpoints
+    trigger, ask them together when possible (up to 4 questions).
+
+  skip_conditions: |
+    Skip a checkpoint if:
+    - User explicitly provided the information
+    - Previous answer in conversation resolves the ambiguity
+    - Context makes the answer obvious (high confidence inference)
+
+  logging: |
+    Log all checkpoint triggers and resolutions in skill metadata:
+    - checkpoint_id
+    - trigger_reason
+    - user_selection
+    - timestamp
+
+# =============================================================================
+# INTEGRATION WITH SKILL.MD
+# =============================================================================
+
+skill_md_markers: |
+  In SKILL.md, checkpoints are marked inline:
+
+  ### Phase 1: Requirements Analysis
+
+  1. Classify task type against patterns
+  2. **CHECKPOINT: task_type_classification**
+     - If classification confidence < 0.7: AskUserQuestion
+     - Present matched patterns with descriptions
+  3. [Continue with selected pattern]
+
+  The CHECKPOINT marker indicates where to evaluate the checkpoint.
+  Skill executor reads checkpoints.yaml for full configuration.

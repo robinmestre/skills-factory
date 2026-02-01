@@ -1,0 +1,274 @@
+# Checkpoint Patterns Library
+# Reusable AskUserQuestion patterns for skills
+# Version: 1.0
+# Last Updated: 2026-02-01
+
+version: "1.0"
+description: |
+  Defines reusable checkpoint types for skills to use with AskUserQuestion.
+  Checkpoints trigger interactive clarification when ambiguity, conflicts,
+  or critical decisions are detected. Skills reference these types in their
+  own checkpoints.yaml to define skill-specific instances.
+
+# =============================================================================
+# CHECKPOINT TYPE DEFINITIONS
+# =============================================================================
+
+checkpoint_types:
+
+  # ---------------------------------------------------------------------------
+  # AMBIGUOUS_CLASSIFICATION
+  # Use when: Input could match multiple categories with similar confidence
+  # ---------------------------------------------------------------------------
+  AMBIGUOUS_CLASSIFICATION:
+    description: |
+      Triggered when the user's request could reasonably map to multiple
+      categories, patterns, or interpretations. Prevents cascading errors
+      from wrong classification early in the workflow.
+    trigger_conditions:
+      - "Classification confidence < threshold (typically 0.7)"
+      - "Top 2+ categories have similar scores (within 0.15)"
+      - "Request contains conflicting keywords"
+    question_template: |
+      Your request could be interpreted as:
+      {options_with_descriptions}
+      Which best fits your intent?
+    options_source: matched_categories
+    behavior:
+      on_selection: "Proceed with selected category"
+      on_other: "Capture custom interpretation, re-analyze"
+    examples:
+      - request: "Create a skill that evaluates and generates architecture options"
+        ambiguity: "MOE-EVALUATE vs MOE-GENERATE vs chained pattern"
+        question: "Is your primary goal to evaluate existing options or generate new ones first?"
+
+  # ---------------------------------------------------------------------------
+  # MISSING_CRITICAL_PARAM
+  # Use when: Required parameter not specified and no safe default exists
+  # ---------------------------------------------------------------------------
+  MISSING_CRITICAL_PARAM:
+    description: |
+      Triggered when a parameter critical to the workflow is not specified
+      and cannot be safely inferred. Missing critical params lead to
+      outputs that don't match user intent.
+    trigger_conditions:
+      - "Parameter marked as required and not provided"
+      - "Parameter has no default and affects output significantly"
+      - "Inference would be guessing rather than reasoning"
+    question_template: |
+      What {param_name} should be used?
+      {param_description}
+    options_source: param_valid_values
+    behavior:
+      on_selection: "Use selected value"
+      on_other: "Validate custom value against constraints"
+    examples:
+      - param: domain
+        question: "What domain is this skill for?"
+        options: ["Architecture/Technical", "Product/Strategy", "Research/Academic"]
+
+  # ---------------------------------------------------------------------------
+  # PARAM_CONFLICT
+  # Use when: User-specified value conflicts with preset or system default
+  # ---------------------------------------------------------------------------
+  PARAM_CONFLICT:
+    description: |
+      Triggered when a user-provided parameter value conflicts with a
+      domain preset, system default, or another user-provided value.
+      Prevents silent override of user intent.
+    trigger_conditions:
+      - "User value differs from applicable preset value"
+      - "Two user-provided values are mutually exclusive"
+      - "Value outside recommended range for selected configuration"
+    question_template: |
+      {param_name} has a conflict:
+      - Your value: {user_value}
+      - {preset_name} preset: {preset_value}
+      Which should apply?
+    options:
+      - label: "Use my value"
+        description: "Override the preset with your specified value"
+      - label: "Use preset"
+        description: "Use the recommended value for this configuration"
+      - label: "Other"
+        description: "Specify a different value or approach"
+    behavior:
+      on_user_value: "Apply user value, log override in metadata"
+      on_preset: "Apply preset value"
+      on_other: "Capture custom resolution"
+    examples:
+      - conflict: "panel_size=6 vs product preset expert_count=4"
+        question: "You specified 6 experts, but the 'product' preset recommends 4. Which should we use?"
+
+  # ---------------------------------------------------------------------------
+  # OUTPUT_FORMAT
+  # Use when: Multiple valid output formats exist and none explicitly chosen
+  # ---------------------------------------------------------------------------
+  OUTPUT_FORMAT:
+    description: |
+      Triggered when the skill can produce output in multiple formats
+      that differ meaningfully (not just cosmetic differences).
+      Wrong format wastes user effort.
+    trigger_conditions:
+      - "Multiple output formats available"
+      - "Format not specified in request"
+      - "Formats have different capabilities or portability"
+    question_template: |
+      How should the output be delivered?
+    options_source: available_formats
+    behavior:
+      on_selection: "Generate in selected format"
+      on_both: "Generate all requested formats"
+    examples:
+      - formats: ["SKILL.md (reusable)", "Portable prompt (standalone)"]
+        question: "Should this be an executable skill or a portable prompt?"
+
+  # ---------------------------------------------------------------------------
+  # ROUTING_AMBIGUOUS
+  # Use when: Item could legitimately belong to multiple destinations
+  # ---------------------------------------------------------------------------
+  ROUTING_AMBIGUOUS:
+    description: |
+      Triggered when placement, categorization, or routing of output
+      could reasonably go to multiple destinations. Misrouting affects
+      discoverability and organization.
+    trigger_conditions:
+      - "Item matches criteria for 2+ destinations"
+      - "Primary category unclear from context"
+      - "Cross-cutting concerns (e.g., evaluates documentation)"
+    question_template: |
+      Where should this be placed?
+      {destination_options_with_rationale}
+    options_source: valid_destinations
+    behavior:
+      on_selection: "Route to selected destination"
+      on_other: "Capture custom location with justification"
+    examples:
+      - item: "skill that audits PRD completeness"
+        options:
+          - "evaluation-tools (primary action is evaluation)"
+          - "documentation-tools (primary domain is documentation)"
+
+  # ---------------------------------------------------------------------------
+  # ANTI_PATTERN_DETECTED
+  # Use when: Requested action matches a known problematic pattern
+  # ---------------------------------------------------------------------------
+  ANTI_PATTERN_DETECTED:
+    description: |
+      Triggered when the user's request would result in a known
+      anti-pattern (infinite loops, invalid compositions, security
+      issues, etc.). Allows informed override rather than silent failure.
+    trigger_conditions:
+      - "Requested composition matches documented anti-pattern"
+      - "Action could cause infinite recursion"
+      - "Configuration violates safety constraints"
+    question_template: |
+      {action} is an anti-pattern: {reason}
+
+      Would you like to:
+    options:
+      - label: "Use recommended alternative"
+        description: "{alternative_description}"
+      - label: "Proceed anyway"
+        description: "I understand the implications"
+      - label: "Other"
+        description: "Describe a different approach"
+    behavior:
+      on_alternative: "Apply recommended alternative"
+      on_proceed: "Execute with explicit acknowledgment logged"
+      on_other: "Evaluate custom approach"
+    examples:
+      - anti_pattern: "ADVERSARIAL-VALIDATE → ADVERSARIAL-VALIDATE chain"
+        reason: "Creates infinite validation regress"
+        alternative: "Single ADVERSARIAL-VALIDATE with more rounds"
+
+# =============================================================================
+# CHECKPOINT GUIDANCE
+# =============================================================================
+
+checkpoint_guidance:
+
+  # When to trigger AskUserQuestion
+  when_to_ask:
+    - condition: "Confidence in classification < 0.7"
+      rationale: "Low confidence means multiple valid interpretations"
+    - condition: "Multiple valid interpretations exist"
+      rationale: "User should choose, not the system"
+    - condition: "User-specified value conflicts with defaults"
+      rationale: "Prevents silent override of user intent"
+    - condition: "Action could cause unrecoverable state"
+      rationale: "User must opt-in to irreversible actions"
+    - condition: "Output format materially affects usability"
+      rationale: "Wrong format wastes user effort"
+    - condition: "Missing parameter with no safe default"
+      rationale: "Guessing critical params leads to wrong outputs"
+
+  # When to proceed without asking
+  when_to_proceed:
+    - condition: "Single clear interpretation"
+      rationale: "No ambiguity to resolve"
+    - condition: "User explicitly stated preference"
+      rationale: "User already answered the question"
+    - condition: "Default is safe and reversible"
+      rationale: "User can easily correct if wrong"
+    - condition: "Asking would be pedantic"
+      rationale: "Trivial decisions don't merit interruption"
+    - condition: "Context strongly implies answer"
+      rationale: "Inference is reasoning, not guessing"
+
+  # Question quality guidelines
+  question_best_practices:
+    - "Keep questions concise (1-2 sentences)"
+    - "Provide 2-4 options, not more"
+    - "Include brief description for each option"
+    - "Put recommended option first with '(Recommended)' suffix"
+    - "Always allow 'Other' for custom input"
+    - "Frame in terms of user goals, not system internals"
+
+# =============================================================================
+# SKILL INTEGRATION PATTERN
+# =============================================================================
+
+skill_integration:
+  description: |
+    Skills define their checkpoints in references/checkpoints.yaml.
+    Each checkpoint references a type from this library and adds
+    skill-specific configuration.
+
+  checkpoint_definition_schema:
+    id: "Unique identifier within the skill"
+    type: "Reference to checkpoint_types above"
+    phase: "Workflow phase where checkpoint occurs"
+    trigger_config: "Skill-specific trigger configuration"
+    options_config: "Skill-specific options if not using options_source"
+
+  skill_md_integration: |
+    In SKILL.md workflow phases, add checkpoint markers:
+
+    ### Phase N: [Phase Name]
+
+    1. [Step description]
+    2. **CHECKPOINT: {checkpoint_id}**
+       - Trigger: {trigger_description}
+       - If triggered: AskUserQuestion with options from checkpoints.yaml
+    3. [Continue with selected option]
+
+# =============================================================================
+# EXTENSIBILITY
+# =============================================================================
+
+extensibility:
+  adding_new_types: |
+    To add a new checkpoint type:
+    1. Add entry to checkpoint_types with all required fields
+    2. Document trigger_conditions clearly
+    3. Provide question_template with placeholders
+    4. Include at least one example
+    5. Define behavior for each option type
+
+  custom_options_source: |
+    If options_source is specified, the skill provides options dynamically:
+    - matched_categories: From classification results
+    - param_valid_values: From parameter schema
+    - available_formats: From output configuration
+    - valid_destinations: From routing rules

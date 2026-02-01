@@ -1,0 +1,337 @@
+# Checkpoints for expert-panel-deliberation
+# References: @core/checkpoint-patterns.yaml
+# Version: 1.0
+# Last Updated: 2026-02-01
+
+skill: expert-panel-deliberation
+description: |
+  Defines AskUserQuestion checkpoints for the expert-panel-deliberation workflow.
+  Checkpoints ensure panel composition, deliberation parameters, and conflict
+  resolution approaches align with user intent.
+
+# =============================================================================
+# SKILL CHECKPOINTS
+# =============================================================================
+
+checkpoints:
+
+  # ---------------------------------------------------------------------------
+  # Step 1: Define Panel Requirements
+  # ---------------------------------------------------------------------------
+
+  - id: domain_context
+    type: MISSING_CRITICAL_PARAM
+    phase: 1
+    description: |
+      Triggers when domain/context is not specified. Domain determines
+      which expert archetypes are relevant and how they weight findings.
+    trigger:
+      condition: "domain NOT specified AND NOT inferable from subject"
+      signals:
+        - "Generic subject without domain keywords"
+        - "Cross-cutting topic that spans multiple domains"
+    param: domain
+    param_description: |
+      Domain affects expert archetype selection and evaluation criteria.
+      Select the domain that best matches what's being evaluated.
+    valid_values:
+      - id: architecture
+        label: "Architecture/Technical"
+        description: "System design, infrastructure, technical decisions"
+        recommended_archetypes: [Technical Authority, Quality Guardian, Risk Specialist, Efficiency Expert, Challenger]
+      - id: product
+        label: "Product/Strategy"
+        description: "Feature decisions, roadmap, user experience"
+        recommended_archetypes: [User Advocate, Domain Specialist, Technical Authority, Efficiency Expert, Challenger]
+      - id: security
+        label: "Security/Compliance"
+        description: "Security posture, compliance, risk management"
+        recommended_archetypes: [Risk Specialist, Technical Authority, Quality Guardian, Challenger]
+      - id: operations
+        label: "Operations/DevOps"
+        description: "Deployment, reliability, operational concerns"
+        recommended_archetypes: [Efficiency Expert, Risk Specialist, Technical Authority, Quality Guardian, Challenger]
+      - id: business
+        label: "Business/Strategy"
+        description: "Business decisions, market strategy, resource allocation"
+        recommended_archetypes: [Domain Specialist, User Advocate, Efficiency Expert, Risk Specialist, Challenger]
+      - id: custom
+        label: "Custom domain"
+        description: "Specify your own domain and archetype selection"
+    example_questions:
+      - situation: "Analyze this proposal with an expert panel"
+        question: "What domain is this evaluation for?"
+
+  - id: output_format_selection
+    type: OUTPUT_FORMAT
+    phase: 1
+    description: |
+      Triggers when output format is not specified. Different formats
+      serve different decision-making needs.
+    trigger:
+      condition: "output_format NOT specified"
+    formats:
+      - id: findings
+        label: "Findings summary"
+        description: "Consensus and divergent views with confidence levels"
+        use_when: "Understanding perspectives is the goal"
+      - id: scores
+        label: "Scored evaluation"
+        description: "Dimensional scoring with expert breakdowns"
+        use_when: "Comparing against criteria or benchmarks"
+      - id: ranking
+        label: "Ranked options"
+        description: "Ordinal ranking of options with rationale"
+        use_when: "Choosing between multiple options"
+      - id: recommendation
+        label: "Decision recommendation"
+        description: "Single recommendation with supporting rationale"
+        use_when: "Need a clear go/no-go or action recommendation"
+    default: findings
+    example_questions:
+      - situation: "Get expert perspectives on our API design"
+        question: "What output format would be most useful?"
+
+  - id: deliberation_depth_selection
+    type: AMBIGUOUS_CLASSIFICATION
+    phase: 1
+    description: |
+      Triggers when deliberation depth could significantly impact results.
+      Depth affects thoroughness of cross-examination and conflict resolution.
+    trigger:
+      condition: "decision_stakes unclear AND deliberation_depth NOT specified"
+      signals:
+        - "Subject complexity suggests deep analysis needed"
+        - "User mentions 'quick' or 'thorough' without specifying depth"
+    categories:
+      - id: quick
+        label: "Quick deliberation"
+        description: "Single round, surface-level findings, 10-15 min equivalent"
+        use_when: "Low stakes, time pressure, initial exploration"
+      - id: standard
+        label: "Standard deliberation"
+        description: "All 4 rounds, thorough but focused, 30-45 min equivalent"
+        use_when: "Typical decisions, balanced depth"
+      - id: deep
+        label: "Deep deliberation"
+        description: "Extended rounds, comprehensive analysis, 60+ min equivalent"
+        use_when: "High stakes, complex tradeoffs, need high confidence"
+    threshold: 0.7
+    example_questions:
+      - situation: "Evaluate our security architecture"
+        question: "How thorough should the deliberation be?"
+
+  # ---------------------------------------------------------------------------
+  # Step 2: Assemble Expert Panel
+  # ---------------------------------------------------------------------------
+
+  - id: panel_composition
+    type: AMBIGUOUS_CLASSIFICATION
+    phase: 2
+    description: |
+      Triggers when automatic archetype selection is ambiguous.
+      Wrong panel composition leads to blind spots or irrelevant perspectives.
+    trigger:
+      condition: "subject matches multiple domain presets OR custom panel requested"
+      signals:
+        - "Cross-domain topic (e.g., 'security AND user experience')"
+        - "User specified some but not all archetypes"
+        - "Unusual combination of concerns mentioned"
+    categories:
+      - id: preset_architecture
+        label: "Architecture panel"
+        description: "Technical Authority, Quality Guardian, Risk Specialist, Efficiency Expert, Challenger"
+      - id: preset_product
+        label: "Product panel"
+        description: "User Advocate, Domain Specialist, Technical Authority, Efficiency Expert, Challenger"
+      - id: preset_security
+        label: "Security panel"
+        description: "Risk Specialist, Technical Authority, Quality Guardian, Challenger"
+      - id: preset_operations
+        label: "Operations panel"
+        description: "Efficiency Expert, Risk Specialist, Technical Authority, Quality Guardian, Challenger"
+      - id: custom
+        label: "Custom panel"
+        description: "Select specific archetypes for this evaluation"
+    threshold: 0.6
+    example_questions:
+      - situation: "Evaluate API security AND usability"
+        question: "Which expert panel composition fits best?"
+        options:
+          - "Security panel (focus on security with technical depth)"
+          - "Product panel (focus on usability with technical grounding)"
+          - "Custom panel (select specific experts for both concerns)"
+
+  - id: panel_size_adjustment
+    type: PARAM_CONFLICT
+    phase: 2
+    description: |
+      Triggers when user-specified panel size conflicts with recommendation
+      for the subject complexity or domain preset.
+    trigger:
+      condition: "user_panel_size differs from recommended_size by >2"
+      signals:
+        - "User specified 3 experts for complex cross-domain topic"
+        - "User specified 8 experts for simple focused question"
+    conflict_resolution:
+      log_override: true
+      metadata_key: "panel_size_override"
+    example_questions:
+      - situation: "User specified 3 experts for complex architecture decision"
+        question: |
+          You specified 3 experts, but this complex topic typically benefits
+          from 5-6 perspectives. Which should we use?
+        options:
+          - "Use my size (3 experts) — keep it focused"
+          - "Use recommended size (5 experts) — more perspectives"
+          - "Other"
+
+  # ---------------------------------------------------------------------------
+  # Step 4: Execute Deliberation
+  # ---------------------------------------------------------------------------
+
+  - id: conflict_resolution_approach
+    type: AMBIGUOUS_CLASSIFICATION
+    phase: 4
+    description: |
+      Triggers when significant conflicts remain after Round 3 and
+      resolution approach is ambiguous. User should decide how to handle.
+    trigger:
+      condition: "unresolved_conflicts.count > 0 AND no_clear_resolution_path"
+      signals:
+        - "Two experts strongly disagree on critical finding"
+        - "Conflict affects final recommendation"
+        - "Both positions have merit"
+    categories:
+      - id: weight_by_domain
+        label: "Weight by domain relevance"
+        description: "Expert closer to subject domain gets higher weight"
+      - id: weight_by_evidence
+        label: "Weight by evidence strength"
+        description: "Position with stronger evidence/rationale wins"
+      - id: document_both
+        label: "Document both positions"
+        description: "Present both views without resolution, user decides"
+      - id: escalate
+        label: "Escalate to user"
+        description: "Ask user to decide between positions"
+    threshold: 0.5
+    example_questions:
+      - situation: "Technical Authority and User Advocate disagree on API design"
+        question: "How should we resolve this conflict?"
+        options:
+          - "Weight by domain relevance (Technical Authority for API design)"
+          - "Document both positions (let reader decide)"
+          - "Provide more context and I'll decide"
+
+  - id: weighting_approach
+    type: MISSING_CRITICAL_PARAM
+    phase: 4
+    description: |
+      Triggers when consensus building (Round 4) needs explicit weighting
+      and no weighting approach is specified.
+    trigger:
+      condition: "weighting_algorithm NOT specified AND experts have unequal relevance"
+      signals:
+        - "Some experts clearly more relevant to subject"
+        - "Different confidence levels across experts"
+        - "User didn't specify how to weight perspectives"
+    param: weighting_approach
+    param_description: |
+      How should expert perspectives be weighted in consensus building?
+    valid_values:
+      - id: equal
+        label: "Equal weight"
+        description: "All experts weighted equally regardless of domain"
+      - id: domain_relevance
+        label: "Weight by domain relevance"
+        description: "Experts closer to subject domain weighted higher"
+      - id: confidence_adjusted
+        label: "Confidence-adjusted"
+        description: "Higher-confidence findings weighted more"
+      - id: evidence_based
+        label: "Evidence-based"
+        description: "Weight by strength of supporting evidence"
+    example_questions:
+      - situation: "Building consensus from 5 expert perspectives"
+        question: "How should expert perspectives be weighted?"
+
+  # ---------------------------------------------------------------------------
+  # Step 5: Generate Output
+  # ---------------------------------------------------------------------------
+
+  - id: dissent_documentation
+    type: AMBIGUOUS_CLASSIFICATION
+    phase: 5
+    description: |
+      Triggers when minority views exist and it's unclear whether to
+      prominently document them or summarize briefly.
+    trigger:
+      condition: "minority_views.count > 0 AND significance unclear"
+      signals:
+        - "Single expert disagrees with consensus"
+        - "Dissent is from challenger (expected) vs domain expert (notable)"
+        - "Dissent affects recommendation confidence"
+    categories:
+      - id: prominent
+        label: "Document prominently"
+        description: "Dedicate section to dissent with full rationale"
+        use_when: "Dissent is from domain expert or affects key recommendation"
+      - id: brief
+        label: "Document briefly"
+        description: "Note dissent in findings without detailed rationale"
+        use_when: "Dissent is expected (challenger) or tangential"
+      - id: omit
+        label: "Omit from output"
+        description: "Don't include in final output"
+        use_when: "Dissent was resolved or is noise"
+    threshold: 0.6
+    example_questions:
+      - situation: "Risk Specialist disagrees with consensus recommendation"
+        question: "How should we document this dissenting view?"
+        options:
+          - "Document prominently (Risk Specialist's view is relevant)"
+          - "Document briefly (note the disagreement)"
+          - "Omit (dissent doesn't affect the recommendation)"
+
+# =============================================================================
+# CHECKPOINT EXECUTION LOGIC
+# =============================================================================
+
+execution:
+
+  order: |
+    Checkpoints evaluated in phase order:
+    - Phase 1: domain_context, output_format_selection, deliberation_depth_selection
+    - Phase 2: panel_composition, panel_size_adjustment
+    - Phase 4: conflict_resolution_approach, weighting_approach
+    - Phase 5: dissent_documentation
+
+  skip_conditions: |
+    Skip a checkpoint if:
+    - User explicitly provided the parameter
+    - Domain makes the answer obvious (e.g., "security audit" → security domain)
+    - Previous answer in conversation resolves ambiguity
+
+  batch_questions: |
+    Phase 1 checkpoints can be asked together (up to 3 questions).
+    Phase 4 checkpoints are asked during deliberation as conflicts arise.
+
+# =============================================================================
+# INTEGRATION WITH SKILL.MD
+# =============================================================================
+
+skill_md_markers: |
+  In SKILL.md, checkpoints are marked inline:
+
+  ### Step 1: Define Panel Requirements
+
+  Determine what evaluation is needed:
+  - **Subject:** What is being evaluated?
+  - **Goal:** What should the evaluation determine?
+
+  **CHECKPOINT: domain_context**
+  - If domain not specified: AskUserQuestion
+
+  **CHECKPOINT: output_format_selection**
+  - If output format not specified: AskUserQuestion

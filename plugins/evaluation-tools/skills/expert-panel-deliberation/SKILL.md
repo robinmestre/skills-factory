@@ -37,6 +37,18 @@ Provide consistent, high-quality multi-perspective analysis by:
 - Time-critical decisions needing speed
 - Single-domain technical questions
 
+## Checkpoints
+
+This skill uses interactive checkpoints (see `references/checkpoints.yaml`) to resolve ambiguity:
+- **domain_context** — When domain not specified
+- **output_format_selection** — When output format not specified
+- **deliberation_depth_selection** — When depth could vary based on stakes
+- **panel_composition** — When archetype selection is ambiguous
+- **panel_size_adjustment** — When specified size conflicts with recommended
+- **conflict_resolution_approach** — When unresolved conflicts need user input
+- **weighting_approach** — When consensus weighting is ambiguous
+- **dissent_documentation** — When minority view significance is unclear
+
 ## Workflow
 
 ### Step 1: Define Panel Requirements
@@ -46,6 +58,21 @@ Determine what evaluation is needed:
 - **Goal:** What should the evaluation determine?
 - **Panel size:** 3-8 experts (default: 5)
 - **Output format:** findings | scores | ranking | recommendation
+
+**CHECKPOINT: domain_context**
+- If domain not specified and not inferable from subject: **AskUserQuestion**
+- Options: Architecture, Product, Security, Operations, Business, Custom
+- Example: "What domain is this evaluation for?"
+
+**CHECKPOINT: output_format_selection**
+- If output format not specified: **AskUserQuestion**
+- Options: Findings, Scores, Ranking, Recommendation
+- Example: "What output format would be most useful?"
+
+**CHECKPOINT: deliberation_depth_selection**
+- If stakes unclear and depth not specified: **AskUserQuestion**
+- Options: Quick, Standard, Deep
+- Example: "How thorough should the deliberation be?"
 
 ### Step 2: Assemble Expert Panel
 
@@ -66,6 +93,15 @@ Select from archetypes based on domain:
 - Maximum 8 experts (diminishing returns beyond)
 - Always include at least one challenger perspective
 - Balance technical and business viewpoints
+
+**CHECKPOINT: panel_composition**
+- If subject matches multiple domains or custom panel needed: **AskUserQuestion**
+- Options: Architecture panel, Product panel, Security panel, Custom selection
+- Example: "Which expert panel composition fits best?"
+
+**CHECKPOINT: panel_size_adjustment**
+- If user-specified size differs significantly from recommended: **AskUserQuestion**
+- Example: "You specified 3 experts, but this topic typically benefits from 5. Which size?"
 
 ### Step 3: Execute Individual Evaluation
 
@@ -94,9 +130,24 @@ For each expert:
 - Weight by expert influence
 - Synthesize combined view
 
+**CHECKPOINT: conflict_resolution_approach**
+- If significant conflicts remain unresolved: **AskUserQuestion**
+- Options: Weight by domain, Weight by evidence, Document both, Escalate to user
+- Example: "Technical Authority and User Advocate disagree. How should we resolve?"
+
+**CHECKPOINT: weighting_approach**
+- If weighting algorithm not specified and experts have unequal relevance: **AskUserQuestion**
+- Options: Equal weight, Domain relevance, Confidence-adjusted, Evidence-based
+- Example: "How should expert perspectives be weighted?"
+
 ### Step 5: Generate Output
 
 Format based on requested output type.
+
+**CHECKPOINT: dissent_documentation**
+- If minority views exist and significance unclear: **AskUserQuestion**
+- Options: Document prominently, Document briefly, Omit
+- Example: "Risk Specialist disagrees with consensus. How should we document this?"
 
 ## Output Format
 ```markdown
@@ -142,6 +193,7 @@ Format based on requested output type.
 - [ ] Consensus clearly stated
 - [ ] Dissent documented if present
 - [ ] Confidence levels assigned
+- [ ] All applicable checkpoints evaluated (ambiguity resolved via AskUserQuestion)
 
 ## Parameters
 
