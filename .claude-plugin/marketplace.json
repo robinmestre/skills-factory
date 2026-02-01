@@ -1,10 +1,10 @@
 {
-  "name": "skills-factory",
+  "name": "vibekit",
   "owner": {
     "name": "Agentient"
   },
   "metadata": {
-    "description": "AI skills factory with advanced reasoning techniques for research, evaluation, and documentation",
+    "description": "AI skills marketplace with advanced reasoning techniques for research, evaluation, and documentation",
     "version": "1.0.0",
     "pluginRoot": "./plugins"
   },

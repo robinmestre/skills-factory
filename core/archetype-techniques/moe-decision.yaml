@@ -1,0 +1,1388 @@
+# ============================================================================
+# MOE-DECISION ARCHETYPE: HIGH-AFFINITY TECHNIQUES
+# ============================================================================
+# Version: 1.0
+# Purpose: Detailed technique metadata for Skill Factory skill generation
+# Archetype: MoE-Decision (Multi-perspective â†’ Tournament ranking â†’ Adversarial validation)
+# 
+# This file enables the Skill Factory to:
+#   1. Select appropriate techniques based on domain + problem characteristics
+#   2. Configure technique parameters for the specific use case
+#   3. Compose techniques into coherent skill workflow
+#   4. Generate domain-specific output formats
+# ============================================================================
+
+archetype:
+  id: ARCH-MOE-DECISION
+  name: "MoE-Decision"
+  description: "Multi-perspective analysis with weighted tournament ranking and adversarial validation"
+  version: "1.0"
+  
+  core_pattern:
+    phases:
+      - name: "Perspective Generation"
+        purpose: "Generate diverse expert viewpoints on the decision space"
+        technique_categories: [parallel_processing]
+        primary_techniques: [multi_persona_simulation, multi_lens_analysis]
+        
+      - name: "Option Evaluation"
+        purpose: "Systematically compare options via pairwise tournament"
+        technique_categories: [probabilistic, meta_cognitive]
+        primary_techniques: [pairwise_tournament, bradley_terry_aggregation]
+        
+      - name: "Adversarial Validation"
+        purpose: "Stress-test the winning option(s)"
+        technique_categories: [unbiased_reasoning]
+        primary_techniques: [true_steel_manning, adversarial_collaboration]
+        
+      - name: "Synthesis & Recommendation"
+        purpose: "Integrate findings into actionable recommendation"
+        technique_categories: [meta_cognitive, structured_decomposition]
+        primary_techniques: [confidence_calibration, scqa_communication]
+  
+  applicable_domains:
+    high_affinity:  # 0.85+
+      - architecture
+      - product
+      - strategy
+    moderate_affinity:  # 0.65-0.84
+      - security
+      - research
+    low_affinity:  # <0.65
+      - operations
+      - data_modeling
+      - content
+  
+  problem_characteristics:
+    ideal:
+      - "Multiple viable options exist"
+      - "Tradeoffs between options are non-obvious"
+      - "Multiple stakeholder perspectives matter"
+      - "Decision is high-stakes or difficult to reverse"
+      - "Subjective judgment required (not purely objective)"
+    poor_fit:
+      - "Single obvious answer exists"
+      - "Purely factual/deterministic question"
+      - "Low stakes, easily reversible"
+      - "Time pressure prevents thorough analysis"
+
+# ============================================================================
+# PHASE 1 TECHNIQUES: PERSPECTIVE GENERATION
+# ============================================================================
+
+perspective_generation_techniques:
+  
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Multi-Persona Simulation
+  # --------------------------------------------------------------------------
+  multi_persona_simulation:
+    id: TECH-PP-MPS
+    name: "Multi-Persona Simulation"
+    category: parallel_processing
+    subcategory: multi_frame_simultaneity
+    
+    description: |
+      Simulate multiple stakeholder personas responding to the same decision
+      simultaneously, capturing their distinct concerns, priorities, and reactions.
+    
+    cognitive_advantage: |
+      Humans simulate one persona at a time and forget earlier ones.
+      Claude holds all personas simultaneously, catching inter-persona conflicts.
+    
+    # APPLICABILITY METADATA
+    applicability:
+      problem_types:
+        - decision_with_multiple_stakeholders
+        - product_feature_decision
+        - pricing_change
+        - policy_decision
+        - organizational_change
+      
+      triggers:
+        - "multiple users/stakeholders affected"
+        - "need to understand different perspectives"
+        - "who will this impact"
+        - "how will X react"
+        - "stakeholder analysis"
+      
+      anti_triggers:
+        - "single user type"
+        - "internal technical decision only"
+        - "no external stakeholders"
+      
+      stakes_threshold: "medium+"  # Don't use for low-stakes
+      
+    domain_affinity:
+      product: 0.95
+      strategy: 0.90
+      architecture: 0.75
+      security: 0.70
+      research: 0.60
+      operations: 0.50
+    
+    # CONFIGURATION PARAMETERS
+    parameters:
+      persona_count:
+        description: "Number of distinct personas to simulate"
+        type: integer
+        min: 3
+        max: 8
+        default: 4
+        guidance: |
+          - 3-4 personas for focused decisions
+          - 5-6 personas for complex multi-stakeholder
+          - 7-8 only when stakeholder landscape is highly fragmented
+      
+      persona_selection_strategy:
+        description: "How to select which personas to simulate"
+        type: enum
+        options:
+          - standard_segments       # Use domain-standard segments
+          - power_interest_matrix   # Select by power + interest
+          - value_chain_positions   # Select by position in value chain
+          - adversarial_mix         # Include at least one adversarial persona
+        default: standard_segments
+      
+      analysis_depth:
+        description: "Depth of analysis per persona"
+        type: enum
+        options:
+          - shallow    # First reaction + main concern only
+          - standard   # Full reaction, concerns, delights, likelihood
+          - deep       # + decision factors, influence relationships
+        default: standard
+      
+      cross_persona_synthesis:
+        description: "Whether to synthesize across personas"
+        type: boolean
+        default: true
+        guidance: "Always true for MoE-decision; identifies conflict zones"
+    
+    # DOMAIN-SPECIFIC CONFIGURATIONS
+    domain_configurations:
+      
+      architecture:
+        default_personas:
+          - name: "Security Architect"
+            focus: "Attack surface, compliance, data protection"
+            typical_concerns: ["vulnerability exposure", "audit requirements", "key management"]
+          - name: "Platform Engineer"
+            focus: "Operability, scalability, maintainability"
+            typical_concerns: ["deployment complexity", "monitoring gaps", "toil creation"]
+          - name: "Developer Experience"
+            focus: "API usability, documentation, onboarding"
+            typical_concerns: ["cognitive load", "breaking changes", "learning curve"]
+          - name: "Cost Optimizer"
+            focus: "Resource efficiency, cost predictability"
+            typical_concerns: ["compute costs", "storage growth", "license implications"]
+          - name: "Business Stakeholder"
+            focus: "Time to market, competitive positioning"
+            typical_concerns: ["delivery timeline", "feature parity", "technical debt"]
+        
+        custom_analysis_dimensions:
+          - "Migration complexity"
+          - "Reversibility"
+          - "Operational burden"
+      
+      product:
+        default_personas:
+          - name: "Power User"
+            focus: "Advanced features, customization, efficiency"
+            typical_concerns: ["feature depth", "keyboard shortcuts", "automation"]
+          - name: "Casual User"
+            focus: "Simplicity, immediate value, low friction"
+            typical_concerns: ["learning curve", "cognitive load", "clear paths"]
+          - name: "Enterprise Buyer"
+            focus: "Risk, compliance, support, integration"
+            typical_concerns: ["security certifications", "SLAs", "vendor stability"]
+          - name: "Churned User"
+            focus: "Pain points that caused departure"
+            typical_concerns: ["unmet expectations", "friction points", "alternatives"]
+          - name: "Competitor Observer"
+            focus: "Competitive response, differentiation"
+            typical_concerns: ["feature parity", "positioning", "response timeline"]
+        
+        custom_analysis_dimensions:
+          - "Adoption likelihood"
+          - "Churn risk"
+          - "NPS impact"
+      
+      strategy:
+        default_personas:
+          - name: "Board Member"
+            focus: "Fiduciary duty, long-term value, governance"
+            typical_concerns: ["risk exposure", "capital allocation", "strategic alignment"]
+          - name: "Investor"
+            focus: "Growth metrics, competitive moat, exit potential"
+            typical_concerns: ["unit economics", "market size", "defensibility"]
+          - name: "Employee"
+            focus: "Job security, growth opportunity, mission alignment"
+            typical_concerns: ["layoff risk", "skill relevance", "company direction"]
+          - name: "Customer"
+            focus: "Value delivery, relationship continuity"
+            typical_concerns: ["service quality", "pricing stability", "innovation pace"]
+          - name: "Competitor"
+            focus: "Competitive dynamics, market positioning"
+            typical_concerns: ["response strategy", "talent acquisition", "pricing pressure"]
+        
+        custom_analysis_dimensions:
+          - "Strategic optionality"
+          - "Stakeholder coalition strength"
+          - "Reversibility window"
+    
+    # OUTPUT SPECIFICATION
+    output:
+      format: "structured_table_plus_synthesis"
+      components:
+        - name: "Persona Response Grid"
+          structure: |
+            | Persona | First Reaction | Main Concerns | Delight Factors | Likelihood to Support |
+            |---------|----------------|---------------|-----------------|----------------------|
+        
+        - name: "Cross-Persona Conflict Matrix"
+          structure: |
+            | Conflict | Persona A | Persona B | Nature | Resolution Approach |
+            |----------|-----------|-----------|--------|---------------------|
+        
+        - name: "Agreement Zones"
+          structure: "List of aspects where all/most personas align"
+        
+        - name: "Decision Implications"
+          structure: "Who to optimize for and why"
+    
+    # INTEGRATION WITH OTHER TECHNIQUES
+    synergies:
+      strong:
+        - multi_lens_analysis         # Combine personas with frameworks
+        - multi_stakeholder_impact    # Detailed impact per stakeholder
+        - adversarial_collaboration   # Personas inform adversarial roles
+      moderate:
+        - multi_criteria_optimization # Persona concerns become criteria
+      weak:
+        - temporal_analysis           # Limited interaction
+    
+    conflicts:
+      - rapid_iteration              # Persona sim takes time
+    
+    # EXECUTION METADATA
+    execution:
+      token_overhead: "medium"       # 1-3K tokens
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+      human_input_required: "none_to_minimal"  # May ask for persona additions
+    
+    # QUALITY CRITERIA
+    quality_criteria:
+      - "Each persona is distinct (no overlap in perspective)"
+      - "Persona reactions are internally consistent"
+      - "Cross-persona conflicts are explicitly surfaced"
+      - "Synthesis identifies who to optimize for"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Multi-Lens Analysis
+  # --------------------------------------------------------------------------
+  multi_lens_analysis:
+    id: TECH-PP-MLA
+    name: "Multi-Lens Analysis"
+    category: parallel_processing
+    subcategory: multi_frame_simultaneity
+    
+    description: |
+      Apply multiple analytical frameworks to the same problem simultaneously,
+      identifying where frameworks converge (high confidence) and diverge (hidden complexity).
+    
+    cognitive_advantage: |
+      Humans master 1-2 frameworks and over-apply them.
+      Claude applies all relevant frameworks equally, preventing framework lock-in.
+    
+    applicability:
+      problem_types:
+        - strategic_decision
+        - market_analysis
+        - competitive_positioning
+        - architecture_evaluation
+        - investment_decision
+      
+      triggers:
+        - "unsure which framework applies"
+        - "strategic analysis needed"
+        - "comprehensive evaluation"
+        - "multiple ways to look at this"
+      
+      anti_triggers:
+        - "framework already specified"
+        - "tactical execution question"
+        - "single dimension to evaluate"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.85
+      architecture: 0.80
+      research: 0.75
+      security: 0.60
+    
+    parameters:
+      lens_count:
+        description: "Number of frameworks to apply"
+        type: integer
+        min: 3
+        max: 7
+        default: 5
+        guidance: "5 is optimalâ€”enough diversity without dilution"
+      
+      lens_selection_strategy:
+        description: "How to select frameworks"
+        type: enum
+        options:
+          - domain_standard      # Use standard frameworks for domain
+          - orthogonal_coverage  # Maximize perspective diversity
+          - user_specified       # User provides frameworks
+        default: domain_standard
+      
+      synthesis_depth:
+        description: "How deeply to synthesize across lenses"
+        type: enum
+        options:
+          - convergence_only     # Where do lenses agree
+          - full_synthesis       # Convergence + divergence + meta-recommendation
+        default: full_synthesis
+    
+    domain_configurations:
+      
+      architecture:
+        default_lenses:
+          - name: "Quality Attributes (NFRs)"
+            focus: "Performance, security, scalability, maintainability, reliability"
+            key_questions: ["What are the -ilities tradeoffs?"]
+          - name: "Evolutionary Architecture"
+            focus: "Fitness functions, guided change, incremental adaptation"
+            key_questions: ["Can this evolve? What are the coupling constraints?"]
+          - name: "Domain-Driven Design"
+            focus: "Bounded contexts, aggregates, strategic design"
+            key_questions: ["Where are the domain boundaries? What language?"]
+          - name: "Cloud-Native Principles"
+            focus: "12-factor, containerization, service mesh, observability"
+            key_questions: ["How cloud-native is this? What's the ops burden?"]
+          - name: "Cost-Efficiency"
+            focus: "FinOps, resource optimization, TCO"
+            key_questions: ["What does this cost? How predictable?"]
+      
+      product:
+        default_lenses:
+          - name: "Jobs-to-be-Done"
+            focus: "What job is the user hiring the product to do?"
+            key_questions: ["What progress are they trying to make?"]
+          - name: "Blue Ocean / Value Innovation"
+            focus: "Eliminate, reduce, raise, create"
+            key_questions: ["What can we eliminate? What new value?"]
+          - name: "Kano Model"
+            focus: "Basic, performance, delight factors"
+            key_questions: ["What's table stakes? What delights?"]
+          - name: "Lean Startup"
+            focus: "Build-measure-learn, validated learning"
+            key_questions: ["What's the riskiest assumption? How to test?"]
+          - name: "Network Effects"
+            focus: "Direct, indirect, data network effects"
+            key_questions: ["Does value increase with users? How?"]
+      
+      strategy:
+        default_lenses:
+          - name: "Porter's Five Forces"
+            focus: "Industry structure, competitive intensity"
+            key_questions: ["How attractive is this market structure?"]
+          - name: "Wardley Mapping"
+            focus: "Value chain evolution, strategic positioning"
+            key_questions: ["Where are components on evolution axis?"]
+          - name: "Resource-Based View"
+            focus: "VRIN resources, sustainable advantage"
+            key_questions: ["What resources are valuable, rare, inimitable?"]
+          - name: "Game Theory"
+            focus: "Strategic interactions, equilibria"
+            key_questions: ["What game are we playing? Nash equilibrium?"]
+          - name: "Real Options"
+            focus: "Option value, flexibility, learning"
+            key_questions: ["What options does this create/foreclose?"]
+    
+    output:
+      format: "lens_comparison_matrix_plus_synthesis"
+      components:
+        - name: "Lens Analysis Grid"
+          structure: |
+            | Framework | Key Insight | Recommendation | Confidence |
+            |-----------|-------------|----------------|------------|
+        
+        - name: "Convergence Analysis"
+          structure: "Where do 3+ frameworks agree? (High confidence)"
+        
+        - name: "Divergence Analysis"
+          structure: "Where do frameworks contradict? (Hidden complexity)"
+        
+        - name: "Meta-Recommendation"
+          structure: "Which framework is most useful for THIS decision and why"
+    
+    synergies:
+      strong:
+        - multi_persona_simulation  # Combine frameworks with stakeholders
+        - true_steel_manning        # Lens disagreement informs adversarial
+      moderate:
+        - multi_criteria_optimization
+    
+    execution:
+      token_overhead: "medium-high"  # 2-4K tokens
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Multi-Criteria Decision Matrix
+  # --------------------------------------------------------------------------
+  multi_criteria_optimization:
+    id: TECH-PP-MCO
+    name: "Multi-Criteria Decision Matrix"
+    category: parallel_processing
+    subcategory: dimensional_parallelism
+    
+    description: |
+      Evaluate options against multiple weighted criteria simultaneously,
+      identifying Pareto-optimal solutions and explicit tradeoffs.
+    
+    cognitive_advantage: |
+      Humans optimize criteria sequentially, forgetting earlier dimensions.
+      Claude evaluates all criteria in parallel, finding true Pareto frontier.
+    
+    applicability:
+      problem_types:
+        - option_comparison
+        - prioritization
+        - resource_allocation
+        - vendor_selection
+        - architecture_decision
+      
+      triggers:
+        - "compare these options"
+        - "multiple criteria to consider"
+        - "tradeoffs between options"
+        - "weighted evaluation"
+        - "prioritize based on"
+      
+      stakes_threshold: "low+"  # Can use for lower stakes than other techniques
+    
+    domain_affinity:
+      product: 0.95
+      architecture: 0.90
+      strategy: 0.85
+      operations: 0.80
+      security: 0.75
+    
+    parameters:
+      criteria_count:
+        description: "Number of evaluation criteria"
+        type: integer
+        min: 3
+        max: 10
+        default: 5
+        guidance: "5-7 is optimal; >7 creates cognitive overload"
+      
+      weight_method:
+        description: "How to determine criteria weights"
+        type: enum
+        options:
+          - equal_weights           # All criteria equal (simple)
+          - user_specified          # User provides weights
+          - pairwise_derivation     # Derive via pairwise importance
+          - domain_default          # Use domain-standard weights
+        default: pairwise_derivation
+      
+      scoring_scale:
+        description: "Scale for option scoring"
+        type: enum
+        options:
+          - binary                  # 0 or 1
+          - ternary                 # 1, 2, 3
+          - five_point              # 1-5
+          - ten_point               # 1-10
+        default: five_point
+      
+      pareto_analysis:
+        description: "Whether to identify Pareto-optimal solutions"
+        type: boolean
+        default: true
+    
+    domain_configurations:
+      
+      architecture:
+        default_criteria:
+          - name: "Scalability"
+            weight: 0.20
+            definition: "Ability to handle 10x load without redesign"
+          - name: "Maintainability"
+            weight: 0.20
+            definition: "Ease of understanding, modifying, debugging"
+          - name: "Security"
+            weight: 0.20
+            definition: "Attack surface, compliance, data protection"
+          - name: "Cost Efficiency"
+            weight: 0.15
+            definition: "TCO including operations"
+          - name: "Time to Implement"
+            weight: 0.15
+            definition: "Development effort to production"
+          - name: "Reversibility"
+            weight: 0.10
+            definition: "Cost to change direction if needed"
+      
+      product:
+        default_criteria:
+          - name: "User Value"
+            weight: 0.25
+            definition: "Impact on user's ability to achieve goals"
+          - name: "Business Value"
+            weight: 0.20
+            definition: "Revenue/retention/expansion impact"
+          - name: "Feasibility"
+            weight: 0.20
+            definition: "Technical difficulty, resources required"
+          - name: "Speed to Market"
+            weight: 0.15
+            definition: "Time to launch"
+          - name: "Strategic Alignment"
+            weight: 0.10
+            definition: "Fit with product vision"
+          - name: "Risk"
+            weight: 0.10
+            definition: "Probability and impact of failure"
+    
+    output:
+      format: "weighted_matrix_plus_pareto"
+      components:
+        - name: "Weighted Decision Matrix"
+          structure: |
+            | Criteria (Weight) | Option A | Option B | Option C |
+            |-------------------|----------|----------|----------|
+            | Criterion 1 (W)   | Score    | Score    | Score    |
+            | Weighted Score    | WÃ—Score  | WÃ—Score  | WÃ—Score  |
+            | **TOTAL**         | Sum      | Sum      | Sum      |
+        
+        - name: "Pareto Analysis"
+          structure: "Which options are Pareto-optimal (non-dominated)?"
+        
+        - name: "Sensitivity Analysis"
+          structure: "Would changing weights change the winner?"
+    
+    synergies:
+      strong:
+        - pairwise_tournament       # Tournament validates matrix winner
+        - multi_persona_simulation  # Persona concerns become criteria
+      moderate:
+        - multi_lens_analysis       # Frameworks inform criteria
+    
+    execution:
+      token_overhead: "low-medium"   # 0.5-2K tokens
+      typical_duration: "single_pass"
+      iteration_pattern: "may_iterate_on_weights"
+
+# ============================================================================
+# PHASE 2 TECHNIQUES: TOURNAMENT EVALUATION
+# ============================================================================
+
+tournament_evaluation_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Pairwise Tournament
+  # --------------------------------------------------------------------------
+  pairwise_tournament:
+    id: TECH-TOURN-PW
+    name: "Pairwise Tournament"
+    category: meta_cognitive
+    subcategory: method_selection
+    
+    description: |
+      Compare options head-to-head in pairs, producing more reliable rankings
+      than absolute scoring. Uses position-swapping to eliminate bias.
+    
+    cognitive_advantage: |
+      Pairwise comparisons are cognitively easier and more reliable than
+      absolute scoring. Reduces cognitive load per judgment while improving
+      overall ranking quality.
+    
+    applicability:
+      problem_types:
+        - ranking_subjective_options
+        - creative_evaluation
+        - qualitative_comparison
+        - preference_elicitation
+      
+      triggers:
+        - "which is better"
+        - "rank these options"
+        - "compare A vs B"
+        - "prioritize"
+        - "subjective evaluation"
+      
+      anti_triggers:
+        - "objective measurement exists"
+        - "single option to evaluate"
+        - ">15 options (use Swiss instead)"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      product: 0.95
+      strategy: 0.90
+      architecture: 0.85
+      research: 0.80
+      content: 0.85
+    
+    parameters:
+      tournament_format:
+        description: "How to structure comparisons"
+        type: enum
+        options:
+          - round_robin             # All pairs (n(n-1)/2 comparisons)
+          - swiss_system            # Adaptive pairing (log(n) rounds)
+          - single_elimination      # Bracket (n-1 comparisons, less reliable)
+        default: round_robin
+        guidance: |
+          - round_robin: Best for â‰¤8 options
+          - swiss_system: Use for 8-20 options
+          - single_elimination: Only for speed, not reliability
+      
+      comparisons_per_pair:
+        description: "Number of comparisons per option pair"
+        type: integer
+        min: 1
+        max: 5
+        default: 3
+        guidance: |
+          Research shows 3 comparisons per pair is minimum for reliability.
+          More adds confidence but increases tokens.
+      
+      position_swap:
+        description: "Whether to swap positions to mitigate bias"
+        type: boolean
+        default: true
+        guidance: |
+          MANDATORY. Position bias is 17-44% in pairwise. Swapping is most
+          effective mitigation. Never disable for serious evaluations.
+      
+      evaluation_criteria:
+        description: "Criteria for comparison"
+        type: list
+        default: ["overall_quality"]
+        guidance: |
+          Single criterion is cleaner. Multiple criteria â†’ run separate
+          tournaments or use multi_criteria_optimization instead.
+      
+      tiebreaker_method:
+        description: "How to handle ties"
+        type: enum
+        options:
+          - additional_comparison   # One more comparison
+          - criteria_drill_down     # Break by sub-criteria
+          - accept_tie              # Report as equivalent
+        default: additional_comparison
+    
+    output:
+      format: "tournament_bracket_plus_rankings"
+      components:
+        - name: "Comparison Log"
+          structure: |
+            | Round | Option A | Option B | Winner | Reasoning |
+            |-------|----------|----------|--------|-----------|
+        
+        - name: "Final Rankings"
+          structure: |
+            | Rank | Option | Wins | Losses | Bradley-Terry Score |
+            |------|--------|------|--------|---------------------|
+        
+        - name: "Confidence Assessment"
+          structure: "How confident are we in these rankings?"
+    
+    synergies:
+      strong:
+        - bradley_terry_aggregation # Aggregates tournament results
+        - multi_criteria_optimization # Matrix feeds tournament
+      moderate:
+        - true_steel_manning        # Validates tournament winner
+    
+    conflicts:
+      - rapid_iteration            # Tournaments take time
+      - single_option_validation   # Needs multiple options
+    
+    execution:
+      token_overhead: "medium-high"  # Scales with nÂ²
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates_after_completion"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Bradley-Terry Aggregation
+  # --------------------------------------------------------------------------
+  bradley_terry_aggregation:
+    id: TECH-TOURN-BT
+    name: "Bradley-Terry Aggregation"
+    category: probabilistic
+    subcategory: confidence_quantification
+    
+    description: |
+      Probabilistic model that converts pairwise comparison outcomes into
+      interval-scale ratings with confidence intervals. More rigorous than
+      raw win counts.
+    
+    cognitive_advantage: |
+      Produces mathematically grounded ratings from subjective pairwise
+      judgments. Confidence intervals reveal when rankings are truly
+      distinguishable vs. noise.
+    
+    applicability:
+      problem_types:
+        - tournament_aggregation
+        - rating_derivation
+        - confidence_estimation
+      
+      triggers:
+        - "aggregate tournament results"
+        - "how confident in rankings"
+        - "are these really different"
+      
+      anti_triggers:
+        - "no pairwise data"
+        - "absolute scores available"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      product: 0.85
+      strategy: 0.85
+      research: 0.90
+      architecture: 0.75
+    
+    parameters:
+      confidence_level:
+        description: "Confidence level for intervals"
+        type: float
+        min: 0.80
+        max: 0.99
+        default: 0.95
+      
+      minimum_comparisons:
+        description: "Minimum comparisons per item for reliable estimate"
+        type: integer
+        min: 3
+        max: 10
+        default: 3
+        guidance: |
+          Research-backed minimum: 3 comparisons per item pair.
+          For n items: need n(n-1)/2 Ã— 3 total comparisons minimum.
+      
+      output_scale:
+        description: "How to scale output ratings"
+        type: enum
+        options:
+          - raw_log_odds          # Mathematical output
+          - elo_style             # 1500 Â± range
+          - normalized_0_100      # 0-100 scale
+        default: elo_style
+    
+    output:
+      format: "ratings_with_confidence"
+      components:
+        - name: "Bradley-Terry Ratings"
+          structure: |
+            | Option | Rating | 95% CI | Distinguishable From |
+            |--------|--------|--------|---------------------|
+        
+        - name: "Overlap Analysis"
+          structure: "Which options have overlapping confidence intervals?"
+        
+        - name: "Statistical Confidence"
+          structure: "Can we confidently say A > B? (CI non-overlapping)"
+    
+    synergies:
+      strong:
+        - pairwise_tournament      # Produces input data
+      moderate:
+        - confidence_calibration   # Both about uncertainty
+    
+    execution:
+      token_overhead: "low"          # Just aggregation
+      typical_duration: "instant"
+      iteration_pattern: "no_iteration"
+
+# ============================================================================
+# PHASE 3 TECHNIQUES: ADVERSARIAL VALIDATION
+# ============================================================================
+
+adversarial_validation_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: True Steel-Manning
+  # --------------------------------------------------------------------------
+  true_steel_manning:
+    id: TECH-UR-TSM
+    name: "True Steel-Manning"
+    category: unbiased_reasoning
+    subcategory: genuine_adversarial_thinking
+    
+    description: |
+      Construct the genuinely strongest argument against the proposed decision
+      or winning optionâ€”not a strawman or half-hearted attempt.
+    
+    cognitive_advantage: |
+      Humans unconsciously weaken opposing arguments due to ego investment.
+      Claude has no ego stake and can construct genuinely devastating opposition.
+    
+    applicability:
+      problem_types:
+        - decision_validation
+        - strategy_stress_test
+        - belief_testing
+        - position_robustness
+      
+      triggers:
+        - "argue against this"
+        - "what's the strongest counter-argument"
+        - "stress test this decision"
+        - "devil's advocate"
+        - "red team"
+      
+      anti_triggers:
+        - "already validated"
+        - "need to move forward quickly"
+        - "low stakes"
+      
+      stakes_threshold: "high"  # Reserve for high-stakes decisions
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.90
+      architecture: 0.85
+      research: 0.80
+    
+    parameters:
+      opponent_archetype:
+        description: "Who is the smart opponent?"
+        type: enum
+        options:
+          - domain_expert           # Expert who disagrees
+          - skeptical_investor      # Financially rigorous
+          - affected_stakeholder    # Someone who loses
+          - future_self             # Looking back with regret
+          - competitor              # Strategic adversary
+          - user_specified          # Custom archetype
+        default: domain_expert
+      
+      argument_count:
+        description: "Number of strong arguments to construct"
+        type: integer
+        min: 2
+        max: 5
+        default: 3
+        guidance: "3 is optimalâ€”enough coverage without dilution"
+      
+      argument_types:
+        description: "Types of arguments to include"
+        type: list
+        default: [logical, empirical, values_based]
+        options:
+          - logical               # Pure reasoning
+          - empirical             # Evidence-based
+          - values_based          # Different values
+          - practical             # Implementation problems
+          - temporal              # Timing issues
+      
+      response_evaluation:
+        description: "Whether to evaluate responses to steel-man"
+        type: boolean
+        default: true
+        guidance: "Should be true for MoE-decisionâ€”need to assess if counter is fatal"
+    
+    domain_configurations:
+      
+      architecture:
+        opponent_archetypes:
+          - name: "Experienced SRE"
+            perspective: "This will be hell to operate"
+            argument_focus: ["operational complexity", "failure modes", "toil"]
+          - name: "Security Architect"
+            perspective: "This is an attack surface waiting to be exploited"
+            argument_focus: ["vulnerabilities", "compliance gaps", "data exposure"]
+          - name: "Future Maintainer"
+            perspective: "This will be impossible to understand in 2 years"
+            argument_focus: ["cognitive load", "documentation debt", "bus factor"]
+      
+      product:
+        opponent_archetypes:
+          - name: "Churned Customer"
+            perspective: "This is exactly why I left"
+            argument_focus: ["unmet needs", "friction points", "competitive gaps"]
+          - name: "Engineering Lead"
+            perspective: "This will take 3x longer than you think"
+            argument_focus: ["hidden complexity", "tech debt", "dependencies"]
+          - name: "Finance Lead"
+            perspective: "The unit economics don't work"
+            argument_focus: ["CAC", "LTV", "margin erosion"]
+      
+      strategy:
+        opponent_archetypes:
+          - name: "Board Member"
+            perspective: "This puts the company at unacceptable risk"
+            argument_focus: ["downside scenarios", "capital at risk", "reputation"]
+          - name: "Competitor Strategist"
+            perspective: "Here's how we'd exploit this"
+            argument_focus: ["competitive response", "market dynamics", "timing"]
+          - name: "10-Year Future Self"
+            perspective: "Looking back, this was the turning point where we failed"
+            argument_focus: ["path dependency", "opportunity cost", "strategic lock-in"]
+    
+    output:
+      format: "structured_counter_argument_plus_evaluation"
+      components:
+        - name: "Opponent Characterization"
+          structure: "Who is arguing against this? Why are they credible?"
+        
+        - name: "Steel-Man Arguments"
+          structure: |
+            | # | Argument | Evidence | Why Response Is Inadequate |
+            |---|----------|----------|---------------------------|
+        
+        - name: "Conditions for Opponent Being Right"
+          structure: "What would have to be true for opponent to be correct?"
+        
+        - name: "Position Evaluation"
+          structure: |
+            | Argument | Strength (1-10) | Best Response | Response Strength |
+            |----------|-----------------|---------------|-------------------|
+        
+        - name: "Verdict"
+          structure: "Position unchanged / modified / weakened / defeated"
+    
+    synergies:
+      strong:
+        - adversarial_collaboration # Extends into full red-team
+        - multi_persona_simulation  # Personas inform opponents
+      moderate:
+        - disconfirmation_hunt      # Related evidence focus
+    
+    execution:
+      token_overhead: "medium-high"  # 2-4K tokens
+      typical_duration: "single_pass"
+      iteration_pattern: "may_iterate_if_position_weakened"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Adversarial Collaboration Simulation
+  # --------------------------------------------------------------------------
+  adversarial_collaboration:
+    id: TECH-UR-ACS
+    name: "Adversarial Collaboration Simulation"
+    category: unbiased_reasoning
+    subcategory: genuine_adversarial_thinking
+    
+    description: |
+      Simulate a structured debate between positions, with iterative refinement
+      until reaching genuine crux identification or consensus.
+    
+    cognitive_advantage: |
+      Humans struggle to genuinely argue against their own position.
+      Claude can maintain both positions simultaneously and drive genuine convergence.
+    
+    applicability:
+      problem_types:
+        - contested_decision
+        - high_stakes_validation
+        - strategy_debate
+        - multi_stakeholder_conflict
+      
+      triggers:
+        - "debate this thoroughly"
+        - "red-team blue-team"
+        - "structured argument"
+        - "find the crux"
+      
+      anti_triggers:
+        - "quick decision needed"
+        - "low stakes"
+        - "consensus already exists"
+      
+      stakes_threshold: "high"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.85
+      architecture: 0.80
+      research: 0.85
+    
+    parameters:
+      iteration_limit:
+        description: "Maximum debate rounds"
+        type: integer
+        min: 2
+        max: 5
+        default: 3
+        guidance: |
+          Research shows diminishing returns after 3-5 iterations.
+          More iterations without experience pool risks catastrophic forgetting.
+      
+      resolution_target:
+        description: "What outcome are we seeking"
+        type: enum
+        options:
+          - crux_identification     # Find the key disagreement
+          - consensus_building      # Drive toward agreement
+          - risk_surfacing          # Identify all risks
+        default: crux_identification
+      
+      position_assignment:
+        description: "How to assign debate positions"
+        type: enum
+        options:
+          - pro_con                 # Traditional for/against
+          - option_advocates        # Each position advocates for an option
+          - stakeholder_proxies     # Positions represent stakeholders
+        default: pro_con
+    
+    output:
+      format: "debate_log_plus_resolution"
+      components:
+        - name: "Debate Log"
+          structure: |
+            ROUND 1:
+            - Position A argues: ...
+            - Position B responds: ...
+            
+            ROUND 2:
+            - Position A refines: ...
+            - Position B counters: ...
+        
+        - name: "Crux Identification"
+          structure: "The debate hinges on [specific factual/value question]"
+        
+        - name: "Resolution"
+          structure: "Consensus reached / Irreconcilable difference / Key experiment needed"
+    
+    synergies:
+      strong:
+        - true_steel_manning       # Steel-man initiates debate
+      moderate:
+        - multi_persona_simulation # Personas become debate positions
+    
+    execution:
+      token_overhead: "high"         # 3-6K tokens
+      typical_duration: "multi_pass"
+      iteration_pattern: "inherently_iterative"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Disconfirmation Hunt
+  # --------------------------------------------------------------------------
+  disconfirmation_hunt:
+    id: TECH-UR-DH
+    name: "Disconfirmation Hunt"
+    category: unbiased_reasoning
+    subcategory: bias_detection_mitigation
+    
+    description: |
+      Actively search for evidence that would disprove the proposed decision
+      or contradict the winning option's superiority.
+    
+    cognitive_advantage: |
+      Humans naturally seek confirming evidence (confirmation bias).
+      Claude can genuinely hunt for disconfirming evidence without resistance.
+    
+    applicability:
+      problem_types:
+        - decision_validation
+        - assumption_testing
+        - evidence_gathering
+      
+      triggers:
+        - "what evidence would prove this wrong"
+        - "find disconfirming evidence"
+        - "challenge this assumption"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      research: 0.95
+      strategy: 0.85
+      product: 0.80
+      architecture: 0.75
+    
+    parameters:
+      evidence_sources:
+        description: "Where to hunt for disconfirming evidence"
+        type: list
+        default: [internal_contradictions, external_precedents, assumption_failures]
+      
+      assumption_depth:
+        description: "How deep to dig into assumptions"
+        type: enum
+        options:
+          - explicit_only          # Only stated assumptions
+          - implicit_included      # Infer unstated assumptions
+          - structural             # Include framing assumptions
+        default: implicit_included
+    
+    output:
+      format: "disconfirmation_report"
+      components:
+        - name: "Disconfirming Evidence Found"
+          structure: |
+            | Evidence | Source | Strength | Implication |
+            |----------|--------|----------|-------------|
+        
+        - name: "Assumptions at Risk"
+          structure: "Which assumptions could be wrong?"
+        
+        - name: "Verdict"
+          structure: "Decision robust / Modified recommendation / Reconsider"
+    
+    synergies:
+      strong:
+        - true_steel_manning       # Complementary validation
+        - comprehensive_bias_audit # Both about debiasing
+    
+    execution:
+      token_overhead: "medium"
+      typical_duration: "single_pass"
+
+# ============================================================================
+# PHASE 4 TECHNIQUES: SYNTHESIS & RECOMMENDATION
+# ============================================================================
+
+synthesis_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Confidence Calibration
+  # --------------------------------------------------------------------------
+  confidence_calibration:
+    id: TECH-MC-CC
+    name: "Confidence Calibration"
+    category: meta_cognitive
+    subcategory: uncertainty_management
+    
+    description: |
+      Explicitly assess and calibrate confidence in the final recommendation,
+      distinguishing types of uncertainty and appropriate confidence levels.
+    
+    cognitive_advantage: |
+      Humans are systematically overconfident. Claude can explicitly examine
+      evidence-confidence alignment and calibrate appropriately.
+    
+    applicability:
+      problem_types:
+        - recommendation_delivery
+        - uncertainty_communication
+        - decision_support
+      
+      triggers:
+        - "how confident are we"
+        - "calibrate confidence"
+        - "what's the certainty level"
+      
+      stakes_threshold: "any"
+    
+    domain_affinity:
+      research: 0.95
+      strategy: 0.90
+      product: 0.85
+      architecture: 0.85
+    
+    parameters:
+      confidence_decomposition:
+        description: "Whether to decompose confidence by type"
+        type: boolean
+        default: true
+        guidance: |
+          Decompose into:
+          - Epistemic (knowledge gaps)
+          - Aleatory (inherent randomness)
+          - Model uncertainty (framework limitations)
+      
+      sensitivity_check:
+        description: "Whether to check what would change confidence"
+        type: boolean
+        default: true
+    
+    output:
+      format: "calibrated_confidence_statement"
+      components:
+        - name: "Overall Confidence"
+          structure: "X% confident in recommendation"
+        
+        - name: "Confidence Decomposition"
+          structure: |
+            | Uncertainty Type | Source | Impact on Confidence |
+            |------------------|--------|---------------------|
+        
+        - name: "What Would Change Confidence"
+          structure: "If X, confidence would increase/decrease to Y"
+    
+    execution:
+      token_overhead: "low"
+      typical_duration: "instant"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: SCQA Communication
+  # --------------------------------------------------------------------------
+  scqa_communication:
+    id: TECH-SD-SCQA
+    name: "SCQA Communication"
+    category: structured_decomposition
+    subcategory: communication_structures
+    
+    description: |
+      Structure the final recommendation using Situation-Complication-Question-Answer
+      format for executive-level clarity.
+    
+    applicability:
+      problem_types:
+        - executive_communication
+        - recommendation_delivery
+        - decision_summary
+      
+      triggers:
+        - "summarize for executives"
+        - "structure the recommendation"
+        - "communicate clearly"
+      
+      stakes_threshold: "any"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.90
+      architecture: 0.85
+    
+    output:
+      format: "scqa_structure"
+      components:
+        - name: "Situation"
+          structure: "Current state that everyone agrees on"
+        
+        - name: "Complication"
+          structure: "Why this requires a decision now"
+        
+        - name: "Question"
+          structure: "The specific question being answered"
+        
+        - name: "Answer"
+          structure: "The recommendation with key supporting points"
+    
+    execution:
+      token_overhead: "low"
+      typical_duration: "instant"
+
+# ============================================================================
+# ARCHETYPE COMPOSITION RULES
+# ============================================================================
+
+composition_rules:
+  
+  phase_sequence:
+    description: "Standard MoE-decision execution sequence"
+    phases:
+      - phase: 1
+        name: "Perspective Generation"
+        required_techniques: 1
+        technique_options:
+          - multi_persona_simulation
+          - multi_lens_analysis
+        selection_guidance: |
+          - Use multi_persona_simulation when stakeholders are key
+          - Use multi_lens_analysis when frameworks are key
+          - Can use both for high-stakes
+      
+      - phase: 2
+        name: "Option Development"
+        required_techniques: 0-1
+        technique_options:
+          - multi_criteria_optimization
+        selection_guidance: |
+          - Include if options need to be compared on criteria
+          - Skip if perspectives generated sufficient comparison basis
+      
+      - phase: 3
+        name: "Tournament Evaluation"
+        required_techniques: 1-2
+        technique_options:
+          - pairwise_tournament
+          - bradley_terry_aggregation
+        selection_guidance: |
+          - pairwise_tournament is always required
+          - bradley_terry_aggregation adds statistical rigor
+          - Always include bradley_terry for high-stakes
+      
+      - phase: 4
+        name: "Adversarial Validation"
+        required_techniques: 1-2
+        technique_options:
+          - true_steel_manning
+          - adversarial_collaboration
+          - disconfirmation_hunt
+        selection_guidance: |
+          - true_steel_manning is minimum required
+          - Add adversarial_collaboration for contested decisions
+          - Add disconfirmation_hunt when evidence base is uncertain
+      
+      - phase: 5
+        name: "Synthesis"
+        required_techniques: 1-2
+        technique_options:
+          - confidence_calibration
+          - scqa_communication
+        selection_guidance: |
+          - confidence_calibration always recommended
+          - scqa_communication for executive audiences
+  
+  domain_overrides:
+    architecture:
+      - "Always include multi_persona_simulation with architecture-specific personas"
+      - "Include multi_criteria_optimization with NFR criteria"
+      - "Steel-man from SRE and security perspectives"
+    
+    product:
+      - "Always include multi_persona_simulation with user segments"
+      - "Include multi_lens_analysis with product frameworks"
+      - "Steel-man from churned customer perspective"
+    
+    strategy:
+      - "Always include multi_lens_analysis with strategic frameworks"
+      - "Include adversarial_collaboration for contested strategies"
+      - "Steel-man from board/investor perspective"
+  
+  token_budget_guidance:
+    minimal:    # ~3K tokens
+      phases: [1, 3, 5]
+      techniques: [multi_persona_simulation, pairwise_tournament, confidence_calibration]
+    
+    standard:   # ~6K tokens
+      phases: [1, 2, 3, 4, 5]
+      techniques: [multi_persona_simulation, pairwise_tournament, bradley_terry_aggregation, true_steel_manning, confidence_calibration]
+    
+    comprehensive:  # ~10K tokens
+      phases: [1, 2, 3, 4, 5]
+      techniques: [multi_persona_simulation, multi_lens_analysis, multi_criteria_optimization, pairwise_tournament, bradley_terry_aggregation, true_steel_manning, adversarial_collaboration, disconfirmation_hunt, confidence_calibration, scqa_communication]
+
+# ============================================================================
+# TECHNIQUE COUNT SUMMARY
+# ============================================================================
+
+summary:
+  archetype: "MoE-Decision"
+  total_high_affinity_techniques: 12
+  by_phase:
+    perspective_generation: 3
+    tournament_evaluation: 2
+    adversarial_validation: 3
+    synthesis: 2
+  
+  techniques_detailed:
+    - multi_persona_simulation
+    - multi_lens_analysis
+    - multi_criteria_optimization
+    - pairwise_tournament
+    - bradley_terry_aggregation
+    - true_steel_manning
+    - adversarial_collaboration
+    - disconfirmation_hunt
+    - confidence_calibration
+    - scqa_communication

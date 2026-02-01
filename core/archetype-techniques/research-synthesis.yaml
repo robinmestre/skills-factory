@@ -1,0 +1,1483 @@
+# ============================================================================
+# RESEARCH-SYNTHESIS ARCHETYPE: HIGH-AFFINITY TECHNIQUES
+# ============================================================================
+# Version: 1.0
+# Purpose: Detailed technique metadata for Skill Factory skill generation
+# Archetype: Research-Synthesis (Multi-source integration â†’ Evidence reconciliation â†’ 
+#            Confidence tiering â†’ Gap identification â†’ Unified output)
+# 
+# This file enables the Skill Factory to:
+#   1. Select appropriate techniques for consolidating multi-source research
+#   2. Configure technique parameters for specific research domains
+#   3. Compose techniques into coherent synthesis workflow
+#   4. Generate domain-specific output formats with confidence tiers
+# ============================================================================
+
+archetype:
+  id: ARCH-RESEARCH-SYNTHESIS
+  name: "Research-Synthesis"
+  description: "Consolidate multi-source research into unified findings with confidence tiers, gap identification, and evidence reconciliation"
+  version: "1.0"
+  
+  core_pattern:
+    phases:
+      - name: "Source Integration"
+        purpose: "Ingest and normalize multiple research inputs"
+        technique_categories: [perfect_recall, parallel_processing]
+        primary_techniques: [source_provenance_tracking, multi_hypothesis_tracking]
+        
+      - name: "Evidence Reconciliation"
+        purpose: "Identify agreement, disagreement, and gaps across sources"
+        technique_categories: [perfect_recall, unbiased_reasoning]
+        primary_techniques: [cross_source_consistency_matrix, evidence_strength_tribunal]
+        
+      - name: "Confidence Tiering"
+        purpose: "Classify findings by evidence strength and corroboration"
+        technique_categories: [meta_cognitive, probabilistic]
+        primary_techniques: [confidence_calibration_protocol, uncertainty_decomposition]
+        
+      - name: "Gap Analysis"
+        purpose: "Identify what's missing, contradictory, or under-evidenced"
+        technique_categories: [perfect_recall, meta_cognitive]
+        primary_techniques: [mece_gap_detection, unknown_unknowns_probe]
+        
+      - name: "Unified Output"
+        purpose: "Produce structured synthesis with clear confidence levels"
+        technique_categories: [structured_decomposition, meta_cognitive]
+        primary_techniques: [epistemic_status_labeling, synthesis_structuring]
+  
+  applicable_domains:
+    high_affinity:  # 0.85+
+      - research
+      - strategy
+      - competitive_analysis
+    moderate_affinity:  # 0.65-0.84
+      - product
+      - architecture
+      - due_diligence
+    low_affinity:  # <0.65
+      - operations
+      - content
+      - data_modeling
+  
+  problem_characteristics:
+    ideal:
+      - "Multiple research sources to consolidate"
+      - "Sources may conflict or use different methodologies"
+      - "Need confidence-weighted findings"
+      - "Gaps and limitations must be explicit"
+      - "Downstream decisions depend on synthesis quality"
+    poor_fit:
+      - "Single authoritative source exists"
+      - "No conflicting information to reconcile"
+      - "Binary fact-checking (true/false)"
+      - "Speed matters more than rigor"
+  
+  input_types:
+    supported:
+      - "Multi-model research outputs (Claude, Gemini, GPT)"
+      - "Human-generated research reports"
+      - "Mixed AI + human research"
+      - "Literature reviews"
+      - "Competitive intelligence reports"
+      - "Market research summaries"
+      - "Technical documentation sets"
+
+# ============================================================================
+# PHASE 1 TECHNIQUES: SOURCE INTEGRATION
+# ============================================================================
+
+source_integration_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Source Provenance Tracking
+  # --------------------------------------------------------------------------
+  source_provenance_tracking:
+    id: TECH-PR-SPT
+    name: "Source Provenance Tracking"
+    category: perfect_recall
+    subcategory: provenance_tracking
+    
+    description: |
+      Track where every fact came from, assess source reliability, and maintain
+      complete attribution throughout the synthesis process.
+    
+    cognitive_advantage: |
+      Humans suffer source confusionâ€”they remember facts but forget origins.
+      Claude maintains perfect provenance for every claim, enabling reliability
+      assessment and proper attribution.
+    
+    applicability:
+      problem_types:
+        - multi_source_research
+        - evidence_synthesis
+        - fact_verification
+        - intelligence_analysis
+        - literature_review
+      
+      triggers:
+        - "multiple sources to consolidate"
+        - "need to track where claims come from"
+        - "assess source reliability"
+        - "attribute findings properly"
+        - "audit trail needed"
+      
+      anti_triggers:
+        - "single source"
+        - "source doesn't matter"
+        - "speed over rigor"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      research: 0.95
+      competitive_analysis: 0.90
+      due_diligence: 0.90
+      strategy: 0.80
+      product: 0.70
+      architecture: 0.65
+    
+    parameters:
+      source_classification:
+        description: "How to classify sources"
+        type: enum
+        options:
+          - primary_secondary_tertiary   # Original research vs. synthesis vs. aggregation
+          - model_based                  # Claude vs. Gemini vs. GPT vs. Human
+          - methodology_based            # Quantitative vs. qualitative vs. mixed
+          - recency_based               # By publication/research date
+        default: model_based
+        guidance: |
+          - Use model_based when consolidating multi-model AI research
+          - Use primary_secondary_tertiary for traditional research synthesis
+          - Use methodology_based when comparing different research approaches
+      
+      reliability_dimensions:
+        description: "Dimensions for assessing source reliability"
+        type: list
+        default: [expertise, independence, methodology, recency, corroboration]
+        options:
+          - expertise        # Domain knowledge of source
+          - independence     # Freedom from conflicts of interest
+          - methodology      # Rigor of approach
+          - recency          # How current the information is
+          - corroboration    # Supported by other sources
+          - track_record     # Historical accuracy
+      
+      fact_granularity:
+        description: "Level of granularity for fact tracking"
+        type: enum
+        options:
+          - claim_level      # Track each distinct claim
+          - finding_level    # Track each major finding
+          - section_level    # Track by report section
+        default: finding_level
+        guidance: "claim_level for high-stakes; finding_level for standard synthesis"
+    
+    domain_configurations:
+      
+      research:
+        reliability_weights:
+          methodology: 0.30
+          expertise: 0.25
+          independence: 0.20
+          recency: 0.15
+          corroboration: 0.10
+        source_types:
+          - peer_reviewed_research
+          - industry_reports
+          - ai_model_research
+          - expert_interviews
+          - primary_data
+      
+      competitive_analysis:
+        reliability_weights:
+          recency: 0.30
+          independence: 0.25
+          corroboration: 0.20
+          expertise: 0.15
+          methodology: 0.10
+        source_types:
+          - competitor_filings
+          - industry_analysts
+          - customer_reviews
+          - ai_research_tools
+          - news_coverage
+      
+      strategy:
+        reliability_weights:
+          expertise: 0.25
+          independence: 0.25
+          methodology: 0.20
+          recency: 0.15
+          corroboration: 0.15
+        source_types:
+          - market_research
+          - financial_analysis
+          - trend_reports
+          - expert_opinions
+          - multi_model_research
+    
+    output:
+      format: "fact_registry_with_provenance"
+      components:
+        - name: "Fact Registry"
+          structure: |
+            | Fact ID | Claim | Source | Source Type | Reliability | Corroborated? |
+            |---------|-------|--------|-------------|-------------|---------------|
+        
+        - name: "Source Quality Assessment"
+          structure: |
+            | Source | Type | Facts Cited | Reliability Score | Bias Risk | Recency |
+            |--------|------|-------------|-------------------|-----------|---------|
+        
+        - name: "Corroboration Matrix"
+          structure: |
+            | Fact | Source 1 | Source 2 | Source 3 | Agreement Status |
+            |------|----------|----------|----------|------------------|
+    
+    synergies:
+      strong:
+        - cross_source_consistency_matrix  # Provenance feeds consistency
+        - evidence_strength_tribunal       # Source quality informs tribunal
+      moderate:
+        - confidence_calibration_protocol  # Reliability affects confidence
+    
+    execution:
+      token_overhead: "medium"       # Scales with source count
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Multi-Hypothesis Tracking
+  # --------------------------------------------------------------------------
+  multi_hypothesis_tracking:
+    id: TECH-PP-MHT
+    name: "Multi-Hypothesis Tracking"
+    category: parallel_processing
+    subcategory: multi_frame_simultaneity
+    
+    description: |
+      Hold competing interpretations or conclusions simultaneously without
+      premature convergence, updating probability assignments as evidence
+      is integrated.
+    
+    cognitive_advantage: |
+      Humans anchor on the first plausible interpretation and struggle to
+      genuinely consider alternatives. Claude can maintain multiple hypotheses
+      with equal weight until evidence truly discriminates.
+    
+    applicability:
+      problem_types:
+        - conflicting_research_findings
+        - ambiguous_evidence
+        - multiple_interpretations
+        - root_cause_analysis
+      
+      triggers:
+        - "sources disagree on interpretation"
+        - "multiple explanations possible"
+        - "evidence is ambiguous"
+        - "competing theories"
+      
+      anti_triggers:
+        - "sources fully agree"
+        - "clear single answer"
+        - "no interpretation needed"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      research: 0.95
+      competitive_analysis: 0.85
+      strategy: 0.85
+      due_diligence: 0.80
+      product: 0.70
+    
+    parameters:
+      hypothesis_count:
+        description: "Number of competing hypotheses to track"
+        type: integer
+        min: 2
+        max: 6
+        default: 4
+        guidance: |
+          - 2-3 for binary/ternary questions
+          - 4 for standard research synthesis (include null hypothesis)
+          - 5-6 only for highly contested topics
+      
+      include_null:
+        description: "Whether to include null hypothesis"
+        type: boolean
+        default: true
+        guidance: "Always includeâ€”prevents over-interpretation"
+      
+      probability_method:
+        description: "How to update hypothesis probabilities"
+        type: enum
+        options:
+          - bayesian_update        # Formal Bayesian updating
+          - qualitative_weight     # Qualitative up/down adjustments
+          - evidence_counting      # Count evidence for/against
+        default: qualitative_weight
+      
+      convergence_threshold:
+        description: "Probability at which to consider hypothesis dominant"
+        type: float
+        min: 0.70
+        max: 0.95
+        default: 0.80
+    
+    output:
+      format: "hypothesis_tracker_with_evidence"
+      components:
+        - name: "Hypothesis State"
+          structure: |
+            | Hypothesis | Current Probability | Evidence For | Evidence Against |
+            |------------|---------------------|--------------|------------------|
+        
+        - name: "Evidence Impact Log"
+          structure: |
+            | Evidence | Source | Hypotheses Affected | Probability Shift |
+            |----------|--------|---------------------|-------------------|
+        
+        - name: "Convergence Assessment"
+          structure: "Have hypotheses converged? If so, to what conclusion?"
+    
+    synergies:
+      strong:
+        - uncertainty_decomposition    # Classify uncertainty types
+        - evidence_strength_tribunal   # Evaluate evidence quality
+      moderate:
+        - cross_source_consistency_matrix
+    
+    execution:
+      token_overhead: "medium"
+      typical_duration: "iterative_as_evidence_added"
+      iteration_pattern: "inherently_iterative"
+
+# ============================================================================
+# PHASE 2 TECHNIQUES: EVIDENCE RECONCILIATION
+# ============================================================================
+
+evidence_reconciliation_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Cross-Source Consistency Matrix
+  # --------------------------------------------------------------------------
+  cross_source_consistency_matrix:
+    id: TECH-PR-CSCM
+    name: "Cross-Source Consistency Matrix"
+    category: perfect_recall
+    subcategory: exhaustive_cross_reference
+    
+    description: |
+      Systematically compare findings across all sources to identify agreement,
+      disagreement, and partial overlap. Every claim from every source is
+      checked against every other source.
+    
+    cognitive_advantage: |
+      Humans check a few source pairs then stop due to cognitive fatigue.
+      Claude can exhaustively check NÂ² pairs, catching subtle conflicts and
+      building reliable agreement maps.
+    
+    applicability:
+      problem_types:
+        - multi_source_synthesis
+        - conflict_identification
+        - consensus_building
+        - fact_reconciliation
+      
+      triggers:
+        - "do sources agree"
+        - "find contradictions"
+        - "where do sources conflict"
+        - "reconcile findings"
+        - "identify consensus"
+      
+      anti_triggers:
+        - "single source"
+        - "sources known to agree"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      research: 0.95
+      due_diligence: 0.90
+      competitive_analysis: 0.85
+      strategy: 0.80
+      architecture: 0.75
+    
+    parameters:
+      comparison_granularity:
+        description: "Level at which to compare sources"
+        type: enum
+        options:
+          - claim_by_claim          # Compare each distinct claim
+          - finding_by_finding      # Compare major findings
+          - theme_by_theme          # Compare thematic conclusions
+        default: finding_by_finding
+      
+      conflict_classification:
+        description: "How to classify disagreements"
+        type: enum
+        options:
+          - binary                  # Agree vs. Disagree
+          - ternary                 # Agree, Disagree, Tension
+          - five_level              # Strong agree to Strong disagree
+        default: ternary
+      
+      source_weighting:
+        description: "Whether to weight sources differently"
+        type: boolean
+        default: true
+        guidance: "Weight by reliability scores from provenance tracking"
+    
+    domain_configurations:
+      
+      research:
+        comparison_focus:
+          - "Key findings"
+          - "Quantitative data points"
+          - "Causal claims"
+          - "Recommendations"
+        conflict_resolution_priority:
+          - "Prefer primary over secondary sources"
+          - "Prefer rigorous methodology"
+          - "Prefer larger sample sizes"
+          - "Prefer more recent data"
+      
+      competitive_analysis:
+        comparison_focus:
+          - "Market share claims"
+          - "Competitive positioning"
+          - "Feature comparisons"
+          - "Trend predictions"
+        conflict_resolution_priority:
+          - "Prefer recent over dated"
+          - "Prefer independent over company-sourced"
+          - "Prefer quantitative over qualitative"
+      
+      strategy:
+        comparison_focus:
+          - "Market opportunity size"
+          - "Competitive dynamics"
+          - "Success factors"
+          - "Risk factors"
+        conflict_resolution_priority:
+          - "Prefer expert consensus"
+          - "Prefer data-backed over opinion"
+          - "Consider source incentives"
+    
+    output:
+      format: "consistency_matrix_with_resolution"
+      components:
+        - name: "Source-by-Source Consistency Matrix"
+          structure: |
+            |           | Source A | Source B | Source C | Source D |
+            |-----------|----------|----------|----------|----------|
+            | Source A  |    â€”     | âœ“/âœ—/?    | âœ“/âœ—/?    | âœ“/âœ—/?    |
+            | Source B  |          |    â€”     | âœ“/âœ—/?    | âœ“/âœ—/?    |
+            | ...       |          |          |    â€”     | ...      |
+        
+        - name: "Finding-Level Agreement Table"
+          structure: |
+            | Finding | Sources Agreeing | Sources Disagreeing | Agreement % |
+            |---------|------------------|---------------------|-------------|
+        
+        - name: "Conflict Inventory"
+          structure: |
+            | Conflict ID | Finding | Source A Says | Source B Says | Nature | Resolution |
+            |-------------|---------|---------------|---------------|--------|------------|
+        
+        - name: "Consensus Findings"
+          structure: "Findings where all/most sources agree"
+    
+    synergies:
+      strong:
+        - source_provenance_tracking   # Provenance provides source metadata
+        - evidence_strength_tribunal   # Tribunal resolves conflicts
+        - confidence_calibration_protocol  # Consensus â†’ high confidence
+      moderate:
+        - mece_gap_detection          # Find topics with no coverage
+    
+    execution:
+      token_overhead: "high"          # NÂ² comparisons
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Evidence Strength Tribunal
+  # --------------------------------------------------------------------------
+  evidence_strength_tribunal:
+    id: TECH-UR-EST
+    name: "Evidence Strength Tribunal"
+    category: unbiased_reasoning
+    subcategory: evidence_evaluation
+    
+    description: |
+      Evaluate evidence quality through a structured tribunal with multiple
+      "judges" assessing methodological rigor, source quality, relevance,
+      and adversarial weaknesses.
+    
+    cognitive_advantage: |
+      Humans evaluate evidence based on whether it supports their preferred
+      conclusion (confirmation bias). A tribunal structure forces objective
+      evaluation across multiple dimensions.
+    
+    applicability:
+      problem_types:
+        - evidence_quality_assessment
+        - claim_verification
+        - conflict_resolution
+        - research_quality_evaluation
+      
+      triggers:
+        - "how strong is this evidence"
+        - "is this claim supported"
+        - "resolve conflicting sources"
+        - "evaluate research quality"
+      
+      anti_triggers:
+        - "evidence strength doesn't matter"
+        - "speed over rigor"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      research: 0.95
+      due_diligence: 0.90
+      strategy: 0.85
+      competitive_analysis: 0.80
+      product: 0.70
+    
+    parameters:
+      tribunal_composition:
+        description: "Judges in the tribunal"
+        type: list
+        default: [methodological_rigor, source_quality, relevance, adversarial]
+        options:
+          - methodological_rigor   # HOW was evidence gathered
+          - source_quality         # WHO produced the evidence
+          - relevance              # WHETHER evidence applies to claim
+          - adversarial            # Actively looks for weaknesses
+          - recency                # Is evidence current
+          - generalizability       # Does it apply beyond original context
+      
+      scoring_scale:
+        description: "Scale for judge scores"
+        type: enum
+        options:
+          - five_point             # 1-5
+          - ten_point              # 1-10
+          - percentage             # 0-100%
+        default: ten_point
+      
+      verdict_threshold:
+        description: "Minimum score for 'sufficient' evidence"
+        type: float
+        min: 5.0
+        max: 8.0
+        default: 6.0
+    
+    domain_configurations:
+      
+      research:
+        judge_weights:
+          methodological_rigor: 0.35
+          source_quality: 0.25
+          relevance: 0.25
+          adversarial: 0.15
+        rigor_criteria:
+          - "Sample size adequacy"
+          - "Control group presence"
+          - "Replicability"
+          - "Statistical significance"
+      
+      competitive_analysis:
+        judge_weights:
+          recency: 0.30
+          source_quality: 0.25
+          relevance: 0.25
+          adversarial: 0.20
+        rigor_criteria:
+          - "Data recency"
+          - "Source independence"
+          - "Market coverage"
+          - "Methodology transparency"
+    
+    output:
+      format: "tribunal_verdict_with_scores"
+      components:
+        - name: "Judge Scores"
+          structure: |
+            | Evidence | Rigor | Source | Relevance | Adversarial | Overall |
+            |----------|-------|--------|-----------|-------------|---------|
+        
+        - name: "Tribunal Deliberation"
+          structure: "Key concerns raised by each judge"
+        
+        - name: "Verdict"
+          structure: |
+            Evidence classification:
+            - [ ] Strong (would convince a skeptic)
+            - [ ] Moderate (suggestive but not conclusive)
+            - [ ] Weak (some support but significant gaps)
+            - [ ] Insufficient (claim not adequately supported)
+    
+    synergies:
+      strong:
+        - cross_source_consistency_matrix  # Resolve conflicts via tribunal
+        - confidence_calibration_protocol  # Tribunal scores feed confidence
+      moderate:
+        - source_provenance_tracking       # Source metadata informs judges
+    
+    execution:
+      token_overhead: "medium"
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+# ============================================================================
+# PHASE 3 TECHNIQUES: CONFIDENCE TIERING
+# ============================================================================
+
+confidence_tiering_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Confidence Calibration Protocol
+  # --------------------------------------------------------------------------
+  confidence_calibration_protocol:
+    id: TECH-MC-CCP
+    name: "Confidence Calibration Protocol"
+    category: meta_cognitive
+    subcategory: uncertainty_management
+    
+    description: |
+      Systematically calibrate confidence levels for each finding using
+      multiple methods: evidence balance, reference class, inside-outside
+      view, and betting test. Produces well-calibrated probability estimates.
+    
+    cognitive_advantage: |
+      Humans are systematically overconfident and rarely calibrate.
+      This protocol forces explicit examination of evidence-confidence
+      alignment using multiple calibration methods.
+    
+    applicability:
+      problem_types:
+        - confidence_assessment
+        - probability_estimation
+        - finding_classification
+        - recommendation_strength
+      
+      triggers:
+        - "how confident should we be"
+        - "what's the certainty level"
+        - "calibrate confidence"
+        - "tier the findings"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      research: 0.95
+      strategy: 0.90
+      due_diligence: 0.90
+      competitive_analysis: 0.85
+      product: 0.75
+    
+    parameters:
+      calibration_methods:
+        description: "Methods to use for calibration"
+        type: list
+        default: [evidence_balance, reference_class, inside_outside, betting_test]
+        options:
+          - evidence_balance       # Weight of evidence for/against
+          - reference_class        # Base rate from similar situations
+          - inside_outside         # Compare internal vs. external view
+          - betting_test           # Would you bet money on this?
+          - decomposition          # Break into components
+          - anchor_adjustment      # Start from anchor, adjust
+      
+      tier_structure:
+        description: "How to structure confidence tiers"
+        type: enum
+        options:
+          - three_tier             # High / Medium / Low
+          - four_tier              # High / Medium-High / Medium-Low / Low
+          - five_tier              # Very High / High / Medium / Low / Very Low
+          - percentage             # Explicit percentages
+        default: three_tier
+      
+      tier_thresholds:
+        description: "Probability thresholds for each tier"
+        type: object
+        default:
+          high: 0.80
+          medium: 0.50
+          low: 0.20
+        guidance: |
+          - High confidence: 80%+ probability of being correct
+          - Medium confidence: 50-79% probability
+          - Low confidence: Below 50%, significant uncertainty
+    
+    domain_configurations:
+      
+      research:
+        calibration_emphasis:
+          - "Reference class: Similar research accuracy rates"
+          - "Evidence quality weighting"
+          - "Methodology rigor impact"
+        tier_labels:
+          high: "Well-Established"
+          medium: "Supported"
+          low: "Preliminary/Speculative"
+      
+      competitive_analysis:
+        calibration_emphasis:
+          - "Recency decay"
+          - "Source independence"
+          - "Historical prediction accuracy"
+        tier_labels:
+          high: "High Confidence"
+          medium: "Moderate Confidence"
+          low: "Speculative"
+      
+      strategy:
+        calibration_emphasis:
+          - "Expert consensus level"
+          - "Data quality"
+          - "Assumption sensitivity"
+        tier_labels:
+          high: "Actionable with High Confidence"
+          medium: "Actionable with Caveats"
+          low: "Requires Validation"
+    
+    output:
+      format: "calibrated_confidence_with_rationale"
+      components:
+        - name: "Calibration Worksheet"
+          structure: |
+            | Method | Suggested Confidence | Rationale |
+            |--------|---------------------|-----------|
+            | Evidence Balance | X% | ... |
+            | Reference Class | X% | ... |
+            | Inside-Outside | X% | ... |
+            | Betting Test | X% | ... |
+        
+        - name: "Final Confidence Assignment"
+          structure: |
+            Calibrated confidence: X%
+            Tier: [High/Medium/Low]
+            Adjustment from naive estimate: X% â†’ Y%
+            Key factor driving confidence: ...
+        
+        - name: "Sensitivity Statement"
+          structure: "What would change this confidence level?"
+    
+    synergies:
+      strong:
+        - evidence_strength_tribunal   # Tribunal scores feed calibration
+        - uncertainty_decomposition    # Type of uncertainty affects calibration
+      moderate:
+        - cross_source_consistency_matrix  # Agreement level affects confidence
+    
+    execution:
+      token_overhead: "low-medium"
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Uncertainty Decomposition
+  # --------------------------------------------------------------------------
+  uncertainty_decomposition:
+    id: TECH-MC-UD
+    name: "Uncertainty Decomposition"
+    category: meta_cognitive
+    subcategory: uncertainty_management
+    
+    description: |
+      Distinguish different types of uncertainty (aleatory, epistemic, model,
+      linguistic) and apply appropriate responses to each type.
+    
+    cognitive_advantage: |
+      Humans treat all uncertainty the same. Decomposition enables appropriate
+      responsesâ€”epistemic uncertainty can be reduced with more research;
+      aleatory uncertainty cannot.
+    
+    applicability:
+      problem_types:
+        - uncertainty_classification
+        - research_planning
+        - confidence_assessment
+        - decision_support
+      
+      triggers:
+        - "what type of uncertainty"
+        - "can this uncertainty be reduced"
+        - "why are we uncertain"
+        - "decompose the uncertainty"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      research: 0.95
+      strategy: 0.90
+      architecture: 0.80
+      product: 0.75
+    
+    parameters:
+      uncertainty_types:
+        description: "Types of uncertainty to identify"
+        type: list
+        default: [epistemic, aleatory, model, linguistic]
+        options:
+          - epistemic       # Knowledge gapsâ€”reducible with more info
+          - aleatory        # Inherent randomnessâ€”irreducible
+          - model           # Framework limitationsâ€”requires different model
+          - linguistic      # Definitional ambiguityâ€”requires clarification
+      
+      reduction_assessment:
+        description: "Whether to assess reducibility"
+        type: boolean
+        default: true
+        guidance: "Always assessâ€”drives research prioritization"
+    
+    output:
+      format: "uncertainty_classification_with_response"
+      components:
+        - name: "Uncertainty Inventory"
+          structure: |
+            | Finding | Uncertainty Type | Source | Reducible? | How to Reduce |
+            |---------|------------------|--------|------------|---------------|
+        
+        - name: "Research Implications"
+          structure: |
+            Epistemic uncertainties (research can help):
+            - ...
+            
+            Aleatory uncertainties (must accept):
+            - ...
+            
+            Model uncertainties (need different approach):
+            - ...
+        
+        - name: "Appropriate Response"
+          structure: "Recommended response for each uncertainty type"
+    
+    synergies:
+      strong:
+        - confidence_calibration_protocol  # Uncertainty type affects calibration
+        - mece_gap_detection              # Gaps are often epistemic uncertainty
+      moderate:
+        - unknown_unknowns_probe          # Finds unclassified uncertainties
+    
+    execution:
+      token_overhead: "low-medium"
+      typical_duration: "single_pass"
+
+# ============================================================================
+# PHASE 4 TECHNIQUES: GAP ANALYSIS
+# ============================================================================
+
+gap_analysis_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: MECE Gap Detection
+  # --------------------------------------------------------------------------
+  mece_gap_detection:
+    id: TECH-PR-MGD
+    name: "MECE Gap Detection"
+    category: perfect_recall
+    subcategory: gap_analysis
+    
+    description: |
+      Apply MECE (Mutually Exclusive, Collectively Exhaustive) framework to
+      identify what's missing from the research coverage. Ensures no gaps
+      in the problem space are overlooked.
+    
+    cognitive_advantage: |
+      Humans satisfy easilyâ€”they stop looking once they find "enough."
+      MECE forces systematic coverage checking across the entire space.
+    
+    applicability:
+      problem_types:
+        - coverage_analysis
+        - completeness_checking
+        - research_scoping
+        - gap_identification
+      
+      triggers:
+        - "what's missing"
+        - "is this complete"
+        - "find the gaps"
+        - "coverage analysis"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      research: 0.95
+      due_diligence: 0.90
+      strategy: 0.85
+      competitive_analysis: 0.85
+      product: 0.80
+    
+    parameters:
+      framework_dimensions:
+        description: "Dimensions for MECE analysis"
+        type: list
+        default: [stakeholders, timeframes, geographies, segments]
+        guidance: "Customize to research domain"
+      
+      coverage_threshold:
+        description: "Minimum coverage to consider adequate"
+        type: float
+        min: 0.70
+        max: 0.95
+        default: 0.80
+      
+      gap_prioritization:
+        description: "How to prioritize identified gaps"
+        type: enum
+        options:
+          - impact_based          # By importance to conclusions
+          - effort_based          # By difficulty to fill
+          - combined              # Impact / Effort ratio
+        default: combined
+    
+    domain_configurations:
+      
+      research:
+        default_dimensions:
+          - "Key questions addressed"
+          - "Data sources covered"
+          - "Time periods analyzed"
+          - "Methodologies employed"
+          - "Perspectives represented"
+        completeness_criteria:
+          - "All research questions have at least one finding"
+          - "Multiple sources for critical claims"
+          - "Recent and historical data considered"
+      
+      competitive_analysis:
+        default_dimensions:
+          - "Competitors covered"
+          - "Product/service categories"
+          - "Geographic markets"
+          - "Customer segments"
+          - "Value chain positions"
+        completeness_criteria:
+          - "Top 5 competitors analyzed"
+          - "All major product categories covered"
+          - "Key markets represented"
+      
+      strategy:
+        default_dimensions:
+          - "Strategic options considered"
+          - "Stakeholders analyzed"
+          - "Risks identified"
+          - "Success factors mapped"
+          - "Implementation barriers"
+        completeness_criteria:
+          - "3+ strategic options evaluated"
+          - "Major stakeholder groups represented"
+          - "Key risks surfaced"
+    
+    output:
+      format: "mece_coverage_with_gaps"
+      components:
+        - name: "Coverage Matrix"
+          structure: |
+            | Dimension | Elements Required | Elements Covered | Coverage % |
+            |-----------|-------------------|------------------|------------|
+        
+        - name: "Gap Inventory"
+          structure: |
+            | Gap | Dimension | Impact if Unfilled | Effort to Fill | Priority |
+            |-----|-----------|-------------------|----------------|----------|
+        
+        - name: "Critical Gaps"
+          structure: "Gaps that must be filled before conclusions are reliable"
+        
+        - name: "Acceptable Gaps"
+          structure: "Gaps acknowledged but not critical"
+    
+    synergies:
+      strong:
+        - unknown_unknowns_probe      # Finds gaps outside known framework
+        - completeness_verification   # Detailed completeness check
+      moderate:
+        - uncertainty_decomposition   # Gaps create epistemic uncertainty
+    
+    execution:
+      token_overhead: "medium"
+      typical_duration: "single_pass"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Unknown Unknowns Probe
+  # --------------------------------------------------------------------------
+  unknown_unknowns_probe:
+    id: TECH-MC-UUP
+    name: "Unknown Unknowns Probe"
+    category: meta_cognitive
+    subcategory: knowledge_state_assessment
+    
+    description: |
+      Systematically search for things that might be missing that we don't
+      even know we should be looking for. Uses perspective shifts, expertise
+      probes, and failure mode analysis to surface blind spots.
+    
+    cognitive_advantage: |
+      By definition, humans can't see their unknown unknowns. Systematic
+      probing using multiple perspectives can surface some of them.
+    
+    applicability:
+      problem_types:
+        - blind_spot_detection
+        - research_completeness
+        - risk_identification
+        - assumption_surfacing
+      
+      triggers:
+        - "what might we be missing"
+        - "blind spots"
+        - "unknown unknowns"
+        - "what would an expert notice"
+      
+      stakes_threshold: "high"
+    
+    domain_affinity:
+      research: 0.95
+      strategy: 0.90
+      due_diligence: 0.90
+      architecture: 0.80
+    
+    parameters:
+      probe_types:
+        description: "Types of probes to use"
+        type: list
+        default: [expertise_probe, failure_mode_probe, perspective_probe, assumption_probe]
+        options:
+          - expertise_probe      # What would domain experts know?
+          - failure_mode_probe   # What has gone wrong before?
+          - perspective_probe    # What would different stakeholders see?
+          - assumption_probe     # What are we assuming without realizing?
+          - adjacent_field_probe # What do related fields know?
+      
+      expert_archetypes:
+        description: "Expert types to simulate"
+        type: list
+        default: [domain_expert, practitioner, historian, adjacent_expert]
+    
+    output:
+      format: "unknown_unknowns_inventory"
+      components:
+        - name: "Probe Results"
+          structure: |
+            | Probe Type | What Surfaced | Was This Considered? | Priority |
+            |------------|---------------|---------------------|----------|
+        
+        - name: "Newly Discovered Unknowns"
+          structure: |
+            1. [Unknown] - Can investigate? Impact? Priority?
+            2. ...
+        
+        - name: "Residual Blind Spots"
+          structure: "Areas where blind spots likely remain"
+        
+        - name: "Appropriate Humility Statement"
+          structure: "Given unknown unknowns, confidence should be capped at X%"
+    
+    synergies:
+      strong:
+        - mece_gap_detection          # MECE finds known gaps; this finds unknown ones
+        - uncertainty_decomposition   # Unknown unknowns are epistemic
+      moderate:
+        - confidence_calibration_protocol  # Caps confidence appropriately
+    
+    execution:
+      token_overhead: "medium-high"
+      typical_duration: "single_pass"
+
+# ============================================================================
+# PHASE 5 TECHNIQUES: UNIFIED OUTPUT
+# ============================================================================
+
+unified_output_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Epistemic Status Labeling
+  # --------------------------------------------------------------------------
+  epistemic_status_labeling:
+    id: TECH-MC-ESL
+    name: "Epistemic Status Labeling"
+    category: meta_cognitive
+    subcategory: epistemic_hygiene
+    
+    description: |
+      Label every claim, finding, and recommendation with its epistemic statusâ€”
+      distinguishing established facts, well-supported claims, working hypotheses,
+      speculation, and acknowledged unknowns.
+    
+    cognitive_advantage: |
+      Humans conflate certainty levels in communication. Explicit labeling
+      enables readers to appropriately weight different findings and understand
+      where conclusions rest on solid vs. shaky ground.
+    
+    applicability:
+      problem_types:
+        - research_output
+        - recommendation_delivery
+        - uncertainty_communication
+        - intellectual_honesty
+      
+      triggers:
+        - "label certainty levels"
+        - "communicate uncertainty"
+        - "what's fact vs assumption"
+        - "epistemic status"
+      
+      stakes_threshold: "any"
+    
+    domain_affinity:
+      research: 0.95
+      strategy: 0.85
+      due_diligence: 0.85
+      product: 0.75
+    
+    parameters:
+      status_taxonomy:
+        description: "Categories for epistemic status"
+        type: list
+        default: [established_fact, well_supported, working_hypothesis, speculation, acknowledged_unknown]
+        guidance: |
+          - Established fact: Multiple independent confirmations, no credible dispute
+          - Well-supported: Strong evidence, expert consensus
+          - Working hypothesis: Reasonable but not fully validated
+          - Speculation: Plausible but limited evidence
+          - Acknowledged unknown: Explicitly don't know
+      
+      inline_vs_section:
+        description: "How to present epistemic status"
+        type: enum
+        options:
+          - inline_markers          # [Fact], [Hypothesis], etc. inline
+          - section_grouping        # Group by epistemic status
+          - both                    # Both inline and grouped
+        default: section_grouping
+    
+    output:
+      format: "findings_by_epistemic_status"
+      components:
+        - name: "Established Facts"
+          structure: "Claims with highest confidenceâ€”treat as ground truth"
+        
+        - name: "Well-Supported Findings"
+          structure: "Claims with strong evidenceâ€”high confidence but monitor"
+        
+        - name: "Working Hypotheses"
+          structure: "Claims under investigationâ€”use with appropriate caveats"
+        
+        - name: "Speculative Findings"
+          structure: "Claims with limited evidenceâ€”do not rely on for decisions"
+        
+        - name: "Acknowledged Unknowns"
+          structure: "Questions we cannot answer with current research"
+    
+    synergies:
+      strong:
+        - confidence_calibration_protocol  # Calibration feeds status assignment
+        - synthesis_structuring           # Status labeling is part of structure
+    
+    execution:
+      token_overhead: "low"
+      typical_duration: "single_pass"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Synthesis Structuring
+  # --------------------------------------------------------------------------
+  synthesis_structuring:
+    id: TECH-SD-SS
+    name: "Synthesis Structuring"
+    category: structured_decomposition
+    subcategory: communication_structures
+    
+    description: |
+      Structure the final synthesis output for clarity, actionability, and
+      appropriate uncertainty communication. Uses pyramid principle and
+      progressive disclosure.
+    
+    applicability:
+      problem_types:
+        - research_output
+        - executive_communication
+        - synthesis_delivery
+      
+      triggers:
+        - "structure the synthesis"
+        - "format for executives"
+        - "deliver findings"
+      
+      stakes_threshold: "any"
+    
+    domain_affinity:
+      research: 0.90
+      strategy: 0.90
+      competitive_analysis: 0.85
+      due_diligence: 0.85
+    
+    parameters:
+      structure_style:
+        description: "How to structure the synthesis"
+        type: enum
+        options:
+          - executive_summary_first  # BLUF, then detail
+          - confidence_tiered        # High confidence â†’ Low confidence
+          - question_answer          # Organized by research questions
+          - thematic                 # By topic/theme
+        default: confidence_tiered
+      
+      detail_levels:
+        description: "Levels of detail to provide"
+        type: list
+        default: [executive_summary, key_findings, detailed_findings, methodology, limitations]
+      
+      actionability_emphasis:
+        description: "How much to emphasize actionability"
+        type: enum
+        options:
+          - observation_focused      # Facts and findings only
+          - implication_included     # Findings + "so what"
+          - recommendation_included  # Findings + implications + recommendations
+        default: implication_included
+    
+    domain_configurations:
+      
+      research:
+        standard_structure:
+          - "Executive Summary"
+          - "High-Confidence Findings"
+          - "Medium-Confidence Findings"
+          - "Gaps and Limitations"
+          - "Implications and Next Steps"
+          - "Methodology and Sources"
+      
+      competitive_analysis:
+        standard_structure:
+          - "Executive Summary"
+          - "Key Competitive Insights"
+          - "Market Position Analysis"
+          - "Competitive Threats and Opportunities"
+          - "Information Gaps"
+          - "Recommendations"
+      
+      strategy:
+        standard_structure:
+          - "Strategic Synthesis"
+          - "High-Confidence Strategic Inputs"
+          - "Areas of Uncertainty"
+          - "Strategic Implications"
+          - "Key Assumptions and Risks"
+          - "Recommended Next Steps"
+    
+    output:
+      format: "structured_synthesis_document"
+      components:
+        - name: "Executive Summary"
+          structure: "1-page summary of key findings and confidence levels"
+        
+        - name: "Tiered Findings"
+          structure: "Findings organized by confidence level"
+        
+        - name: "Gap and Limitation Statement"
+          structure: "What we don't know and why it matters"
+        
+        - name: "Implications"
+          structure: "What the findings mean for decisions"
+        
+        - name: "Methodology Transparency"
+          structure: "How the synthesis was conducted"
+    
+    synergies:
+      strong:
+        - epistemic_status_labeling    # Status informs structure
+        - confidence_calibration_protocol  # Confidence tiers drive organization
+    
+    execution:
+      token_overhead: "low"
+      typical_duration: "single_pass"
+
+# ============================================================================
+# ARCHETYPE COMPOSITION RULES
+# ============================================================================
+
+composition_rules:
+  
+  phase_sequence:
+    description: "Standard research-synthesis execution sequence"
+    phases:
+      - phase: 1
+        name: "Source Integration"
+        required_techniques: 1-2
+        technique_options:
+          - source_provenance_tracking
+          - multi_hypothesis_tracking
+        selection_guidance: |
+          - source_provenance_tracking is always required
+          - Add multi_hypothesis_tracking when sources conflict on interpretation
+      
+      - phase: 2
+        name: "Evidence Reconciliation"
+        required_techniques: 1-2
+        technique_options:
+          - cross_source_consistency_matrix
+          - evidence_strength_tribunal
+        selection_guidance: |
+          - cross_source_consistency_matrix is always required
+          - Add evidence_strength_tribunal to resolve conflicts and assess quality
+      
+      - phase: 3
+        name: "Confidence Tiering"
+        required_techniques: 1-2
+        technique_options:
+          - confidence_calibration_protocol
+          - uncertainty_decomposition
+        selection_guidance: |
+          - confidence_calibration_protocol is always required
+          - Add uncertainty_decomposition for research planning implications
+      
+      - phase: 4
+        name: "Gap Analysis"
+        required_techniques: 1-2
+        technique_options:
+          - mece_gap_detection
+          - unknown_unknowns_probe
+        selection_guidance: |
+          - mece_gap_detection is minimum required
+          - Add unknown_unknowns_probe for high-stakes synthesis
+      
+      - phase: 5
+        name: "Unified Output"
+        required_techniques: 1-2
+        technique_options:
+          - epistemic_status_labeling
+          - synthesis_structuring
+        selection_guidance: |
+          - Both recommended for final output
+          - synthesis_structuring alone acceptable for time-constrained
+  
+  source_type_configurations:
+    
+    multi_model_ai_research:
+      description: "Consolidating Claude + Gemini + GPT research outputs"
+      technique_emphasis:
+        - source_provenance_tracking: "Classify by model, track methodology"
+        - cross_source_consistency_matrix: "Find model agreement/disagreement"
+        - confidence_calibration_protocol: "Weight by model strengths"
+      special_considerations:
+        - "Model-specific biases (recency for GPT, breadth for Gemini, depth for Claude)"
+        - "Methodology differences between models"
+        - "Complementary strengths to leverage"
+    
+    human_expert_research:
+      description: "Consolidating human-generated research reports"
+      technique_emphasis:
+        - source_provenance_tracking: "Assess expertise and independence"
+        - evidence_strength_tribunal: "Full tribunal for quality assessment"
+        - unknown_unknowns_probe: "Experts may share blind spots"
+      special_considerations:
+        - "Potential conflicts of interest"
+        - "Expertise boundaries"
+        - "Methodological rigor variation"
+    
+    mixed_ai_human:
+      description: "Consolidating both AI and human research"
+      technique_emphasis:
+        - source_provenance_tracking: "Distinguish source types"
+        - cross_source_consistency_matrix: "Cross-validate AI and human findings"
+        - epistemic_status_labeling: "Clear attribution of source type"
+      special_considerations:
+        - "AI vs. human reliability for different claim types"
+        - "Complementary verification opportunities"
+        - "Appropriate weighting of each source type"
+  
+  token_budget_guidance:
+    minimal:    # ~4K tokens
+      phases: [1, 2, 5]
+      techniques: [source_provenance_tracking, cross_source_consistency_matrix, synthesis_structuring]
+    
+    standard:   # ~8K tokens
+      phases: [1, 2, 3, 4, 5]
+      techniques: [source_provenance_tracking, cross_source_consistency_matrix, evidence_strength_tribunal, confidence_calibration_protocol, mece_gap_detection, epistemic_status_labeling, synthesis_structuring]
+    
+    comprehensive:  # ~12K tokens
+      phases: [1, 2, 3, 4, 5]
+      techniques: [source_provenance_tracking, multi_hypothesis_tracking, cross_source_consistency_matrix, evidence_strength_tribunal, confidence_calibration_protocol, uncertainty_decomposition, mece_gap_detection, unknown_unknowns_probe, epistemic_status_labeling, synthesis_structuring]
+
+# ============================================================================
+# OUTPUT TEMPLATES
+# ============================================================================
+
+output_templates:
+  
+  standard_synthesis:
+    sections:
+      - name: "Executive Summary"
+        content: "Key findings with confidence indicators"
+        length: "200-400 words"
+      
+      - name: "Source Overview"
+        content: "Sources analyzed with reliability assessments"
+        length: "Table format"
+      
+      - name: "High-Confidence Findings"
+        content: "Findings with 80%+ confidence; multiple source corroboration"
+        length: "Variable"
+      
+      - name: "Medium-Confidence Findings"
+        content: "Findings with 50-79% confidence; some corroboration or strong single source"
+        length: "Variable"
+      
+      - name: "Low-Confidence / Preliminary Findings"
+        content: "Findings with <50% confidence; limited evidence or conflicting sources"
+        length: "Variable"
+      
+      - name: "Unresolved Conflicts"
+        content: "Areas where sources fundamentally disagree without resolution"
+        length: "Variable"
+      
+      - name: "Gaps and Limitations"
+        content: "What the research doesn't cover; known unknowns"
+        length: "200-400 words"
+      
+      - name: "Implications"
+        content: "What the findings mean for decisions"
+        length: "200-400 words"
+      
+      - name: "Methodology"
+        content: "How synthesis was conducted; sources used"
+        length: "Appendix"
+
+# ============================================================================
+# TECHNIQUE COUNT SUMMARY
+# ============================================================================
+
+summary:
+  archetype: "Research-Synthesis"
+  total_high_affinity_techniques: 10
+  by_phase:
+    source_integration: 2
+    evidence_reconciliation: 2
+    confidence_tiering: 2
+    gap_analysis: 2
+    unified_output: 2
+  
+  techniques_detailed:
+    - source_provenance_tracking
+    - multi_hypothesis_tracking
+    - cross_source_consistency_matrix
+    - evidence_strength_tribunal
+    - confidence_calibration_protocol
+    - uncertainty_decomposition
+    - mece_gap_detection
+    - unknown_unknowns_probe
+    - epistemic_status_labeling
+    - synthesis_structuring

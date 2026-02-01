@@ -1,0 +1,1733 @@
+# ============================================================================
+# STRATEGY VALIDATION ARCHETYPE: HIGH-AFFINITY TECHNIQUES
+# ============================================================================
+# Version: 1.0
+# Purpose: Detailed technique metadata for Skill Factory skill generation
+# Archetype: Strategy Validation (Assumption audit â†’ Failure analysis â†’ 
+#            Risk quantification â†’ Adversarial stress-test â†’ Exit criteria)
+# 
+# DISTINCTION FROM MOE-DECISION:
+#   - MoE-Decision: Choosing between options via multi-perspective tournament
+#   - Strategy Validation: Stress-testing an existing strategy/decision
+#   
+# This archetype answers: "Is this strategy sound? What could go wrong?
+# Should we proceed, modify, or abandon?"
+# ============================================================================
+
+archetype:
+  id: ARCH-STRAT-VAL
+  name: "Strategy Validation"
+  description: "Systematic validation of existing strategy through assumption audit, failure mode analysis, risk quantification, adversarial stress-testing, and pre-committed exit criteria"
+  version: "1.0"
+  
+  core_pattern:
+    phases:
+      - name: "Assumption & Evidence Audit"
+        purpose: "Surface all assumptions (explicit, implicit, structural) and evaluate evidence quality"
+        technique_categories: [perfect_recall, unbiased_reasoning]
+        primary_techniques: [complete_assumption_inventory, comprehensive_bias_audit, base_rate_integration]
+        
+      - name: "Failure Mode Analysis"
+        purpose: "Systematically identify how and why the strategy could fail"
+        technique_categories: [structured_decomposition, parallel_processing]
+        primary_techniques: [pre_mortem, inversion_via_negativa, parallel_future_cones]
+        
+      - name: "Adversarial Stress-Testing"
+        purpose: "Attack the strategy from multiple angles to find weaknesses"
+        technique_categories: [unbiased_reasoning]
+        primary_techniques: [true_steel_manning, disconfirmation_hunt, wwhtbt]
+        
+      - name: "Risk Quantification"
+        purpose: "Quantify uncertainties and risks with explicit probabilities"
+        technique_categories: [probabilistic, meta_cognitive]
+        primary_techniques: [expected_value_calculation, uncertainty_decomposition, confidence_calibration]
+        
+      - name: "Decision Hygiene & Exit Criteria"
+        purpose: "Pre-commit to stopping conditions and decision tracking"
+        technique_categories: [structured_decomposition]
+        primary_techniques: [kill_criteria, decision_journal, pre_commitment]
+  
+  applicable_domains:
+    high_affinity:  # 0.85+
+      - strategy
+      - product
+      - architecture
+    moderate_affinity:  # 0.65-0.84
+      - security
+      - operations
+    low_affinity:  # <0.65
+      - research
+      - data_modeling
+      - content
+  
+  problem_characteristics:
+    ideal:
+      - "Significant investment/commitment already proposed or underway"
+      - "High-stakes decision with substantial downside risk"
+      - "Irreversibilityâ€”difficult to change direction once committed"
+      - "Uncertainty about key assumptions"
+      - "Need for explicit go/no-go decision"
+      - "History of optimism bias in similar decisions"
+    poor_fit:
+      - "Still in option-generation phase (use MoE-Decision instead)"
+      - "Low stakes, easily reversible"
+      - "Purely operational/tactical execution"
+      - "No significant assumptions to test"
+  
+  key_outputs:
+    - "Validated/invalidated assumption inventory"
+    - "Failure mode catalog with probabilities"
+    - "Risk-adjusted expected value"
+    - "Steel-manned counter-arguments with responses"
+    - "Pre-committed kill criteria"
+    - "Go/Modify/Abandon recommendation"
+
+# ============================================================================
+# PHASE 1 TECHNIQUES: ASSUMPTION & EVIDENCE AUDIT
+# ============================================================================
+
+assumption_evidence_audit_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Complete Assumption Inventory
+  # --------------------------------------------------------------------------
+  complete_assumption_inventory:
+    id: TECH-PR-CAI
+    name: "Complete Assumption Inventory"
+    category: perfect_recall
+    subcategory: complete_enumeration
+    
+    description: |
+      Systematically surface ALL assumptions underlying a strategyâ€”not just
+      explicit ones, but implicit assumptions, structural assumptions about
+      the problem framing, temporal assumptions, and environmental assumptions.
+    
+    cognitive_advantage: |
+      Humans have blind spots to their own assumptions. Systematic enumeration
+      across 5 layers forces visibility to hidden load-bearing assumptions.
+    
+    applicability:
+      problem_types:
+        - strategy_validation
+        - business_case_review
+        - investment_decision
+        - project_planning
+        - due_diligence
+      
+      triggers:
+        - "what are we assuming"
+        - "surface assumptions"
+        - "what must be true"
+        - "validate the plan"
+        - "due diligence"
+      
+      anti_triggers:
+        - "quick gut check"
+        - "low stakes"
+        - "pure execution"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.90
+      architecture: 0.85
+      operations: 0.75
+      security: 0.80
+    
+    parameters:
+      assumption_layers:
+        description: "Which layers of assumptions to surface"
+        type: list
+        default: [explicit, implicit, structural, temporal, environmental]
+        options:
+          - explicit          # Stated directly in documents
+          - implicit          # Required for conclusions but unstated
+          - structural        # About problem framing itself
+          - temporal          # About timing and sequence
+          - environmental     # About context/world state
+        guidance: |
+          For full strategy validation, include all 5 layers.
+          For quick checks, explicit + implicit may suffice.
+      
+      depth_per_layer:
+        description: "How exhaustively to enumerate within each layer"
+        type: enum
+        options:
+          - shallow           # 3-5 assumptions per layer
+          - standard          # 5-10 assumptions per layer
+          - exhaustive        # All identifiable assumptions
+        default: standard
+      
+      risk_classification:
+        description: "Whether to classify assumptions by risk"
+        type: boolean
+        default: true
+        guidance: "Always true for strategy validationâ€”identifies load-bearing assumptions"
+    
+    domain_configurations:
+      
+      strategy:
+        layer_focus:
+          explicit: "Revenue projections, market size, competitive positioning"
+          implicit: "Market conditions remain stable, team executes well"
+          structural: "Problem framing, success definition, stakeholder scope"
+          temporal: "Sequencing, market timing, funding runway"
+          environmental: "Competitor response, regulatory environment, macro conditions"
+        risk_categories:
+          - "Load-bearing (if wrong, strategy fails)"
+          - "Easily validated (can test quickly)"
+          - "Hard to validate (must accept uncertainty)"
+          - "Unvalidatable (pure bet)"
+      
+      product:
+        layer_focus:
+          explicit: "User need, market demand, technical feasibility"
+          implicit: "Users will adopt, behavior change is acceptable"
+          structural: "Problem definition, user segmentation, value proposition"
+          temporal: "Development timeline, adoption curve, competitive timing"
+          environmental: "Platform stability, ecosystem evolution, regulatory"
+      
+      architecture:
+        layer_focus:
+          explicit: "Load requirements, integration constraints, team capabilities"
+          implicit: "Technologies will remain supported, patterns will scale"
+          structural: "Bounded contexts, coupling assumptions, data ownership"
+          temporal: "Migration sequence, deprecation timelines, evolution path"
+          environmental: "Cloud provider stability, license terms, vendor roadmaps"
+    
+    output:
+      format: "multi_layer_assumption_matrix"
+      components:
+        - name: "Layer-by-Layer Inventory"
+          structure: |
+            LAYER 1: EXPLICIT ASSUMPTIONS
+            | # | Assumption | Source | Evidence Required | Risk if Wrong |
+            
+            LAYER 2: IMPLICIT ASSUMPTIONS
+            | # | Assumption | Inferred From | Evidence Required | Risk if Wrong |
+            
+            [... remaining layers ...]
+        
+        - name: "Assumption Risk Matrix"
+          structure: |
+                          â”‚ Low Impact â”‚ High Impact â”‚
+            â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+             Likely True  â”‚   Accept   â”‚   Monitor   â”‚
+            â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+             Uncertain    â”‚   Monitor  â”‚  Validate   â”‚
+            â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+             Likely False â”‚   Review   â”‚   STOP      â”‚
+        
+        - name: "Load-Bearing Assumptions"
+          structure: "Prioritized list of assumptions that must be true for strategy to succeed"
+        
+        - name: "Validation Plan"
+          structure: "Which assumptions to validate, how, and in what order"
+    
+    synergies:
+      strong:
+        - pre_mortem                # Assumptions â†’ failure modes
+        - wwhtbt                    # Crux assumption identification
+        - disconfirmation_hunt      # Test critical assumptions
+      moderate:
+        - base_rate_integration     # Challenge assumption optimism
+        - uncertainty_decomposition # Type of uncertainty per assumption
+    
+    execution:
+      token_overhead: "high"         # 3-6K tokens for full 5-layer
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+      human_input_required: "minimal"  # May ask for clarification on structural assumptions
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Comprehensive Bias Audit
+  # --------------------------------------------------------------------------
+  comprehensive_bias_audit:
+    id: TECH-UR-CBA
+    name: "Comprehensive Bias Audit"
+    category: unbiased_reasoning
+    subcategory: bias_detection_mitigation
+    
+    description: |
+      Systematically check for specific cognitive biases that commonly affect
+      strategic decisions, evaluating whether and how each bias may be
+      distorting the analysis.
+    
+    cognitive_advantage: |
+      Humans can't see their own biases (blind spot bias). Claude can
+      systematically check for each bias pattern without defensive reactions.
+    
+    applicability:
+      problem_types:
+        - strategy_validation
+        - decision_review
+        - post_mortem_analysis
+        - investment_decision
+      
+      triggers:
+        - "am I biased"
+        - "check for biases"
+        - "objectivity check"
+        - "cognitive audit"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.85
+      research: 0.90
+      architecture: 0.75
+    
+    parameters:
+      bias_categories:
+        description: "Which bias categories to check"
+        type: list
+        default: [ego_protective, investment_driven, anchoring, availability, framing]
+        options:
+          - ego_protective    # Confirmation, motivated reasoning, defensive
+          - investment_driven # Sunk cost, commitment escalation, IKEA effect
+          - anchoring         # First-information, adjustment insufficiency
+          - availability      # Recency, salience, availability heuristic
+          - attribution       # Fundamental attribution error, self-serving
+          - loss_related      # Loss aversion, status quo, endowment
+          - social            # Authority, in-group, bandwagon
+          - hindsight         # Hindsight bias, outcome bias
+          - framing           # Framing effects, context effects
+      
+      audit_depth:
+        description: "Depth of bias checking"
+        type: enum
+        options:
+          - quick_scan        # Check for obvious bias presence
+          - standard          # Evaluate each bias with examples
+          - forensic          # Deep dive with evidence tracing
+        default: standard
+    
+    domain_configurations:
+      
+      strategy:
+        high_risk_biases:
+          - name: "Confirmation Bias"
+            symptoms: ["Only seeking supporting evidence", "Dismissing contradictory data", "Interpreting ambiguous data favorably"]
+            check_questions: ["What evidence did we NOT seek?", "How did we handle contradictory data?"]
+          
+          - name: "Sunk Cost Fallacy"
+            symptoms: ["Continuing because of prior investment", "Ignoring current ROI", "Emotional attachment to past work"]
+            check_questions: ["If starting fresh today, would we make this choice?", "Are we continuing because of investment or merit?"]
+          
+          - name: "Optimism Bias"
+            symptoms: ["Best-case planning", "Underweighting risks", "Overconfident timelines"]
+            check_questions: ["What's the base rate for similar initiatives?", "What's our track record on estimates?"]
+          
+          - name: "Anchoring"
+            symptoms: ["First number dominates", "Insufficient adjustment from initial estimate"]
+            check_questions: ["Where did our initial estimate come from?", "Would we reach the same number starting from scratch?"]
+          
+          - name: "Planning Fallacy"
+            symptoms: ["Inside view dominance", "Ignoring reference class", "Best-case assumptions"]
+            check_questions: ["How long did similar projects actually take?", "What's the outside view prediction?"]
+    
+    output:
+      format: "bias_audit_report"
+      components:
+        - name: "Bias Scan Results"
+          structure: |
+            | Bias | Present? | Evidence | Severity | Mitigation |
+            |------|----------|----------|----------|------------|
+        
+        - name: "High-Risk Biases Identified"
+          structure: "Prioritized list with specific examples from the strategy"
+        
+        - name: "Debiased Assessment"
+          structure: "How conclusions change when biases are corrected"
+    
+    synergies:
+      strong:
+        - base_rate_integration     # Counters optimism/planning fallacy
+        - disconfirmation_hunt      # Counters confirmation bias
+        - outsider_test             # Counters sunk cost, anchoring
+      moderate:
+        - complete_assumption_inventory  # Surfaces biased assumptions
+    
+    execution:
+      token_overhead: "medium"       # 1-3K tokens
+      typical_duration: "single_pass"
+      iteration_pattern: "may_iterate_on_findings"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Base Rate Integration
+  # --------------------------------------------------------------------------
+  base_rate_integration:
+    id: TECH-UR-BRI
+    name: "Base Rate Integration"
+    category: unbiased_reasoning
+    subcategory: evidence_evaluation
+    
+    description: |
+      Force attention to statistical base rates for the reference class,
+      then explicitly justify any deviation based on case-specific factors.
+    
+    cognitive_advantage: |
+      Humans systematically ignore base rates and overweight vivid case-specific
+      details. This technique anchors on the outside view first.
+    
+    applicability:
+      problem_types:
+        - success_probability_estimation
+        - project_estimation
+        - risk_assessment
+        - investment_evaluation
+      
+      triggers:
+        - "what's the base rate"
+        - "how often does this work"
+        - "outside view"
+        - "reference class"
+        - "similar cases"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.85
+      operations: 0.80
+      architecture: 0.70
+    
+    parameters:
+      reference_class_selection:
+        description: "How to select the reference class"
+        type: enum
+        options:
+          - narrow              # Most specific comparable class
+          - broad               # Wider category
+          - multiple            # Compare across class definitions
+        default: multiple
+        guidance: "Multiple reference classes reveal sensitivity to class selection"
+      
+      deviation_justification:
+        description: "Rigor of deviation justification"
+        type: enum
+        options:
+          - informal            # General reasoning
+          - explicit            # Quantified factor adjustments
+          - documented          # Evidence-backed adjustments
+        default: explicit
+    
+    domain_configurations:
+      
+      strategy:
+        common_reference_classes:
+          - name: "Startup success rates"
+            base_rates:
+              - "~90% fail within 5 years"
+              - "~10% achieve significant exit"
+              - "~1% achieve unicorn status"
+          
+          - name: "Corporate strategy success"
+            base_rates:
+              - "~70% of transformations fail to meet objectives"
+              - "~50% of M&A destroys value"
+              - "~60% of new product launches fail"
+          
+          - name: "Project estimation"
+            base_rates:
+              - "Average overrun: 80% on cost, 100% on time"
+              - "Only ~30% complete on time and budget"
+      
+      product:
+        common_reference_classes:
+          - name: "Feature adoption"
+            base_rates:
+              - "~20% of features get regular use"
+              - "~50% of features rarely used after launch"
+          
+          - name: "Product-market fit"
+            base_rates:
+              - "Only ~10% of startups achieve strong PMF"
+    
+    output:
+      format: "base_rate_analysis"
+      components:
+        - name: "Reference Class Analysis"
+          structure: |
+            | Reference Class | Base Rate | Confidence | Source |
+            |-----------------|-----------|------------|--------|
+        
+        - name: "Case-Specific Adjustments"
+          structure: |
+            | Factor | Direction | Magnitude | Evidence | Adjusted Rate |
+            |--------|-----------|-----------|----------|---------------|
+        
+        - name: "Inside vs. Outside View Reconciliation"
+          structure: "Inside view: X%, Outside view: Y%, Reconciled: Z%"
+        
+        - name: "Deviation Justification"
+          structure: "Why this case differs from base rate (if at all)"
+    
+    synergies:
+      strong:
+        - comprehensive_bias_audit  # Both counter optimism
+        - confidence_calibration    # Both about calibration
+      moderate:
+        - complete_assumption_inventory  # Tests assumptions against base rates
+    
+    execution:
+      token_overhead: "medium"       # 1-2K tokens
+      typical_duration: "single_pass"
+
+# ============================================================================
+# PHASE 2 TECHNIQUES: FAILURE MODE ANALYSIS
+# ============================================================================
+
+failure_mode_analysis_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Pre-Mortem
+  # --------------------------------------------------------------------------
+  pre_mortem:
+    id: TECH-SD-PM
+    name: "Pre-Mortem"
+    category: structured_decomposition
+    subcategory: inversion_negative_thinking
+    
+    description: |
+      Project forward to strategy failure, then explain why it failed.
+      This "prospective hindsight" increases ability to identify failure
+      modes by 30% compared to standard risk identification.
+    
+    cognitive_advantage: |
+      Framing as "we have failed" rather than "we might fail" unlocks
+      different cognitive processes and overcomes optimism bias.
+    
+    applicability:
+      problem_types:
+        - project_planning
+        - strategy_launch
+        - investment_decision
+        - product_launch
+        - organizational_change
+      
+      triggers:
+        - "what could go wrong"
+        - "why might this fail"
+        - "pre-mortem"
+        - "risk identification"
+        - "failure modes"
+      
+      anti_triggers:
+        - "already in crisis"
+        - "retrospective analysis"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.90
+      architecture: 0.85
+      operations: 0.85
+      security: 0.80
+    
+    parameters:
+      time_horizon:
+        description: "How far in the future is the imagined failure"
+        type: string
+        default: "18 months"
+        guidance: "Should be realistic completion/evaluation timeframe"
+      
+      failure_categories:
+        description: "Categories to generate failure explanations for"
+        type: list
+        default: [planning, execution, external, people]
+        options:
+          - planning            # Wrong assumptions, bad strategy
+          - execution           # Implementation failures
+          - external            # Market, competitive, regulatory
+          - people              # Team, leadership, stakeholder
+          - technical           # Technology failures (for tech projects)
+          - financial           # Funding, cash flow, unit economics
+      
+      explanation_count:
+        description: "Number of failure explanations to generate"
+        type: integer
+        min: 5
+        max: 15
+        default: 8
+      
+      mitigation_depth:
+        description: "How detailed should mitigations be"
+        type: enum
+        options:
+          - identification_only    # Just identify risks
+          - high_level_mitigation  # General mitigation approaches
+          - action_plans           # Specific owners, deadlines, actions
+        default: high_level_mitigation
+    
+    domain_configurations:
+      
+      strategy:
+        failure_prompts:
+          - "We misread the market"
+          - "Competitors responded faster than expected"
+          - "Key assumptions proved wrong"
+          - "Execution was slower than planned"
+          - "We ran out of runway"
+          - "Key talent left"
+          - "Regulatory environment changed"
+          - "Customer behavior didn't change as expected"
+      
+      product:
+        failure_prompts:
+          - "Users didn't adopt as expected"
+          - "Technical implementation took 3x longer"
+          - "We solved the wrong problem"
+          - "Churn increased instead of decreased"
+          - "The market moved to a different solution"
+          - "We couldn't achieve unit economics"
+      
+      architecture:
+        failure_prompts:
+          - "The system couldn't scale as required"
+          - "Security vulnerabilities were exploited"
+          - "Migration caused major outages"
+          - "Team couldn't maintain the complexity"
+          - "Key dependencies were deprecated"
+          - "Operational costs exceeded projections"
+    
+    output:
+      format: "pre_mortem_report"
+      components:
+        - name: "Failure Explanations"
+          structure: |
+            | # | Failure Explanation | Category | Plausibility | Preventability | Impact |
+            |---|---------------------|----------|--------------|----------------|--------|
+        
+        - name: "Top Risks"
+          structure: "Prioritized by (Plausibility Ã— Impact Ã— Preventability)"
+        
+        - name: "Mitigation Plan"
+          structure: |
+            | Risk | Mitigation | Owner | Deadline | Early Warning |
+            |------|------------|-------|----------|---------------|
+        
+        - name: "Early Warning Indicators"
+          structure: "What we'd see early if each failure mode is developing"
+    
+    synergies:
+      strong:
+        - parallel_future_cones     # Probability-weighted failure scenarios
+        - inversion_via_negativa    # Complementary negative thinking
+        - kill_criteria             # When to stop based on failure signs
+      moderate:
+        - complete_assumption_inventory  # Link assumptions to failure modes
+        - disconfirmation_hunt      # Hunt for failure evidence
+    
+    execution:
+      token_overhead: "medium"       # 2-3K tokens
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Inversion (Via Negativa)
+  # --------------------------------------------------------------------------
+  inversion_via_negativa:
+    id: TECH-SD-INV
+    name: "Inversion (Via Negativa)"
+    category: structured_decomposition
+    subcategory: inversion_negative_thinking
+    
+    description: |
+      Instead of asking "how do we succeed?", ask "how do we guarantee failure?"
+      and ensure we avoid those paths. Inspired by Charlie Munger's inversion.
+    
+    cognitive_advantage: |
+      Humans are better at identifying failure modes than success paths.
+      Inversion leverages this asymmetry.
+    
+    applicability:
+      problem_types:
+        - goal_setting
+        - strategy_planning
+        - personal_development
+        - process_design
+      
+      triggers:
+        - "how to avoid failure"
+        - "what not to do"
+        - "inversion"
+        - "anti-goals"
+      
+      stakes_threshold: "any"
+    
+    domain_affinity:
+      strategy: 0.90
+      product: 0.85
+      operations: 0.85
+      architecture: 0.80
+    
+    parameters:
+      failure_mode_count:
+        description: "Number of guaranteed failure modes to identify"
+        type: integer
+        min: 3
+        max: 10
+        default: 5
+      
+      inversion_depth:
+        description: "How to structure the inversion"
+        type: enum
+        options:
+          - simple_list           # Just list what to avoid
+          - inverted_guidance     # Invert each failure to guidance
+          - anti_checklist        # Create verification checklist
+        default: inverted_guidance
+    
+    output:
+      format: "inversion_analysis"
+      components:
+        - name: "Guaranteed Failure Modes"
+          structure: "If I wanted to DEFINITELY FAIL, I would..."
+        
+        - name: "Inverted Guidance"
+          structure: |
+            | Failure Mode | Inverted Guidance | Priority |
+            |--------------|-------------------|----------|
+        
+        - name: "Anti-Checklist"
+          structure: "Before proceeding, verify I am NOT doing [each failure mode]"
+    
+    synergies:
+      strong:
+        - pre_mortem               # Both focus on failure
+        - kill_criteria            # Failures â†’ stopping conditions
+      moderate:
+        - comprehensive_bias_audit # Identify biases as failure modes
+    
+    execution:
+      token_overhead: "low"          # 0.5-1K tokens
+      typical_duration: "instant"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Parallel Future Cones
+  # --------------------------------------------------------------------------
+  parallel_future_cones:
+    id: TECH-PP-PFC
+    name: "Parallel Future Cones"
+    category: parallel_processing
+    subcategory: temporal_parallelism
+    
+    description: |
+      Model multiple branching futures with explicit probabilities,
+      including failure scenarios, to calculate expected outcomes and
+      identify high-impact decision points.
+    
+    cognitive_advantage: |
+      Humans prune future branches prematurely due to cognitive load.
+      Claude maintains all branches simultaneously with probability tracking.
+    
+    applicability:
+      problem_types:
+        - decision_under_uncertainty
+        - scenario_planning
+        - risk_analysis
+        - strategic_planning
+      
+      triggers:
+        - "what could happen"
+        - "scenario analysis"
+        - "probability-weighted outcomes"
+        - "branching futures"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.85
+      architecture: 0.75
+      operations: 0.70
+    
+    parameters:
+      branching_depth:
+        description: "How many levels of branching"
+        type: integer
+        min: 1
+        max: 3
+        default: 2
+        guidance: "2 levels captures key uncertainties without explosion"
+      
+      scenario_count:
+        description: "Number of primary scenarios at first branch"
+        type: integer
+        min: 2
+        max: 5
+        default: 3
+        guidance: "3 scenarios (success, partial, failure) is often sufficient"
+      
+      include_failure_scenarios:
+        description: "Whether to explicitly model failure branches"
+        type: boolean
+        default: true
+        guidance: "Always true for strategy validation"
+    
+    output:
+      format: "scenario_tree_with_probabilities"
+      components:
+        - name: "Scenario Tree"
+          structure: |
+            [Decision Point]
+                  â”‚
+            â”Œâ”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”
+            â†“     â†“     â†“
+            [A]  [B]   [C]
+            40%  35%   25%
+        
+        - name: "Terminal State Analysis"
+          structure: |
+            | State | Path | Probability | Value | Expected Value |
+            |-------|------|-------------|-------|----------------|
+        
+        - name: "Expected Value Calculation"
+          structure: "Sum of (probability Ã— value) across all terminal states"
+        
+        - name: "Key Decision Points"
+          structure: "Where branching creates most variance"
+    
+    synergies:
+      strong:
+        - pre_mortem               # Failure scenarios
+        - expected_value_calculation  # Quantify scenario outcomes
+      moderate:
+        - uncertainty_decomposition  # Types of uncertainty per branch
+    
+    execution:
+      token_overhead: "medium-high"  # 2-4K tokens
+      typical_duration: "single_pass"
+
+# ============================================================================
+# PHASE 3 TECHNIQUES: ADVERSARIAL STRESS-TESTING
+# ============================================================================
+
+adversarial_stress_testing_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: True Steel-Manning (imported from MoE-Decision)
+  # --------------------------------------------------------------------------
+  # NOTE: Full specification in moe-decision-techniques.yaml
+  # Included here with strategy-validation-specific configuration
+  
+  true_steel_manning:
+    id: TECH-UR-TSM
+    name: "True Steel-Manning"
+    category: unbiased_reasoning
+    subcategory: genuine_adversarial_thinking
+    
+    description: |
+      Construct the genuinely strongest argument AGAINST proceeding with
+      the strategyâ€”the case that would be made by the smartest, most
+      informed critic.
+    
+    # For full specification, see moe-decision-techniques.yaml
+    # Strategy-validation-specific additions below:
+    
+    domain_configurations:
+      
+      strategy_validation:
+        opponent_archetypes:
+          - name: "Skeptical Board Member"
+            perspective: "This puts shareholder value at unacceptable risk"
+            argument_focus: ["downside scenarios", "capital at risk", "opportunity cost", "track record of similar initiatives"]
+          
+          - name: "Future Regretful Self"
+            perspective: "Looking back 3 years, this was the decision that broke us"
+            argument_focus: ["path dependency", "what we'll wish we'd known", "alternatives we foreclosed"]
+          
+          - name: "Competing Strategy Advocate"
+            perspective: "There's a better way to achieve the same goal"
+            argument_focus: ["alternative strategies", "risk-adjusted returns", "reversibility"]
+          
+          - name: "Base Rate Statistician"
+            perspective: "The outside view predicts failure"
+            argument_focus: ["reference class outcomes", "planning fallacy", "survivorship bias"]
+        
+        key_argument_types:
+          - "Why this specific strategy will fail (not why strategies in general fail)"
+          - "Why now is the wrong time"
+          - "Why we're the wrong team"
+          - "Why the opportunity cost is too high"
+    
+    synergies:
+      strong:
+        - wwhtbt                    # Find crux assumptions to attack
+        - disconfirmation_hunt      # Evidence for steel-man arguments
+      moderate:
+        - base_rate_integration     # Outside view ammunition
+        - comprehensive_bias_audit  # Attack biased assumptions
+    
+    execution:
+      token_overhead: "medium-high"  # 2-4K tokens
+      typical_duration: "single_pass"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Disconfirmation Hunt (imported from MoE-Decision)
+  # --------------------------------------------------------------------------
+  # NOTE: Full specification in moe-decision-techniques.yaml
+  # Strategy-validation-specific focus on assumption testing
+  
+  disconfirmation_hunt:
+    id: TECH-UR-DH
+    name: "Disconfirmation Hunt"
+    category: unbiased_reasoning
+    subcategory: bias_detection_mitigation
+    
+    description: |
+      Actively search for evidence that would disprove the strategy's
+      key assumptions or indicate it will fail.
+    
+    domain_configurations:
+      
+      strategy_validation:
+        hunt_targets:
+          - "Evidence that key assumptions are wrong"
+          - "Examples of similar strategies failing"
+          - "Warning signs in current data"
+          - "Expert opinions contradicting the thesis"
+          - "Market signals suggesting wrong timing"
+        
+        search_locations:
+          - "Historical precedents (especially failures)"
+          - "Competitor post-mortems"
+          - "Academic research on similar initiatives"
+          - "Internal data contradicting assumptions"
+          - "Customer/user feedback that challenges thesis"
+    
+    output:
+      format: "disconfirmation_report"
+      components:
+        - name: "Disconfirming Evidence Found"
+          structure: |
+            | Evidence | Source | Threatens Which Assumption | Severity |
+            |----------|--------|---------------------------|----------|
+        
+        - name: "Search Effort Audit"
+          structure: "Did we search as hard for disconfirming as confirming evidence?"
+        
+        - name: "Verdict"
+          structure: "Strategy robust / Needs modification / Reconsider"
+    
+    synergies:
+      strong:
+        - complete_assumption_inventory  # Assumptions â†’ disconfirmation targets
+        - true_steel_manning        # Complementary attack angles
+    
+    execution:
+      token_overhead: "medium"       # 1-2K tokens
+      typical_duration: "single_pass"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: What Would Have To Be True (WWHTBT)
+  # --------------------------------------------------------------------------
+  wwhtbt:
+    id: TECH-SD-WWHTBT
+    name: "What Would Have To Be True (WWHTBT)"
+    category: structured_decomposition
+    subcategory: disagreement_resolution
+    
+    description: |
+      Shift from arguing positions to examining assumptions. For the strategy
+      to be correct, what would have to be true? For the counter-argument
+      to be correct, what would have to be true? Then test those crux assumptions.
+    
+    cognitive_advantage: |
+      WWHTBT transforms unproductive position debates into testable hypothesis
+      evaluation. Surfaces the actual crux of disagreement.
+    
+    applicability:
+      problem_types:
+        - strategy_debate
+        - contested_decision
+        - option_evaluation
+        - assumption_testing
+      
+      triggers:
+        - "what would have to be true"
+        - "find the crux"
+        - "we disagree on"
+        - "test assumptions"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.85
+      architecture: 0.80
+      research: 0.85
+    
+    parameters:
+      position_count:
+        description: "Number of positions to analyze"
+        type: integer
+        min: 2
+        max: 4
+        default: 2
+        guidance: "Usually 2: the strategy vs. the strongest alternative/objection"
+      
+      crux_identification_depth:
+        description: "How deeply to identify crux assumptions"
+        type: enum
+        options:
+          - surface               # Top-level assumptions
+          - deep                  # Trace to root assumptions
+          - with_tests            # Include testability analysis
+        default: with_tests
+    
+    domain_configurations:
+      
+      strategy_validation:
+        typical_positions:
+          - "Proceed with strategy as planned"
+          - "Modify strategy significantly"
+          - "Abandon strategy entirely"
+          - "Delay for more information"
+        
+        crux_categories:
+          - "Market assumptions (size, timing, dynamics)"
+          - "Competitive assumptions (response, positioning)"
+          - "Execution assumptions (team, timeline, cost)"
+          - "Financial assumptions (unit economics, funding)"
+          - "External assumptions (regulatory, macro)"
+    
+    output:
+      format: "wwhtbt_analysis"
+      components:
+        - name: "Position Requirements"
+          structure: |
+            For [Strategy] to be correct:
+            - Assumption 1 must be true: ___
+            - Assumption 2 must be true: ___
+            
+            For [Alternative/Objection] to be correct:
+            - Assumption A must be true: ___
+            - Assumption B must be true: ___
+        
+        - name: "Crux Identification"
+          structure: |
+            | Assumption | Required for Strategy | Required for Alt | Differentiating? |
+            |------------|----------------------|------------------|------------------|
+        
+        - name: "Crux Testability"
+          structure: |
+            | Crux | Can We Test? | How? | Cost/Time | Current Evidence |
+            |------|--------------|------|-----------|------------------|
+        
+        - name: "Resolution Path"
+          structure: "Focus debate on: [crux assumption]. Test via: [method]"
+    
+    synergies:
+      strong:
+        - complete_assumption_inventory  # Source assumptions
+        - disconfirmation_hunt      # Test crux assumptions
+        - true_steel_manning        # Alternative position arguments
+      moderate:
+        - confidence_calibration    # Confidence in crux assumptions
+    
+    execution:
+      token_overhead: "medium"       # 1-2K tokens
+      typical_duration: "single_pass"
+      iteration_pattern: "may_iterate_on_cruxes"
+
+# ============================================================================
+# PHASE 4 TECHNIQUES: RISK QUANTIFICATION
+# ============================================================================
+
+risk_quantification_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Expected Value Calculation
+  # --------------------------------------------------------------------------
+  expected_value_calculation:
+    id: TECH-PROB-EV
+    name: "Expected Value Calculation"
+    category: probabilistic
+    subcategory: expected_value_analysis
+    
+    description: |
+      Quantify outcomes with explicit probabilities and values to calculate
+      risk-adjusted expected value. Forces numeric precision on vague intuitions.
+    
+    cognitive_advantage: |
+      Humans use vague probability language and avoid numeric commitment.
+      Explicit calculation reveals when intuitions are inconsistent.
+    
+    applicability:
+      problem_types:
+        - investment_decision
+        - strategy_evaluation
+        - option_comparison
+        - risk_assessment
+      
+      triggers:
+        - "what's the expected value"
+        - "risk-adjusted return"
+        - "probability-weighted"
+        - "quantify the upside/downside"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.85
+      operations: 0.80
+      architecture: 0.70
+    
+    parameters:
+      outcome_scenarios:
+        description: "Number of outcome scenarios to model"
+        type: integer
+        min: 3
+        max: 7
+        default: 5
+        guidance: "5 scenarios: Best, Good, Base, Poor, Worst"
+      
+      value_metric:
+        description: "What metric to use for value"
+        type: enum
+        options:
+          - financial              # Dollar value
+          - utility                # Utility units
+          - strategic_value        # Qualitative â†’ numeric mapping
+        default: financial
+      
+      include_opportunity_cost:
+        description: "Whether to include opportunity cost in calculation"
+        type: boolean
+        default: true
+        guidance: "Always true for strategy validation"
+    
+    domain_configurations:
+      
+      strategy:
+        standard_scenarios:
+          - name: "Best Case"
+            probability_range: "5-15%"
+            description: "Everything goes right, exceeds expectations"
+          - name: "Good Case"
+            probability_range: "15-25%"
+            description: "Better than expected, key assumptions hold"
+          - name: "Base Case"
+            probability_range: "30-50%"
+            description: "Meets expectations, plan works as designed"
+          - name: "Poor Case"
+            probability_range: "15-25%"
+            description: "Underperforms, some assumptions wrong"
+          - name: "Worst Case"
+            probability_range: "5-20%"
+            description: "Failure, major assumptions wrong"
+        
+        value_components:
+          - "Direct financial return"
+          - "Strategic option value created"
+          - "Capability/learning value"
+          - "Opportunity cost of capital"
+          - "Opportunity cost of attention/focus"
+    
+    output:
+      format: "expected_value_analysis"
+      components:
+        - name: "Scenario Analysis"
+          structure: |
+            | Scenario | Probability | Value | Expected Value Contribution |
+            |----------|-------------|-------|---------------------------|
+            | Best     | P%          | $X    | P% Ã— $X                   |
+            | Good     | P%          | $X    | P% Ã— $X                   |
+            | Base     | P%          | $X    | P% Ã— $X                   |
+            | Poor     | P%          | $X    | P% Ã— $X                   |
+            | Worst    | P%          | $X    | P% Ã— $X                   |
+            | **Total**| 100%        |       | **$EV**                   |
+        
+        - name: "Probability Sanity Check"
+          structure: "Do probabilities sum to 100%? Are they internally consistent?"
+        
+        - name: "Opportunity Cost Adjustment"
+          structure: "EV minus opportunity cost of alternative use"
+        
+        - name: "Risk-Adjusted Verdict"
+          structure: "Proceed if EV > $X, Modify if EV in range, Abandon if EV < $Y"
+    
+    synergies:
+      strong:
+        - parallel_future_cones     # Scenario probabilities
+        - confidence_calibration    # Calibrated probabilities
+        - base_rate_integration     # Reference class probabilities
+      moderate:
+        - uncertainty_decomposition # Understand probability sources
+    
+    execution:
+      token_overhead: "low-medium"   # 1-2K tokens
+      typical_duration: "single_pass"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Uncertainty Decomposition
+  # --------------------------------------------------------------------------
+  uncertainty_decomposition:
+    id: TECH-MC-UD
+    name: "Uncertainty Decomposition"
+    category: meta_cognitive
+    subcategory: uncertainty_management
+    
+    description: |
+      Distinguish types of uncertainty (epistemic, aleatory, model, linguistic)
+      because each requires different responses. Reducible vs. irreducible
+      uncertainty changes strategy.
+    
+    cognitive_advantage: |
+      Humans conflate uncertainty types and respond inappropriately.
+      Claude can decompose and match responses to uncertainty types.
+    
+    applicability:
+      problem_types:
+        - decision_under_uncertainty
+        - risk_assessment
+        - research_planning
+        - strategy_validation
+      
+      triggers:
+        - "what type of uncertainty"
+        - "can we reduce this uncertainty"
+        - "what don't we know"
+        - "decompose the risk"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.90
+      research: 0.95
+      product: 0.80
+      architecture: 0.85
+    
+    parameters:
+      uncertainty_types:
+        description: "Types of uncertainty to identify"
+        type: list
+        default: [epistemic, aleatory, model, linguistic]
+        options:
+          - epistemic             # Knowledge gaps (reducible via research)
+          - aleatory              # Inherent randomness (irreducible)
+          - model                 # Framework limitations
+          - linguistic            # Definition/communication ambiguity
+    
+    domain_configurations:
+      
+      strategy_validation:
+        uncertainty_examples:
+          epistemic:
+            - "What's the market size?" (researchable)
+            - "How will competitors respond?" (partially knowable)
+            - "Can our team execute?" (testable)
+          aleatory:
+            - "Will macro conditions be favorable?" (irreducible)
+            - "Will key person stay?" (random element)
+            - "Will technology work first time?" (inherent variance)
+          model:
+            - "Is our framework for understanding the market correct?"
+            - "Are we measuring the right metrics?"
+            - "Is our theory of change accurate?"
+          linguistic:
+            - "What do we mean by 'success'?"
+            - "What counts as 'product-market fit'?"
+            - "Who is the 'customer'?"
+        
+        response_mapping:
+          epistemic: "Research before deciding; invest in learning"
+          aleatory: "Build robustness; don't try to predict precisely"
+          model: "Test assumptions; consider alternative models"
+          linguistic: "Define terms precisely; ensure alignment"
+    
+    output:
+      format: "uncertainty_decomposition_report"
+      components:
+        - name: "Uncertainty Inventory"
+          structure: |
+            | Uncertainty | Type | Reducible? | How to Reduce/Manage |
+            |-------------|------|------------|---------------------|
+        
+        - name: "Reduction Plan"
+          structure: "For epistemic uncertainties, what research would reduce them"
+        
+        - name: "Robustness Requirements"
+          structure: "For aleatory uncertainties, what robustness is needed"
+        
+        - name: "Model Testing"
+          structure: "For model uncertainties, how to test the framework"
+    
+    synergies:
+      strong:
+        - confidence_calibration    # Both about uncertainty management
+        - expected_value_calculation # Informs probability assignments
+      moderate:
+        - complete_assumption_inventory  # Uncertainties â† assumptions
+    
+    execution:
+      token_overhead: "medium"       # 1-2K tokens
+      typical_duration: "single_pass"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Confidence Calibration
+  # --------------------------------------------------------------------------
+  # NOTE: Full specification in moe-decision-techniques.yaml
+  # Included for completeness in strategy validation workflow
+
+# ============================================================================
+# PHASE 5 TECHNIQUES: DECISION HYGIENE & EXIT CRITERIA
+# ============================================================================
+
+decision_hygiene_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Kill Criteria
+  # --------------------------------------------------------------------------
+  kill_criteria:
+    id: TECH-SD-KC
+    name: "Kill Criteria"
+    category: structured_decomposition
+    subcategory: inversion_negative_thinking
+    
+    description: |
+      Pre-commit to specific, measurable conditions under which to abandon
+      the strategy, regardless of sunk costs. Defined BEFORE emotional
+      investment makes objective judgment difficult.
+    
+    cognitive_advantage: |
+      Sunk cost fallacy is strongest when emotionally invested. Kill criteria
+      defined in advance bypass this by making stopping a commitment, not a decision.
+    
+    applicability:
+      problem_types:
+        - project_planning
+        - strategy_launch
+        - investment_decision
+        - experiment_design
+      
+      triggers:
+        - "when do we stop"
+        - "exit criteria"
+        - "kill criteria"
+        - "pre-commit to stopping"
+        - "avoid sunk cost"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.90
+      operations: 0.85
+      architecture: 0.80
+    
+    parameters:
+      criteria_categories:
+        description: "Categories of kill criteria to define"
+        type: list
+        default: [time, money, assumption, alternative, opportunity]
+        options:
+          - time                  # Time without progress
+          - money                 # Budget threshold
+          - assumption            # Key assumption falsified
+          - alternative           # Better alternative emerges
+          - opportunity           # Opportunity cost threshold
+          - metric                # Key metric fails to improve
+      
+      measurability_requirement:
+        description: "How measurable criteria must be"
+        type: enum
+        options:
+          - qualitative           # Subjective judgment allowed
+          - semi_quantitative     # General thresholds
+          - fully_quantitative    # Specific numbers only
+        default: semi_quantitative
+      
+      review_schedule:
+        description: "How often to check criteria"
+        type: enum
+        options:
+          - weekly
+          - monthly
+          - quarterly
+          - milestone_based
+        default: monthly
+    
+    domain_configurations:
+      
+      strategy:
+        standard_kill_criteria:
+          - category: "time"
+            template: "If no [milestone] achieved after [N] months"
+          - category: "money"
+            template: "If spend exceeds $[X] without [outcome]"
+          - category: "assumption"
+            template: "If [key assumption] is proven false"
+          - category: "alternative"
+            template: "If [specific alternative] becomes available"
+          - category: "metric"
+            template: "If [key metric] doesn't improve by [X%] in [N] months"
+        
+        credibility_requirements:
+          - "Criteria must be specific enough to be unambiguous"
+          - "Someone other than the project lead should verify triggers"
+          - "Explicit override process if criteria met but continuing anyway"
+      
+      product:
+        standard_kill_criteria:
+          - "If user retention below X% after N weeks"
+          - "If CAC exceeds $Y without path to reduction"
+          - "If NPS doesn't improve by X points in N months"
+          - "If key usage metric doesn't reach X after launch"
+    
+    output:
+      format: "kill_criteria_contract"
+      components:
+        - name: "Kill Criteria Specification"
+          structure: |
+            | # | Criterion | Threshold | Rationale | Measurer |
+            |---|-----------|-----------|-----------|----------|
+        
+        - name: "Review Schedule"
+          structure: |
+            | Date | Criteria Check | Who Reviews |
+            |------|---------------|-------------|
+        
+        - name: "Pre-Commitment Statement"
+          structure: "If [criterion] is met, we will [stop/pivot/review], regardless of sunk cost"
+        
+        - name: "Override Process"
+          structure: "To continue despite triggered criterion, must [explicit process]"
+    
+    synergies:
+      strong:
+        - pre_mortem               # Failure modes â†’ kill criteria
+        - complete_assumption_inventory # Critical assumptions â†’ kill criteria
+        - pre_commitment           # Behavioral commitment device
+      moderate:
+        - expected_value_calculation # Thresholds from EV analysis
+    
+    execution:
+      token_overhead: "low-medium"   # 1-2K tokens
+      typical_duration: "single_pass"
+      iteration_pattern: "may_iterate_on_thresholds"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Decision Journal
+  # --------------------------------------------------------------------------
+  decision_journal:
+    id: TECH-SD-DJ
+    name: "Decision Journal"
+    category: structured_decomposition
+    subcategory: decision_hygiene
+    
+    description: |
+      Document the decision at time of making: context, options considered,
+      reasoning, predictions, and confidence. Enables later learning and
+      calibration without hindsight bias.
+    
+    cognitive_advantage: |
+      Hindsight bias reconstructs past reasoning. Written record preserves
+      actual reasoning for honest retrospective analysis.
+    
+    applicability:
+      problem_types:
+        - any_significant_decision
+        - strategy_approval
+        - investment_decision
+        - hiring_decision
+      
+      triggers:
+        - "document this decision"
+        - "record for learning"
+        - "decision journal"
+        - "pre-register prediction"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.90
+      product: 0.85
+      operations: 0.85
+      research: 0.80
+    
+    parameters:
+      detail_level:
+        description: "How detailed the journal entry"
+        type: enum
+        options:
+          - minimal               # Decision + key reasoning
+          - standard              # + options + predictions
+          - comprehensive         # + all evidence + confidence decomposition
+        default: standard
+      
+      prediction_requirement:
+        description: "Whether to require explicit predictions"
+        type: boolean
+        default: true
+        guidance: "Always true for strategy validationâ€”enables calibration"
+    
+    output:
+      format: "decision_journal_entry"
+      components:
+        - name: "Decision Context"
+          structure: |
+            Date: ___
+            Decision: ___
+            Stakes: ___
+            Reversibility: ___
+        
+        - name: "Options Considered"
+          structure: |
+            | Option | Pros | Cons | Why Rejected/Selected |
+            |--------|------|------|----------------------|
+        
+        - name: "Key Reasoning"
+          structure: "Primary reasons for this decision"
+        
+        - name: "Predictions"
+          structure: |
+            Predicted outcome: ___
+            Confidence: ___%
+            What would change mind: ___
+            Expected to learn: ___
+        
+        - name: "Review Template (fill later)"
+          structure: |
+            Actual outcome: ___
+            Prediction accuracy: ___
+            Process quality: Good decision / Bad decision Ã— Good outcome / Bad outcome
+            Lessons: ___
+    
+    synergies:
+      strong:
+        - kill_criteria            # Document stopping conditions
+        - confidence_calibration   # Calibrate predictions over time
+      moderate:
+        - pre_commitment           # Journal as commitment device
+    
+    execution:
+      token_overhead: "low"          # 0.5-1K tokens
+      typical_duration: "instant"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Pre-Commitment
+  # --------------------------------------------------------------------------
+  pre_commitment:
+    id: TECH-SD-PC
+    name: "Pre-Commitment (Ulysses Contract)"
+    category: structured_decomposition
+    subcategory: decision_hygiene
+    
+    description: |
+      Bind future self to criteria and processes defined now, while thinking
+      clearly, to prevent bias and weak-moment decisions later.
+    
+    cognitive_advantage: |
+      Clear-headed present self can protect emotionally-invested future self
+      from sunk cost fallacy and commitment escalation.
+    
+    applicability:
+      problem_types:
+        - strategy_launch
+        - investment_commitment
+        - habit_formation
+        - any_decision_with_future_temptation
+      
+      triggers:
+        - "commit to criteria"
+        - "ulysses contract"
+        - "pre-commit"
+        - "bind future self"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.90
+      product: 0.85
+      operations: 0.85
+    
+    parameters:
+      commitment_type:
+        description: "Type of pre-commitment"
+        type: list
+        default: [criteria, process, accountability]
+        options:
+          - criteria              # Commit to kill criteria
+          - process               # Commit to review process
+          - accountability        # Commit to external accountability
+          - financial             # Commit financial stake
+    
+    output:
+      format: "pre_commitment_contract"
+      components:
+        - name: "Commitment Statement"
+          structure: "I/We commit to [specific action] when [specific trigger]"
+        
+        - name: "Credibility Mechanism"
+          structure: "How to make commitment binding (accountability, process, financial)"
+        
+        - name: "Escape Clause"
+          structure: "Explicit process required to override commitment"
+    
+    synergies:
+      strong:
+        - kill_criteria            # Commit to kill criteria
+        - decision_journal         # Document commitment
+      moderate:
+        - comprehensive_bias_audit # Commit to debiasing process
+    
+    execution:
+      token_overhead: "low"          # 0.5-1K tokens
+      typical_duration: "instant"
+
+# ============================================================================
+# ARCHETYPE COMPOSITION RULES
+# ============================================================================
+
+composition_rules:
+  
+  phase_sequence:
+    description: "Standard Strategy Validation execution sequence"
+    phases:
+      - phase: 1
+        name: "Assumption & Evidence Audit"
+        required_techniques: 1-2
+        technique_options:
+          - complete_assumption_inventory
+          - comprehensive_bias_audit
+          - base_rate_integration
+        selection_guidance: |
+          - complete_assumption_inventory is usually required
+          - Add comprehensive_bias_audit for decisions with high emotional investment
+          - Add base_rate_integration when comparable reference classes exist
+      
+      - phase: 2
+        name: "Failure Mode Analysis"
+        required_techniques: 1-2
+        technique_options:
+          - pre_mortem
+          - inversion_via_negativa
+          - parallel_future_cones
+        selection_guidance: |
+          - pre_mortem is minimum required
+          - Add inversion_via_negativa for goal-oriented strategies
+          - Add parallel_future_cones for high uncertainty decisions
+      
+      - phase: 3
+        name: "Adversarial Stress-Testing"
+        required_techniques: 1-2
+        technique_options:
+          - true_steel_manning
+          - disconfirmation_hunt
+          - wwhtbt
+        selection_guidance: |
+          - At least one of steel_manning or disconfirmation required
+          - Add wwhtbt when there's internal debate about the strategy
+          - Use all three for contested, high-stakes strategies
+      
+      - phase: 4
+        name: "Risk Quantification"
+        required_techniques: 1-2
+        technique_options:
+          - expected_value_calculation
+          - uncertainty_decomposition
+          - confidence_calibration
+        selection_guidance: |
+          - confidence_calibration is minimum required
+          - Add expected_value_calculation for investment decisions
+          - Add uncertainty_decomposition when uncertainty types vary
+      
+      - phase: 5
+        name: "Decision Hygiene & Exit Criteria"
+        required_techniques: 1-2
+        technique_options:
+          - kill_criteria
+          - decision_journal
+          - pre_commitment
+        selection_guidance: |
+          - kill_criteria is strongly recommended
+          - decision_journal for significant decisions worth tracking
+          - pre_commitment when sunk cost risk is high
+  
+  domain_overrides:
+    strategy:
+      - "Always include complete_assumption_inventory"
+      - "Always include pre_mortem"
+      - "Always include expected_value_calculation"
+      - "Steel-man from board/investor perspective"
+    
+    product:
+      - "Include base_rate_integration with product success rates"
+      - "Include parallel_future_cones for launch scenarios"
+      - "Kill criteria focused on user metrics"
+    
+    architecture:
+      - "Include complete_assumption_inventory with technical layers"
+      - "Pre_mortem from ops/security perspectives"
+      - "Kill criteria focused on operational metrics"
+  
+  token_budget_guidance:
+    minimal:    # ~4K tokens
+      phases: [1, 2, 4]
+      techniques: [complete_assumption_inventory, pre_mortem, confidence_calibration]
+    
+    standard:   # ~8K tokens
+      phases: [1, 2, 3, 4, 5]
+      techniques: [complete_assumption_inventory, comprehensive_bias_audit, pre_mortem, true_steel_manning, expected_value_calculation, confidence_calibration, kill_criteria]
+    
+    comprehensive:  # ~15K tokens
+      phases: [1, 2, 3, 4, 5]
+      techniques: [complete_assumption_inventory, comprehensive_bias_audit, base_rate_integration, pre_mortem, inversion_via_negativa, parallel_future_cones, true_steel_manning, disconfirmation_hunt, wwhtbt, expected_value_calculation, uncertainty_decomposition, confidence_calibration, kill_criteria, decision_journal, pre_commitment]
+
+# ============================================================================
+# TECHNIQUE COUNT SUMMARY
+# ============================================================================
+
+summary:
+  archetype: "Strategy Validation"
+  total_high_affinity_techniques: 15
+  by_phase:
+    assumption_evidence_audit: 3
+    failure_mode_analysis: 3
+    adversarial_stress_testing: 3
+    risk_quantification: 3
+    decision_hygiene: 3
+  
+  techniques_detailed:
+    - complete_assumption_inventory
+    - comprehensive_bias_audit
+    - base_rate_integration
+    - pre_mortem
+    - inversion_via_negativa
+    - parallel_future_cones
+    - true_steel_manning
+    - disconfirmation_hunt
+    - wwhtbt
+    - expected_value_calculation
+    - uncertainty_decomposition
+    - confidence_calibration
+    - kill_criteria
+    - decision_journal
+    - pre_commitment
+  
+  overlap_with_moe_decision:
+    shared_techniques:
+      - true_steel_manning
+      - disconfirmation_hunt
+      - confidence_calibration
+    
+    unique_to_strategy_validation:
+      - complete_assumption_inventory
+      - comprehensive_bias_audit
+      - base_rate_integration
+      - pre_mortem
+      - inversion_via_negativa
+      - parallel_future_cones
+      - wwhtbt
+      - expected_value_calculation
+      - uncertainty_decomposition
+      - kill_criteria
+      - decision_journal
+      - pre_commitment

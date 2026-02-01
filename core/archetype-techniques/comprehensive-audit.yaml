@@ -1,0 +1,1741 @@
+# ============================================================================
+# COMPREHENSIVE AUDIT ARCHETYPE: HIGH-AFFINITY TECHNIQUES
+# ============================================================================
+# Version: 1.0
+# Purpose: Detailed technique metadata for Skill Factory skill generation
+# Archetype: Comprehensive Audit (Exhaustive enumeration â†’ Consistency verification â†’ Gap analysis â†’ Remediation)
+# 
+# This file enables the Skill Factory to:
+#   1. Select appropriate techniques based on audit type + document characteristics
+#   2. Configure technique parameters for the specific audit domain
+#   3. Compose techniques into coherent audit workflow
+#   4. Generate domain-specific findings and remediation formats
+#
+# KEY DIFFERENCE FROM MOE-DECISION:
+#   - MoE-Decision: Multiple perspectives â†’ Rank options â†’ Validate winner
+#   - Comprehensive Audit: Enumerate exhaustively â†’ Check consistency â†’ Find gaps â†’ Report findings
+# ============================================================================
+
+archetype:
+  id: ARCH-COMPREHENSIVE-AUDIT
+  name: "Comprehensive Audit"
+  description: "Exhaustive enumeration, consistency verification, gap analysis, and structured findings"
+  version: "1.0"
+  
+  core_pattern:
+    phases:
+      - name: "Scope & Inventory"
+        purpose: "Define audit scope and enumerate all items to verify"
+        technique_categories: [perfect_recall, structured_decomposition]
+        primary_techniques: [completeness_verification, mece_decomposition]
+        
+      - name: "Exhaustive Enumeration"
+        purpose: "Extract and catalog all relevant items without omission"
+        technique_categories: [perfect_recall]
+        primary_techniques: [complete_assumption_inventory, exhaustive_edge_case_enumeration, full_requirement_traceability]
+        
+      - name: "Consistency Verification"
+        purpose: "Check internal consistency and cross-reference validity"
+        technique_categories: [perfect_recall, meta_cognitive]
+        primary_techniques: [full_consistency_matrix, invariant_verification, logical_chain_audit]
+        
+      - name: "Gap Analysis"
+        purpose: "Identify what's missing against reference or standard"
+        technique_categories: [perfect_recall]
+        primary_techniques: [mece_gap_detection, negative_space_analysis, completeness_verification]
+        
+      - name: "Findings & Remediation"
+        purpose: "Synthesize findings with prioritized remediation"
+        technique_categories: [meta_cognitive, structured_decomposition]
+        primary_techniques: [epistemic_status_labeling, prioritized_findings_report]
+  
+  applicable_domains:
+    high_affinity:  # 0.85+
+      - architecture
+      - data_modeling
+      - security
+      - operations
+    moderate_affinity:  # 0.65-0.84
+      - product
+      - research
+    low_affinity:  # <0.65
+      - strategy
+      - content
+  
+  problem_characteristics:
+    ideal:
+      - "Document or artifact to validate against standard"
+      - "Multiple interconnected elements to cross-reference"
+      - "Completeness matters (nothing should be missing)"
+      - "Consistency matters (no contradictions)"
+      - "Compliance or quality gate scenario"
+      - "Due diligence or risk assessment context"
+    poor_fit:
+      - "Creative generation task"
+      - "Option evaluation/ranking needed"
+      - "No reference standard exists"
+      - "Time pressure prevents thorough analysis"
+      - "Low stakes, informal review"
+
+# ============================================================================
+# PHASE 1 TECHNIQUES: SCOPE & INVENTORY
+# ============================================================================
+
+scope_inventory_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: MECE Decomposition
+  # --------------------------------------------------------------------------
+  mece_decomposition:
+    id: TECH-SD-MECE
+    name: "MECE Decomposition"
+    category: structured_decomposition
+    subcategory: structured_planning
+    
+    description: |
+      Decompose the audit scope into Mutually Exclusive, Collectively Exhaustive
+      categories ensuring complete coverage with no overlaps or gaps.
+    
+    cognitive_advantage: |
+      Humans create overlapping categories and miss coverage gaps.
+      Claude can systematically verify MECE properties and identify violations.
+    
+    applicability:
+      problem_types:
+        - audit_scope_definition
+        - coverage_planning
+        - taxonomy_creation
+        - requirement_categorization
+      
+      triggers:
+        - "break this down"
+        - "categorize exhaustively"
+        - "ensure complete coverage"
+        - "no gaps or overlaps"
+      
+      anti_triggers:
+        - "quick overview"
+        - "partial analysis"
+        - "creative brainstorming"
+      
+      stakes_threshold: "any"
+    
+    domain_affinity:
+      architecture: 0.95
+      data_modeling: 0.95
+      security: 0.90
+      operations: 0.90
+      product: 0.85
+      research: 0.80
+    
+    parameters:
+      decomposition_dimensions:
+        description: "Number of dimensions to decompose across"
+        type: integer
+        min: 1
+        max: 4
+        default: 2
+        guidance: |
+          - 1 dimension: Simple categorization
+          - 2 dimensions: Matrix coverage (most common)
+          - 3+ dimensions: Complex audits only (combinatorial explosion)
+      
+      verification_rigor:
+        description: "How rigorously to verify MECE properties"
+        type: enum
+        options:
+          - assertion_only        # State it's MECE
+          - boundary_check        # Verify boundaries don't overlap
+          - exhaustive_proof      # Prove no gaps exist
+        default: boundary_check
+      
+      handle_non_mece:
+        description: "What to do if MECE violation found"
+        type: enum
+        options:
+          - flag_and_continue     # Note violation, proceed
+          - restructure           # Redesign categories
+          - accept_overlap        # Document overlapping items
+        default: flag_and_continue
+    
+    domain_configurations:
+      
+      architecture:
+        typical_dimensions:
+          - name: "Component Type"
+            categories: ["Frontend", "Backend", "Data", "Infrastructure", "Integration"]
+            mece_verification: "Verify every system element maps to exactly one"
+          - name: "Quality Attribute"
+            categories: ["Performance", "Security", "Reliability", "Maintainability", "Scalability"]
+            mece_verification: "Standard NFR categories"
+          - name: "Lifecycle Phase"
+            categories: ["Design", "Build", "Deploy", "Operate", "Retire"]
+            mece_verification: "Every artifact has lifecycle phase"
+      
+      product:
+        typical_dimensions:
+          - name: "User Segment"
+            categories: ["New User", "Active User", "Power User", "Churned User", "Admin"]
+            mece_verification: "Every user in exactly one segment"
+          - name: "Feature Area"
+            categories: ["Onboarding", "Core Workflow", "Collaboration", "Analytics", "Settings"]
+            mece_verification: "Every feature maps to one area"
+          - name: "Requirement Type"
+            categories: ["Functional", "Non-Functional", "Constraint", "Assumption"]
+            mece_verification: "Standard requirement taxonomy"
+      
+      security:
+        typical_dimensions:
+          - name: "Attack Surface"
+            categories: ["Network", "Application", "Data", "Identity", "Physical"]
+            mece_verification: "Every threat vector covered"
+          - name: "Control Type"
+            categories: ["Preventive", "Detective", "Corrective", "Compensating"]
+            mece_verification: "Standard control taxonomy"
+          - name: "Asset Classification"
+            categories: ["Public", "Internal", "Confidential", "Restricted"]
+            mece_verification: "Every data asset classified"
+    
+    output:
+      format: "mece_framework_with_verification"
+      components:
+        - name: "Dimension Definitions"
+          structure: |
+            Dimension 1: [Name]
+            Categories: [A, B, C, D]
+            MECE Verification: [How verified]
+        
+        - name: "Coverage Matrix"
+          structure: |
+            |          | Cat A | Cat B | Cat C | Cat D |
+            |----------|-------|-------|-------|-------|
+            | Dim 2 X  |   âœ“   |   âœ“   |   âœ“   |   âœ“   |
+        
+        - name: "MECE Violations"
+          structure: "Any overlaps or gaps identified"
+    
+    synergies:
+      strong:
+        - mece_gap_detection          # MECE enables gap detection
+        - completeness_verification   # MECE enables completeness check
+      moderate:
+        - full_consistency_matrix     # Categories enable cross-reference
+    
+    execution:
+      token_overhead: "low-medium"
+      typical_duration: "single_pass"
+      iteration_pattern: "may_iterate_if_violations_found"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Completeness Verification (Initial)
+  # --------------------------------------------------------------------------
+  completeness_verification:
+    id: TECH-PR-CV
+    name: "Completeness Verification"
+    category: perfect_recall
+    subcategory: gap_analysis
+    
+    description: |
+      Verify nothing is missing against a reference template, standard, or
+      checklist. Section-by-section and element-by-element verification.
+    
+    cognitive_advantage: |
+      Humans forget checklist items and lose track mid-audit.
+      Claude verifies every item against reference without fatigue.
+    
+    applicability:
+      problem_types:
+        - document_review
+        - compliance_audit
+        - handoff_readiness
+        - quality_gate
+      
+      triggers:
+        - "is this complete"
+        - "verify against standard"
+        - "check all sections"
+        - "audit for completeness"
+        - "readiness review"
+      
+      anti_triggers:
+        - "no reference standard"
+        - "creative review"
+        - "partial check only"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      operations: 0.95
+      security: 0.95
+      architecture: 0.90
+      data_modeling: 0.90
+      product: 0.85
+    
+    parameters:
+      reference_type:
+        description: "What to verify against"
+        type: enum
+        options:
+          - explicit_template       # User provides template
+          - domain_standard         # Use domain's standard template
+          - best_practices          # Industry best practices
+          - custom_checklist        # User-provided checklist
+        default: domain_standard
+      
+      verification_depth:
+        description: "How deeply to verify each item"
+        type: enum
+        options:
+          - presence_only           # Is it there?
+          - presence_and_quality    # Is it there and adequate?
+          - full_evaluation         # Presence, quality, and completeness
+        default: presence_and_quality
+      
+      scoring_model:
+        description: "How to score completeness"
+        type: enum
+        options:
+          - binary                  # Present/Missing
+          - ternary                 # Full/Partial/Missing
+          - percentage              # 0-100%
+        default: ternary
+    
+    domain_configurations:
+      
+      architecture:
+        standard_template:
+          sections:
+            - name: "Context & Goals"
+              required_elements: ["Problem statement", "Business drivers", "Quality attributes", "Constraints"]
+            - name: "Architecture Overview"
+              required_elements: ["System context", "Container view", "Component view", "Deployment view"]
+            - name: "Cross-Cutting Concerns"
+              required_elements: ["Security", "Performance", "Scalability", "Monitoring"]
+            - name: "Decision Records"
+              required_elements: ["Key decisions", "Rationale", "Alternatives considered", "Consequences"]
+            - name: "Risks & Mitigations"
+              required_elements: ["Identified risks", "Mitigation strategies", "Residual risks"]
+      
+      product:
+        standard_template:
+          sections:
+            - name: "Problem & Opportunity"
+              required_elements: ["Problem statement", "Target users", "Success metrics", "Business case"]
+            - name: "Solution"
+              required_elements: ["User stories", "Acceptance criteria", "Wireframes/Mockups", "Technical approach"]
+            - name: "Scope"
+              required_elements: ["In scope", "Out of scope", "Assumptions", "Dependencies"]
+            - name: "Go-to-Market"
+              required_elements: ["Launch plan", "Support plan", "Success criteria"]
+      
+      security:
+        standard_template:
+          sections:
+            - name: "Asset Inventory"
+              required_elements: ["Data classification", "System boundaries", "Third parties"]
+            - name: "Threat Model"
+              required_elements: ["Threat actors", "Attack vectors", "STRIDE analysis"]
+            - name: "Controls"
+              required_elements: ["Preventive controls", "Detective controls", "Response procedures"]
+            - name: "Compliance"
+              required_elements: ["Regulatory requirements", "Control mapping", "Evidence"]
+    
+    output:
+      format: "completeness_scorecard"
+      components:
+        - name: "Section Verification"
+          structure: |
+            | Section | Present? | Complete? | Quality | Notes |
+            |---------|----------|-----------|---------|-------|
+        
+        - name: "Element Verification"
+          structure: |
+            | Required Element | Status | Location | Issues |
+            |------------------|--------|----------|--------|
+        
+        - name: "Completeness Score"
+          structure: |
+            | Dimension | Score | Missing Items |
+            |-----------|-------|---------------|
+            | Structural | X%   | [list]        |
+            | Content    | X%   | [list]        |
+        
+        - name: "Priority Gaps"
+          structure: "Critical / Important / Nice-to-have"
+    
+    synergies:
+      strong:
+        - mece_decomposition          # MECE provides structure
+        - mece_gap_detection          # Gap detection extends completeness
+    
+    execution:
+      token_overhead: "medium"
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+# ============================================================================
+# PHASE 2 TECHNIQUES: EXHAUSTIVE ENUMERATION
+# ============================================================================
+
+exhaustive_enumeration_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Complete Assumption Inventory
+  # --------------------------------------------------------------------------
+  complete_assumption_inventory:
+    id: TECH-PR-CAI
+    name: "Complete Assumption Inventory"
+    category: perfect_recall
+    subcategory: complete_enumeration
+    
+    description: |
+      Surface every assumptionâ€”explicit, implicit, structural, temporal, and
+      environmentalâ€”with risk assessment for each.
+    
+    cognitive_advantage: |
+      Humans have blind spots to their own assumptions.
+      Claude systematically enumerates all assumption layers without ego protection.
+    
+    applicability:
+      problem_types:
+        - strategy_validation
+        - business_case_review
+        - risk_assessment
+        - due_diligence
+        - plan_review
+      
+      triggers:
+        - "what assumptions are we making"
+        - "surface hidden assumptions"
+        - "assumption audit"
+        - "validate assumptions"
+      
+      anti_triggers:
+        - "accept assumptions as given"
+        - "quick review"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.95
+      product: 0.90
+      architecture: 0.85
+      research: 0.90
+      operations: 0.75
+    
+    parameters:
+      assumption_layers:
+        description: "Which assumption layers to enumerate"
+        type: list
+        default: [explicit, implicit, structural, temporal, environmental]
+        options:
+          - explicit             # Stated directly
+          - implicit             # Required but unstated
+          - structural           # About problem framing
+          - temporal             # About timing/sequence
+          - environmental        # About context/world state
+      
+      risk_assessment:
+        description: "Whether to assess risk per assumption"
+        type: boolean
+        default: true
+      
+      validation_priority:
+        description: "How to prioritize which assumptions to validate"
+        type: enum
+        options:
+          - impact_based          # Highest impact first
+          - uncertainty_based     # Most uncertain first
+          - combined              # Impact Ã— Uncertainty
+        default: combined
+    
+    output:
+      format: "assumption_inventory_with_risk"
+      components:
+        - name: "Explicit Assumptions"
+          structure: |
+            | # | Assumption | Location | Evidence Required | Risk if Wrong |
+            |---|------------|----------|-------------------|---------------|
+        
+        - name: "Implicit Assumptions"
+          structure: |
+            | # | Assumption | Inferred From | Evidence Required | Risk if Wrong |
+            |---|------------|---------------|-------------------|---------------|
+        
+        - name: "Structural Assumptions"
+          structure: |
+            | # | Assumption | What It Shapes | Alternative Framing |
+            |---|------------|----------------|---------------------|
+        
+        - name: "Assumption Risk Matrix"
+          structure: |
+                          â”‚ Low Impact â”‚ High Impact â”‚
+            â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+             Likely True  â”‚   Accept   â”‚   Monitor   â”‚
+            â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+             Uncertain    â”‚   Monitor  â”‚  Validate   â”‚
+            â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+             Likely False â”‚   Review   â”‚   STOP      â”‚
+        
+        - name: "Load-Bearing Assumptions"
+          structure: "Top 3-5 assumptions where wrong = plan fails"
+    
+    synergies:
+      strong:
+        - disconfirmation_hunt        # Hunt for evidence against assumptions
+        - full_consistency_matrix     # Check assumptions for consistency
+      moderate:
+        - constraint_propagation      # Assumptions create constraints
+    
+    execution:
+      token_overhead: "medium-high"
+      typical_duration: "single_pass"
+      iteration_pattern: "may_iterate_for_implicit_layer"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Exhaustive Edge Case Enumeration
+  # --------------------------------------------------------------------------
+  exhaustive_edge_case_enumeration:
+    id: TECH-PR-EECE
+    name: "Exhaustive Edge Case Enumeration"
+    category: perfect_recall
+    subcategory: complete_enumeration
+    
+    description: |
+      Systematically enumerate every edge case by identifying input dimensions,
+      boundary conditions, and combinatorial scenarios.
+    
+    cognitive_advantage: |
+      Humans forget edge cases mid-enumeration and prune prematurely.
+      Claude maintains complete list and checks combinatorially.
+    
+    applicability:
+      problem_types:
+        - qa_test_planning
+        - api_design_review
+        - error_handling_audit
+        - security_review
+        - state_machine_validation
+      
+      triggers:
+        - "what are all the edge cases"
+        - "enumerate boundaries"
+        - "test case generation"
+        - "error scenarios"
+        - "what could go wrong"
+      
+      anti_triggers:
+        - "happy path only"
+        - "quick sanity check"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      security: 0.95
+      architecture: 0.90
+      data_modeling: 0.90
+      operations: 0.85
+      product: 0.75
+    
+    parameters:
+      dimension_identification:
+        description: "How to identify input dimensions"
+        type: enum
+        options:
+          - from_specification      # Extract from spec
+          - from_interface          # Extract from API/UI
+          - domain_standard         # Use domain's standard dimensions
+          - user_specified          # User provides dimensions
+        default: from_specification
+      
+      boundary_types:
+        description: "Which boundary types to enumerate"
+        type: list
+        default: [null, minimum, maximum, just_below, just_above, type_mismatch]
+      
+      combinatorial_depth:
+        description: "How many dimensions to combine"
+        type: enum
+        options:
+          - single_dimension        # Each dimension separately
+          - pairwise                # All pairs of dimensions
+          - full_combinatorial      # All combinations (explosion warning)
+        default: pairwise
+      
+      prioritization:
+        description: "How to prioritize edge cases"
+        type: enum
+        options:
+          - criticality             # By severity of failure
+          - likelihood              # By probability of occurrence
+          - combined                # Criticality Ã— Likelihood
+        default: combined
+    
+    domain_configurations:
+      
+      architecture:
+        standard_dimensions:
+          - name: "Load"
+            boundaries: ["zero", "minimal", "normal", "peak", "over-capacity", "sustained_peak"]
+          - name: "Data State"
+            boundaries: ["empty", "single", "few", "many", "maximum", "corrupted"]
+          - name: "Timing"
+            boundaries: ["immediate", "delayed", "timeout", "concurrent", "race_condition"]
+          - name: "Network"
+            boundaries: ["healthy", "degraded", "partitioned", "high_latency", "packet_loss"]
+          - name: "Dependencies"
+            boundaries: ["available", "slow", "unavailable", "returning_errors", "returning_stale"]
+      
+      security:
+        standard_dimensions:
+          - name: "Authentication State"
+            boundaries: ["anonymous", "expired_session", "valid_user", "admin", "compromised_token"]
+          - name: "Input Content"
+            boundaries: ["normal", "empty", "oversized", "malformed", "injection_attempt"]
+          - name: "Rate"
+            boundaries: ["single", "burst", "sustained_high", "ddos_level"]
+          - name: "Origin"
+            boundaries: ["internal", "trusted_external", "unknown_external", "known_malicious"]
+    
+    output:
+      format: "edge_case_catalog"
+      components:
+        - name: "Dimension Inventory"
+          structure: |
+            Dimension: [Name]
+            Values: [list]
+            Boundary Conditions: [list]
+        
+        - name: "Edge Case Matrix"
+          structure: |
+            | D1 | D2 | D3 | Edge Case | Criticality | Handled? |
+            |----|----|----|-----------|-------------|----------|
+        
+        - name: "Prioritized Edge Cases"
+          structure: |
+            CRITICAL (must handle):
+            1. [edge case + expected behavior]
+            
+            HIGH (likely to occur):
+            1. [edge case + expected behavior]
+        
+        - name: "Coverage Summary"
+          structure: "Total: X | Handled: Y | Gaps: Z"
+    
+    synergies:
+      strong:
+        - invariant_verification            # Verify invariants hold at edges
+      moderate:
+        - mece_gap_detection                # Find gaps in coverage
+    
+    execution:
+      token_overhead: "high"               # Combinatorial
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Full Requirement Traceability
+  # --------------------------------------------------------------------------
+  full_requirement_traceability:
+    id: TECH-PR-FRT
+    name: "Full Requirement Traceability"
+    category: perfect_recall
+    subcategory: provenance_tracking
+    
+    description: |
+      Trace every requirement through design, implementation, and testing.
+      Bidirectional tracing catches orphans in both directions.
+    
+    cognitive_advantage: |
+      Humans lose track of requirement chains across artifacts.
+      Claude maintains complete bidirectional mapping.
+    
+    applicability:
+      problem_types:
+        - compliance_audit
+        - scope_validation
+        - change_impact_analysis
+        - test_coverage_audit
+        - implementation_review
+      
+      triggers:
+        - "trace requirements"
+        - "verify implementation coverage"
+        - "find orphan code"
+        - "requirement mapping"
+        - "impact analysis"
+      
+      anti_triggers:
+        - "no requirements documentation"
+        - "greenfield exploration"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      architecture: 0.95
+      product: 0.90
+      security: 0.90
+      operations: 0.85
+      data_modeling: 0.80
+    
+    parameters:
+      tracing_direction:
+        description: "Which directions to trace"
+        type: enum
+        options:
+          - forward_only            # Requirement â†’ Implementation
+          - backward_only           # Implementation â†’ Requirement
+          - bidirectional           # Both directions
+        default: bidirectional
+      
+      artifact_levels:
+        description: "Which artifact levels to include"
+        type: list
+        default: [requirement, design, implementation, test]
+      
+      gap_classification:
+        description: "How to classify traceability gaps"
+        type: enum
+        options:
+          - binary                  # Gap or no gap
+          - severity_based          # Critical/High/Medium/Low
+        default: severity_based
+    
+    output:
+      format: "traceability_matrix"
+      components:
+        - name: "Forward Traceability"
+          structure: |
+            | Req ID | Requirement | Design | Code | Test | Status |
+            |--------|-------------|--------|------|------|--------|
+        
+        - name: "Backward Traceability"
+          structure: |
+            | Code Element | Traces To | Justified? | Orphan? |
+            |--------------|-----------|------------|---------|
+        
+        - name: "Gap Analysis"
+          structure: |
+            Requirements with no implementation: [list]
+            Requirements with no tests: [list]
+            Code with no requirement (gold-plating): [list]
+            Tests with no requirement: [list]
+        
+        - name: "Coverage Metrics"
+          structure: |
+            Requirement coverage: X%
+            Implementation traceability: X%
+            Test coverage: X%
+    
+    synergies:
+      strong:
+        - completeness_verification       # Both about coverage
+        - mece_gap_detection              # Find coverage gaps
+      moderate:
+        - decision_provenance_tracking    # Related provenance
+    
+    execution:
+      token_overhead: "medium-high"
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+# ============================================================================
+# PHASE 3 TECHNIQUES: CONSISTENCY VERIFICATION
+# ============================================================================
+
+consistency_verification_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Full Consistency Matrix
+  # --------------------------------------------------------------------------
+  full_consistency_matrix:
+    id: TECH-PR-FCM
+    name: "Full Consistency Matrix"
+    category: perfect_recall
+    subcategory: exhaustive_cross_reference
+    
+    description: |
+      Check every statement against every other statement for consistency.
+      NÂ² comparison catches contradictions humans miss.
+    
+    cognitive_advantage: |
+      Humans check a few pairs then stop (cognitive fatigue).
+      Claude checks all NÂ² pairs without degradation.
+    
+    applicability:
+      problem_types:
+        - document_review
+        - contract_review
+        - specification_validation
+        - policy_audit
+        - api_contract_verification
+      
+      triggers:
+        - "check for contradictions"
+        - "consistency audit"
+        - "find conflicts"
+        - "internal consistency"
+      
+      anti_triggers:
+        - "single claim to verify"
+        - "quick review"
+        - "<5 claims (matrix overkill)"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      architecture: 0.95
+      data_modeling: 0.95
+      product: 0.85
+      security: 0.85
+      operations: 0.80
+    
+    parameters:
+      claim_extraction:
+        description: "How to extract claims for comparison"
+        type: enum
+        options:
+          - automatic              # Claude extracts claims
+          - semi_automatic         # Claude proposes, user confirms
+          - user_provided          # User provides claim list
+        default: automatic
+      
+      consistency_levels:
+        description: "Granularity of consistency assessment"
+        type: enum
+        options:
+          - binary                 # Consistent or Contradicts
+          - ternary                # Consistent / Tension / Contradicts
+          - detailed               # + Compatible / Neutral
+        default: ternary
+      
+      conflict_resolution:
+        description: "Whether to propose conflict resolutions"
+        type: boolean
+        default: true
+    
+    output:
+      format: "consistency_matrix_with_analysis"
+      components:
+        - name: "Claim Inventory"
+          structure: |
+            | # | Claim | Location | Category |
+            |---|-------|----------|----------|
+        
+        - name: "Consistency Matrix"
+          structure: |
+            |         | C1 | C2 | C3 | C4 |
+            |---------|----|----|----|----|
+            | Claim 1 | â€”  | âœ“  | ?  | âœ—  |
+            | Claim 2 |    | â€”  | âœ“  | âœ“  |
+            
+            âœ“ = Consistent | âœ— = Contradicts | ? = Tension
+        
+        - name: "Contradiction Details"
+          structure: |
+            | Pair | Claim A Says | Claim B Says | Nature | Resolution |
+            |------|--------------|--------------|--------|------------|
+        
+        - name: "Consistency Verdict"
+          structure: |
+            Fully consistent: Yes/No
+            Contradictions: X
+            Tensions: Y
+            Most problematic: [pair]
+    
+    synergies:
+      strong:
+        - logical_chain_audit           # Both about validity
+        - complete_assumption_inventory # Check assumptions for consistency
+      moderate:
+        - invariant_verification        # Related validation
+    
+    execution:
+      token_overhead: "high"             # NÂ² comparisons
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Invariant Verification
+  # --------------------------------------------------------------------------
+  invariant_verification:
+    id: TECH-PR-IV
+    name: "Invariant Verification"
+    category: perfect_recall
+    subcategory: invariant_maintenance
+    
+    description: |
+      Track and verify properties that must always hold true,
+      checking them across all scenarios and states.
+    
+    cognitive_advantage: |
+      Humans forget invariants while checking scenarios.
+      Claude verifies all invariants across all scenarios systematically.
+    
+    applicability:
+      problem_types:
+        - system_design_review
+        - data_model_validation
+        - business_rule_verification
+        - security_review
+        - protocol_verification
+      
+      triggers:
+        - "what must always be true"
+        - "check invariants"
+        - "verify rules hold"
+        - "constraint verification"
+      
+      anti_triggers:
+        - "no invariants defined"
+        - "exploratory analysis"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      data_modeling: 0.95
+      architecture: 0.95
+      security: 0.90
+      operations: 0.85
+    
+    parameters:
+      invariant_types:
+        description: "Types of invariants to verify"
+        type: list
+        default: [safety, business, structural, temporal]
+        options:
+          - safety                # Must never violate (security, data integrity)
+          - business              # Business rules
+          - structural            # System structure constraints
+          - temporal              # Timing/ordering constraints
+      
+      scenario_coverage:
+        description: "How to select scenarios for verification"
+        type: enum
+        options:
+          - provided_scenarios    # User provides scenarios
+          - edge_case_derived     # Derive from edge case enumeration
+          - state_space_sample    # Sample from state space
+        default: edge_case_derived
+      
+      violation_severity:
+        description: "How to classify invariant violations"
+        type: enum
+        options:
+          - binary                # Violated or not
+          - severity_based        # Critical/High/Medium/Low
+        default: severity_based
+    
+    output:
+      format: "invariant_verification_report"
+      components:
+        - name: "Invariant Inventory"
+          structure: |
+            | ID | Invariant | Type | Source | Criticality |
+            |----|-----------|------|--------|-------------|
+        
+        - name: "Verification Matrix"
+          structure: |
+            | Scenario | INV-1 | INV-2 | INV-3 | Overall |
+            |----------|-------|-------|-------|---------|
+            | Normal   |   âœ“   |   âœ“   |   âœ“   |  PASS   |
+            | Edge     |   âœ“   |   âœ—   |   âœ“   |  FAIL   |
+        
+        - name: "Violation Analysis"
+          structure: |
+            INV-X violated in scenario Y:
+            - How: [explanation]
+            - Severity: [level]
+            - Fix: [recommendation]
+        
+        - name: "Invariant Health"
+          structure: |
+            Total invariants: X
+            Verified across all: Y
+            Violations found: Z
+    
+    synergies:
+      strong:
+        - exhaustive_edge_case_enumeration  # Provides scenarios
+        - constraint_propagation_analysis   # Related constraint checking
+      moderate:
+        - full_consistency_matrix           # Both about correctness
+    
+    execution:
+      token_overhead: "medium-high"
+      typical_duration: "single_pass"
+      iteration_pattern: "may_iterate_on_violations"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Logical Chain Audit
+  # --------------------------------------------------------------------------
+  logical_chain_audit:
+    id: TECH-MC-LCA
+    name: "Logical Chain Audit"
+    category: meta_cognitive
+    subcategory: reasoning_chain_analysis
+    
+    description: |
+      Verify each step in a reasoning chain is valid, identifying
+      weakest links and propagating confidence through the chain.
+    
+    cognitive_advantage: |
+      Humans can't trace their own reasoning chains accurately.
+      Claude can make reasoning explicit and audit each step systematically.
+    
+    applicability:
+      problem_types:
+        - argument_evaluation
+        - decision_justification_review
+        - proof_verification
+        - claim_validation
+      
+      triggers:
+        - "check the reasoning"
+        - "is this logic valid"
+        - "verify the argument"
+        - "find logical flaws"
+      
+      anti_triggers:
+        - "no reasoning provided"
+        - "opinion/preference (no logic)"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      research: 0.95
+      strategy: 0.90
+      architecture: 0.85
+      product: 0.80
+    
+    parameters:
+      inference_type_check:
+        description: "Whether to verify inference types match claims"
+        type: boolean
+        default: true
+        guidance: |
+          - Deductive: If premises true, conclusion must be true
+          - Inductive: Premises make conclusion likely
+          - Abductive: Inference to best explanation
+      
+      confidence_propagation:
+        description: "Whether to propagate confidence through chain"
+        type: boolean
+        default: true
+        guidance: "Confidence degrades at each step; long chains = lower confidence"
+      
+      weakest_link_identification:
+        description: "Whether to identify and rank weakest links"
+        type: boolean
+        default: true
+    
+    output:
+      format: "reasoning_chain_audit_report"
+      components:
+        - name: "Chain Decomposition"
+          structure: |
+            | Step | Claim | Type | Depends On | Valid? |
+            |------|-------|------|------------|--------|
+        
+        - name: "Premise Verification"
+          structure: |
+            | Premise | Source | Verified? | Confidence |
+            |---------|--------|-----------|------------|
+        
+        - name: "Weakest Links"
+          structure: |
+            | Rank | Step | Weakness Type | Impact if Wrong |
+            |------|------|---------------|-----------------|
+        
+        - name: "Chain Verdict"
+          structure: |
+            Chain strength: Strong / Moderate / Weak / Broken
+            Final confidence: X%
+            If broken: Fails at step Y because Z
+    
+    synergies:
+      strong:
+        - full_consistency_matrix           # Check premises for consistency
+        - epistemic_status_labeling         # Label confidence levels
+      moderate:
+        - disconfirmation_hunt              # Hunt for counter-evidence
+    
+    execution:
+      token_overhead: "medium"
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Constraint Propagation Analysis
+  # --------------------------------------------------------------------------
+  constraint_propagation_analysis:
+    id: TECH-PR-CPA
+    name: "Constraint Propagation Analysis"
+    category: perfect_recall
+    subcategory: invariant_maintenance
+    
+    description: |
+      Track how constraints cascade through a system, identifying
+      reinforcing constraints, conflicts, and degrees of freedom remaining.
+    
+    cognitive_advantage: |
+      Humans lose track of cascading implications.
+      Claude traces full propagation chain without losing context.
+    
+    applicability:
+      problem_types:
+        - project_planning
+        - architecture_decisions
+        - resource_allocation
+        - negotiation_prep
+        - scope_management
+      
+      triggers:
+        - "what are the implications"
+        - "trace constraints"
+        - "what does this constrain"
+        - "degrees of freedom"
+      
+      anti_triggers:
+        - "no constraints"
+        - "unconstrained exploration"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      architecture: 0.95
+      operations: 0.90
+      product: 0.85
+      strategy: 0.80
+    
+    parameters:
+      propagation_depth:
+        description: "How deep to trace propagation"
+        type: enum
+        options:
+          - immediate_only          # First-level implications
+          - two_levels              # First and second-level
+          - exhaustive              # Full propagation tree
+        default: two_levels
+      
+      interaction_analysis:
+        description: "Whether to analyze constraint interactions"
+        type: boolean
+        default: true
+        guidance: "Identifies reinforcing, conflicting, and tightening constraints"
+      
+      sensitivity_analysis:
+        description: "Whether to analyze constraint sensitivity"
+        type: boolean
+        default: true
+        guidance: "What becomes possible if constraints relaxed"
+    
+    output:
+      format: "constraint_propagation_report"
+      components:
+        - name: "Constraint Inventory"
+          structure: |
+            | ID | Constraint | Type | Source | Hard/Soft |
+            |----|------------|------|--------|-----------|
+        
+        - name: "Propagation Trees"
+          structure: |
+            C001: [Budget â‰¤ $50K]
+              â””â”€â–º Implies: Team size â‰¤ 2
+                    â””â”€â–º Implies: Parallel workstreams â‰¤ 2
+        
+        - name: "Interaction Analysis"
+          structure: |
+            Reinforcing: C001 + C002 both push toward smaller scope
+            Conflicting: C002 (speed) vs C003 (quality)
+            Tightening: C001 tightens C002
+        
+        - name: "Degrees of Freedom"
+          structure: |
+            Fixed (no choice): [list]
+            Constrained (limited): [list]
+            Free (unconstrained): [list]
+    
+    synergies:
+      strong:
+        - complete_assumption_inventory  # Assumptions create constraints
+        - invariant_verification         # Related constraint checking
+    
+    execution:
+      token_overhead: "medium"
+      typical_duration: "single_pass"
+      iteration_pattern: "may_iterate_for_exhaustive"
+
+# ============================================================================
+# PHASE 4 TECHNIQUES: GAP ANALYSIS
+# ============================================================================
+
+gap_analysis_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: MECE Gap Detection
+  # --------------------------------------------------------------------------
+  mece_gap_detection:
+    id: TECH-PR-MGD
+    name: "MECE Gap Detection"
+    category: perfect_recall
+    subcategory: gap_analysis
+    
+    description: |
+      Find gaps using MECE frameworkâ€”systematically identifying missing
+      cells in coverage matrix.
+    
+    cognitive_advantage: |
+      Humans miss gaps in complex matrices and lose track of cells.
+      Claude checks every cell and identifies all gaps.
+    
+    applicability:
+      problem_types:
+        - market_coverage_analysis
+        - feature_matrix_audit
+        - test_coverage_audit
+        - documentation_coverage
+        - requirement_coverage
+      
+      triggers:
+        - "find the gaps"
+        - "what's missing"
+        - "coverage analysis"
+        - "identify blind spots"
+      
+      anti_triggers:
+        - "no MECE framework available"
+        - "non-categorical analysis"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      product: 0.95
+      security: 0.90
+      architecture: 0.90
+      operations: 0.85
+      research: 0.80
+    
+    parameters:
+      gap_classification:
+        description: "How to classify gaps"
+        type: enum
+        options:
+          - binary                  # Gap or no gap
+          - intentional_vs_oversight  # Was gap deliberate?
+          - severity_based          # By impact
+        default: intentional_vs_oversight
+      
+      fill_recommendations:
+        description: "Whether to recommend how to fill gaps"
+        type: boolean
+        default: true
+      
+      priority_scoring:
+        description: "How to prioritize gaps"
+        type: enum
+        options:
+          - impact                  # By business impact
+          - effort                  # By cost to fill
+          - impact_over_effort      # Impact Ã· Effort ratio
+        default: impact_over_effort
+    
+    output:
+      format: "gap_analysis_report"
+      components:
+        - name: "Coverage Matrix"
+          structure: |
+            |          | Seg A | Seg B | Seg C | Seg D |
+            |----------|-------|-------|-------|-------|
+            | Use 1    |   âœ“   |   âœ“   |  GAP  |   âœ“   |
+            | Use 2    |   âœ“   |  GAP  |  GAP  |   âœ“   |
+        
+        - name: "Gap Inventory"
+          structure: |
+            | Gap ID | Dim 1 | Dim 2 | Impact | Priority | Recommendation |
+            |--------|-------|-------|--------|----------|----------------|
+        
+        - name: "Gap Analysis"
+          structure: |
+            GAP G001: [description]
+            - Intentional or oversight?
+            - Impact of gap
+            - Cost to fill
+            - Recommendation: Fill / Accept / Defer
+        
+        - name: "Coverage Summary"
+          structure: |
+            Total cells: X
+            Covered: Y (Z%)
+            Intentional gaps: A
+            Action needed: B
+    
+    synergies:
+      strong:
+        - mece_decomposition              # MECE provides framework
+        - completeness_verification       # Related coverage checking
+      moderate:
+        - negative_space_analysis         # Both about finding missing
+    
+    execution:
+      token_overhead: "medium"
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Negative Space Analysis
+  # --------------------------------------------------------------------------
+  negative_space_analysis:
+    id: TECH-PR-NSA
+    name: "Negative Space Analysis"
+    category: perfect_recall
+    subcategory: gap_analysis
+    
+    description: |
+      Find what's conspicuously absentâ€”topics that should be addressed
+      but aren't mentioned, questions that should be answered but aren't.
+    
+    cognitive_advantage: |
+      Humans focus on what's present; Claude can systematically examine
+      what's absent by comparison to expectations.
+    
+    applicability:
+      problem_types:
+        - document_review
+        - strategy_validation
+        - proposal_evaluation
+        - due_diligence
+        - risk_assessment
+      
+      triggers:
+        - "what's not being said"
+        - "conspicuous absence"
+        - "what should be here"
+        - "missing topics"
+      
+      anti_triggers:
+        - "complete document"
+        - "focused scope (omissions intentional)"
+      
+      stakes_threshold: "medium+"
+    
+    domain_affinity:
+      strategy: 0.90
+      product: 0.85
+      research: 0.90
+      architecture: 0.80
+    
+    parameters:
+      expectation_source:
+        description: "Where to derive expectations of what should be present"
+        type: enum
+        options:
+          - domain_standard           # Domain best practices
+          - comparable_documents      # Similar documents
+          - explicit_reference        # User-provided reference
+          - logical_inference         # Infer from context
+        default: domain_standard
+      
+      absence_types:
+        description: "Types of absences to look for"
+        type: list
+        default: [topics, stakeholders, scenarios, risks, alternatives]
+      
+      significance_threshold:
+        description: "What level of absence to flag"
+        type: enum
+        options:
+          - any_absence               # Flag everything missing
+          - significant_only          # Only important omissions
+          - critical_only             # Only deal-breaker omissions
+        default: significant_only
+    
+    output:
+      format: "negative_space_report"
+      components:
+        - name: "Expected Elements"
+          structure: |
+            | Category | Expected | Present? | Significance |
+            |----------|----------|----------|--------------|
+        
+        - name: "Conspicuous Absences"
+          structure: |
+            | Absence | Why Expected | Why Significant | Interpretation |
+            |---------|--------------|-----------------|----------------|
+        
+        - name: "Interpretation"
+          structure: |
+            Possible explanations for absences:
+            1. Intentional scope limitation
+            2. Oversight
+            3. Avoidance (sensitive topic)
+            4. Assumption (believed obvious)
+        
+        - name: "Questions to Ask"
+          structure: "Questions that the document should answer but doesn't"
+    
+    synergies:
+      strong:
+        - mece_gap_detection              # Both about finding missing
+        - completeness_verification       # Related coverage
+      moderate:
+        - disconfirmation_hunt            # Both about finding problems
+    
+    execution:
+      token_overhead: "medium"
+      typical_duration: "single_pass"
+      iteration_pattern: "rarely_iterates"
+
+# ============================================================================
+# PHASE 5 TECHNIQUES: FINDINGS & REMEDIATION
+# ============================================================================
+
+findings_remediation_techniques:
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Epistemic Status Labeling
+  # --------------------------------------------------------------------------
+  epistemic_status_labeling:
+    id: TECH-MC-ESL
+    name: "Epistemic Status Labeling"
+    category: meta_cognitive
+    subcategory: epistemic_hygiene
+    
+    description: |
+      Label findings with explicit epistemic statusâ€”distinguishing verified
+      facts from inferences, assumptions, and speculation.
+    
+    cognitive_advantage: |
+      Humans conflate certainty levels in communication.
+      Claude can systematically label every claim with appropriate certainty.
+    
+    applicability:
+      problem_types:
+        - audit_reporting
+        - research_synthesis
+        - finding_communication
+        - recommendation_delivery
+      
+      triggers:
+        - "label certainty levels"
+        - "what's fact vs assumption"
+        - "epistemic status"
+        - "confidence levels"
+      
+      anti_triggers:
+        - "informal communication"
+        - "binary yes/no answer"
+      
+      stakes_threshold: "any"
+    
+    domain_affinity:
+      research: 0.95
+      strategy: 0.90
+      architecture: 0.85
+      product: 0.80
+    
+    parameters:
+      label_granularity:
+        description: "Granularity of epistemic labels"
+        type: enum
+        options:
+          - binary                  # Verified / Unverified
+          - ternary                 # Fact / Inference / Speculation
+          - detailed                # + Assumption / Expert opinion / Contested
+        default: ternary
+      
+      inline_vs_table:
+        description: "How to present labels"
+        type: enum
+        options:
+          - inline_markers          # Labels inline with text
+          - summary_table           # Labels in separate table
+          - both                    # Both inline and table
+        default: inline_markers
+    
+    output:
+      format: "labeled_findings"
+      components:
+        - name: "Epistemic Labels Used"
+          structure: |
+            [VERIFIED] - Confirmed by evidence
+            [INFERRED] - Logical inference from evidence
+            [ASSUMED] - Unstated but relied upon
+            [SPECULATIVE] - Possible but unconfirmed
+        
+        - name: "Labeled Findings"
+          structure: |
+            [VERIFIED] The document contains 47 requirements.
+            [INFERRED] Based on phrasing, requirements 12-15 are MVP.
+            [ASSUMED] Timeline assumes no scope changes.
+            [SPECULATIVE] May indicate rushed authoring.
+    
+    synergies:
+      strong:
+        - confidence_calibration          # Related uncertainty handling
+        - logical_chain_audit             # Provides confidence levels
+    
+    execution:
+      token_overhead: "low"
+      typical_duration: "integrated"
+      iteration_pattern: "no_iteration"
+
+  # --------------------------------------------------------------------------
+  # TECHNIQUE: Prioritized Findings Report
+  # --------------------------------------------------------------------------
+  prioritized_findings_report:
+    id: TECH-SD-PFR
+    name: "Prioritized Findings Report"
+    category: structured_decomposition
+    subcategory: communication_structures
+    
+    description: |
+      Structure audit findings with clear prioritization, actionable
+      remediation, and executive-friendly summary.
+    
+    applicability:
+      problem_types:
+        - audit_reporting
+        - compliance_findings
+        - quality_assessment
+        - review_deliverable
+      
+      triggers:
+        - "report findings"
+        - "summarize audit"
+        - "what needs fixing"
+        - "remediation plan"
+      
+      stakes_threshold: "any"
+    
+    domain_affinity:
+      all_domains: 0.90
+    
+    parameters:
+      priority_framework:
+        description: "How to prioritize findings"
+        type: enum
+        options:
+          - severity_based          # Critical/High/Medium/Low
+          - effort_based            # Quick-wins first
+          - risk_based              # Highest risk first
+          - compliance_based        # Regulatory requirements first
+        default: severity_based
+      
+      remediation_detail:
+        description: "How detailed remediation should be"
+        type: enum
+        options:
+          - direction_only          # What to fix
+          - approach_suggested      # How to approach fixing
+          - actionable_steps        # Specific steps to take
+        default: approach_suggested
+      
+      executive_summary:
+        description: "Whether to include executive summary"
+        type: boolean
+        default: true
+    
+    output:
+      format: "audit_findings_report"
+      components:
+        - name: "Executive Summary"
+          structure: |
+            Overall Assessment: [PASS/CONDITIONAL/FAIL]
+            Critical Issues: X
+            High Issues: Y
+            Key Recommendation: [one sentence]
+        
+        - name: "Findings by Priority"
+          structure: |
+            CRITICAL (Blocking):
+            | # | Finding | Impact | Remediation | Effort |
+            
+            HIGH (Major):
+            | # | Finding | Impact | Remediation | Effort |
+            
+            MEDIUM (Moderate):
+            [...]
+            
+            LOW (Minor):
+            [...]
+        
+        - name: "Remediation Roadmap"
+          structure: |
+            Phase 1 (Immediate): Address critical findings
+            Phase 2 (Short-term): Address high findings
+            Phase 3 (Medium-term): Address medium findings
+        
+        - name: "Metrics Summary"
+          structure: |
+            Total findings: X
+            By severity: Critical(A), High(B), Medium(C), Low(D)
+            Estimated remediation effort: Y person-days
+    
+    synergies:
+      strong:
+        - all_audit_techniques          # Receives findings from all
+      moderate:
+        - epistemic_status_labeling     # Labels confidence in findings
+    
+    execution:
+      token_overhead: "medium"
+      typical_duration: "single_pass"
+      iteration_pattern: "no_iteration"
+
+# ============================================================================
+# ARCHETYPE COMPOSITION RULES
+# ============================================================================
+
+composition_rules:
+  
+  phase_sequence:
+    description: "Standard Comprehensive Audit execution sequence"
+    phases:
+      - phase: 1
+        name: "Scope & Inventory"
+        required_techniques: 1-2
+        technique_options:
+          - mece_decomposition
+          - completeness_verification
+        selection_guidance: |
+          - Always start with MECE to structure the audit
+          - Use completeness_verification if reference standard exists
+      
+      - phase: 2
+        name: "Exhaustive Enumeration"
+        required_techniques: 1-3
+        technique_options:
+          - complete_assumption_inventory
+          - exhaustive_edge_case_enumeration
+          - full_requirement_traceability
+        selection_guidance: |
+          - Select based on what needs enumerating
+          - Assumptions: Strategy/business documents
+          - Edge cases: Technical/system documents
+          - Traceability: Specs with requirements
+      
+      - phase: 3
+        name: "Consistency Verification"
+        required_techniques: 1-3
+        technique_options:
+          - full_consistency_matrix
+          - invariant_verification
+          - logical_chain_audit
+          - constraint_propagation_analysis
+        selection_guidance: |
+          - full_consistency_matrix for documents with many claims
+          - invariant_verification for systems/data models
+          - logical_chain_audit for arguments/justifications
+          - constraint_propagation for plans with constraints
+      
+      - phase: 4
+        name: "Gap Analysis"
+        required_techniques: 1-2
+        technique_options:
+          - mece_gap_detection
+          - negative_space_analysis
+        selection_guidance: |
+          - mece_gap_detection for coverage analysis
+          - negative_space_analysis for strategic documents
+          - Often use both for comprehensive audits
+      
+      - phase: 5
+        name: "Findings & Remediation"
+        required_techniques: 1-2
+        technique_options:
+          - epistemic_status_labeling
+          - prioritized_findings_report
+        selection_guidance: |
+          - Always include prioritized_findings_report
+          - Add epistemic_status_labeling for research/strategy
+  
+  audit_type_configurations:
+    
+    architecture_review:
+      description: "Review architecture documentation for completeness and consistency"
+      phase_1: [mece_decomposition, completeness_verification]
+      phase_2: [exhaustive_edge_case_enumeration, full_requirement_traceability]
+      phase_3: [full_consistency_matrix, invariant_verification, constraint_propagation_analysis]
+      phase_4: [mece_gap_detection, negative_space_analysis]
+      phase_5: [prioritized_findings_report]
+      token_estimate: "8-12K"
+    
+    prd_review:
+      description: "Review PRD for completeness, consistency, and gaps"
+      phase_1: [completeness_verification]
+      phase_2: [complete_assumption_inventory, full_requirement_traceability]
+      phase_3: [full_consistency_matrix, logical_chain_audit]
+      phase_4: [mece_gap_detection, negative_space_analysis]
+      phase_5: [epistemic_status_labeling, prioritized_findings_report]
+      token_estimate: "6-10K"
+    
+    security_audit:
+      description: "Security audit of system or documentation"
+      phase_1: [mece_decomposition, completeness_verification]
+      phase_2: [exhaustive_edge_case_enumeration]
+      phase_3: [invariant_verification]
+      phase_4: [mece_gap_detection]
+      phase_5: [prioritized_findings_report]
+      token_estimate: "6-10K"
+    
+    compliance_audit:
+      description: "Compliance audit against regulatory standard"
+      phase_1: [completeness_verification]
+      phase_2: [full_requirement_traceability]
+      phase_3: [invariant_verification]
+      phase_4: [mece_gap_detection]
+      phase_5: [prioritized_findings_report]
+      token_estimate: "5-8K"
+    
+    strategy_validation:
+      description: "Validate strategy document for assumptions and gaps"
+      phase_1: [mece_decomposition]
+      phase_2: [complete_assumption_inventory]
+      phase_3: [logical_chain_audit, constraint_propagation_analysis]
+      phase_4: [negative_space_analysis]
+      phase_5: [epistemic_status_labeling, prioritized_findings_report]
+      token_estimate: "6-10K"
+  
+  token_budget_guidance:
+    minimal:    # ~4K tokens
+      phases: [1, 3, 5]
+      techniques: [completeness_verification, full_consistency_matrix, prioritized_findings_report]
+    
+    standard:   # ~8K tokens
+      phases: [1, 2, 3, 4, 5]
+      techniques: [mece_decomposition, complete_assumption_inventory, full_consistency_matrix, mece_gap_detection, prioritized_findings_report]
+    
+    comprehensive:  # ~15K tokens
+      phases: [1, 2, 3, 4, 5]
+      techniques: [mece_decomposition, completeness_verification, complete_assumption_inventory, exhaustive_edge_case_enumeration, full_requirement_traceability, full_consistency_matrix, invariant_verification, logical_chain_audit, constraint_propagation_analysis, mece_gap_detection, negative_space_analysis, epistemic_status_labeling, prioritized_findings_report]
+
+# ============================================================================
+# TECHNIQUE COUNT SUMMARY
+# ============================================================================
+
+summary:
+  archetype: "Comprehensive Audit"
+  total_high_affinity_techniques: 14
+  by_phase:
+    scope_inventory: 2
+    exhaustive_enumeration: 3
+    consistency_verification: 4
+    gap_analysis: 2
+    findings_remediation: 2
+    supporting: 1  # constraint_propagation
+  
+  techniques_detailed:
+    - mece_decomposition
+    - completeness_verification
+    - complete_assumption_inventory
+    - exhaustive_edge_case_enumeration
+    - full_requirement_traceability
+    - full_consistency_matrix
+    - invariant_verification
+    - logical_chain_audit
+    - constraint_propagation_analysis
+    - mece_gap_detection
+    - negative_space_analysis
+    - epistemic_status_labeling
+    - prioritized_findings_report

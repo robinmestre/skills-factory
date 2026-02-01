@@ -1,0 +1,2186 @@
+# ============================================================================
+# COGNITIVE PROCESS ARCHITECT LOOKUP TABLE
+# ============================================================================
+# Version: 1.0
+# Last Updated: 2026-02-01
+# Purpose: Master routing table for archetype selection, technique composition,
+#          and skill generation in the Skill Factory
+#
+# This file enables Claude Code to:
+#   1. Fast archetype selection via keyword matching
+#   2. Phase-by-phase technique composition with taxonomy IDs
+#   3. Domain-to-archetype routing with confidence scores
+#   4. Anti-pattern detection and prevention
+#   5. Quality attribute enforcement per archetype
+#
+# Design Principles:
+#   - Lookup-first: Optimize for Claude's pattern matching
+#   - Cross-referenced: All technique IDs map to technique-taxonomy.yaml
+#   - Composable: Clear input/output contracts per phase
+#   - Guarded: Anti-patterns prevent common mistakes
+#
+# Related Files:
+#   - core/technique-taxonomy.yaml: 6 categories, ~203 techniques
+#   - core/skill-patterns.yaml: 10 parameterized workflow patterns
+#   - core/artifact-contracts.yaml: 10 standardized I/O schemas
+#   - core/scoring-rubrics.yaml: 8 pluggable scoring algorithms
+#   - core/archetype-techniques/: Detailed technique specifications
+# ============================================================================
+
+version: "1.0"
+last_updated: "2026-02-01"
+total_archetypes: 8
+
+# ============================================================================
+# ARCHETYPE QUICK REFERENCE INDEX
+# ============================================================================
+# Fast lookup for Claude to understand what each archetype does
+
+archetype_index:
+  EVAL:
+    full_name: "Multi-Expert Evaluation"
+    one_liner: "Choose between options via multi-perspective tournament ranking"
+    primary_output: "RANKED-SOLUTION-LIST"
+    token_range: "3-15K"
+    detailed_spec: "core/archetype-techniques/moe-decision.yaml"
+
+  AUDIT:
+    full_name: "Comprehensive Audit"
+    one_liner: "Exhaustive enumeration, consistency verification, and gap analysis"
+    primary_output: "GAP-INVENTORY"
+    token_range: "4-15K"
+    detailed_spec: "core/archetype-techniques/comprehensive-audit.yaml"
+
+  SYNTH:
+    full_name: "Research Synthesis"
+    one_liner: "Consolidate multi-source findings with confidence tiering"
+    primary_output: "Unified Findings with Epistemic Labels"
+    token_range: "4-12K"
+    detailed_spec: "core/archetype-techniques/research-synthesis.yaml"
+
+  VALID:
+    full_name: "Strategy Validation"
+    one_liner: "Stress-test existing strategy via assumption audit and adversarial analysis"
+    primary_output: "RISK-ASSESSMENT"
+    token_range: "4-15K"
+    detailed_spec: "core/archetype-techniques/strategy-validation.yaml"
+
+  XFORM:
+    full_name: "Transform Structure"
+    one_liner: "Convert unstructured input to validated structured output"
+    primary_output: "PROBLEM-STATEMENT or SOLUTION-CANDIDATE"
+    token_range: "1-4K"
+    pattern_reference: "TRANSFORM-STRUCTURE"
+
+  ELICIT:
+    full_name: "Elicit Extract"
+    one_liner: "Adaptive knowledge extraction through structured questioning"
+    primary_output: "PROBLEM-STATEMENT or documented knowledge"
+    token_range: "2-6K"
+    pattern_reference: "ELICIT-EXTRACT"
+
+  GEN:
+    full_name: "Multi-Expert Generation"
+    one_liner: "Expert-informed ideation and diverse solution generation"
+    primary_output: "SOLUTION-CANDIDATES"
+    token_range: "3-8K"
+    pattern_reference: "MOE-GENERATE"
+
+  ORCH:
+    full_name: "Orchestration"
+    one_liner: "Compose and sequence other archetypes into workflows"
+    primary_output: "skill_chain or prompt sequence"
+    token_range: "variable"
+    is_meta: true
+
+# ============================================================================
+# TASK-TO-ARCHETYPE KEYWORD MAPPING
+# ============================================================================
+# Fast lookup: Match task keywords to most appropriate archetype
+# Priority: high_confidence (0.90+) > medium_confidence (0.70-0.89)
+
+keyword_routing:
+
+  EVAL:
+    high_confidence:
+      - "compare options"
+      - "evaluate alternatives"
+      - "which option is best"
+      - "rank these"
+      - "choose between"
+      - "prioritize features"
+      - "decision matrix"
+      - "tournament"
+      - "expert panel"
+      - "tradeoff analysis"
+      - "multi-criteria"
+    medium_confidence:
+      - "multiple options"
+      - "tradeoffs"
+      - "which should we"
+      - "evaluate"
+      - "assess options"
+      - "compare"
+    disambiguation:
+      vs_VALID: "EVAL chooses between options; VALID stress-tests a chosen strategy"
+      vs_AUDIT: "EVAL ranks options; AUDIT checks completeness of a single artifact"
+      vs_GEN: "EVAL ranks existing options; GEN creates new options"
+
+  AUDIT:
+    high_confidence:
+      - "review this document"
+      - "audit for completeness"
+      - "check for contradictions"
+      - "find gaps"
+      - "verify consistency"
+      - "compliance check"
+      - "due diligence"
+      - "quality gate"
+      - "is this complete"
+      - "what's missing"
+      - "requirement traceability"
+    medium_confidence:
+      - "review"
+      - "check"
+      - "validate document"
+      - "find issues"
+      - "verify"
+    disambiguation:
+      vs_SYNTH: "AUDIT checks one artifact; SYNTH consolidates multiple sources"
+      vs_VALID: "AUDIT examines artifacts; VALID stress-tests strategies"
+
+  SYNTH:
+    high_confidence:
+      - "consolidate research"
+      - "synthesize findings"
+      - "reconcile sources"
+      - "combine research"
+      - "multi-source synthesis"
+      - "integrate findings"
+      - "literature review"
+      - "competitive intelligence"
+      - "multiple sources"
+      - "conflicting information"
+    medium_confidence:
+      - "reconcile"
+      - "consolidate"
+      - "merge findings"
+      - "combine"
+    disambiguation:
+      vs_AUDIT: "SYNTH integrates multiple sources; AUDIT reviews one artifact"
+      vs_EVAL: "SYNTH consolidates findings; EVAL ranks options"
+
+  VALID:
+    high_confidence:
+      - "stress test this strategy"
+      - "validate assumptions"
+      - "what could go wrong"
+      - "red team"
+      - "adversarial review"
+      - "pre-mortem"
+      - "challenge this decision"
+      - "kill criteria"
+      - "devil's advocate"
+      - "failure modes"
+    medium_confidence:
+      - "validate"
+      - "test"
+      - "challenge"
+      - "assumptions"
+      - "risks"
+    disambiguation:
+      vs_EVAL: "VALID tests chosen strategy; EVAL compares multiple options"
+      vs_AUDIT: "VALID stress-tests strategy logic; AUDIT checks document completeness"
+
+  XFORM:
+    high_confidence:
+      - "convert to"
+      - "structure this"
+      - "format as"
+      - "extract into"
+      - "parse into"
+      - "JTBD format"
+      - "problem statement"
+      - "transform to"
+      - "normalize"
+    medium_confidence:
+      - "structure"
+      - "format"
+      - "convert"
+      - "extract"
+    disambiguation:
+      vs_ELICIT: "XFORM structures existing input; ELICIT gathers new information"
+      vs_GEN: "XFORM converts formats; GEN creates new content"
+
+  ELICIT:
+    high_confidence:
+      - "gather requirements"
+      - "interview"
+      - "extract knowledge"
+      - "what do you need"
+      - "ask questions"
+      - "requirements gathering"
+      - "discovery"
+      - "clarify requirements"
+      - "understand needs"
+    medium_confidence:
+      - "gather"
+      - "discover"
+      - "understand"
+      - "requirements"
+      - "clarify"
+    disambiguation:
+      vs_XFORM: "ELICIT gathers new info via questions; XFORM structures existing input"
+
+  GEN:
+    high_confidence:
+      - "generate ideas"
+      - "brainstorm"
+      - "ideate"
+      - "create options"
+      - "propose solutions"
+      - "what are the possibilities"
+      - "generate alternatives"
+      - "creative solutions"
+      - "come up with"
+    medium_confidence:
+      - "ideas"
+      - "options"
+      - "possibilities"
+      - "solutions"
+      - "alternatives"
+    disambiguation:
+      vs_EVAL: "GEN creates options; EVAL ranks existing options"
+      vs_XFORM: "GEN creates new content; XFORM converts existing content"
+
+  ORCH:
+    high_confidence:
+      - "run full workflow"
+      - "end-to-end"
+      - "orchestrate"
+      - "pipeline"
+      - "multi-step process"
+      - "skill chain"
+      - "sequence of steps"
+    medium_confidence:
+      - "workflow"
+      - "process"
+      - "pipeline"
+      - "chain"
+    disambiguation:
+      vs_others: "ORCH coordinates multiple archetypes; use single archetype for single-purpose tasks"
+
+# ============================================================================
+# DOMAIN-TO-ARCHETYPE ROUTING MATRIX
+# ============================================================================
+# Given a domain, which archetypes are most applicable?
+# Scores 0.0-1.0 indicate affinity
+
+domain_routing:
+
+  architecture:
+    description: "System architecture, technical design, infrastructure"
+    primary: [EVAL, AUDIT]
+    secondary: [VALID, SYNTH]
+    rarely: [ELICIT, GEN]
+    scores:
+      EVAL: 0.90
+      AUDIT: 0.95
+      SYNTH: 0.70
+      VALID: 0.85
+      XFORM: 0.65
+      ELICIT: 0.60
+      GEN: 0.75
+      ORCH: 0.80
+
+  product:
+    description: "Product management, feature development, UX"
+    primary: [EVAL, GEN]
+    secondary: [VALID, AUDIT, ELICIT]
+    rarely: [SYNTH]
+    scores:
+      EVAL: 0.90
+      AUDIT: 0.80
+      SYNTH: 0.70
+      VALID: 0.85
+      XFORM: 0.75
+      ELICIT: 0.85
+      GEN: 0.90
+      ORCH: 0.80
+
+  strategy:
+    description: "Business strategy, competitive analysis, planning"
+    primary: [EVAL, VALID]
+    secondary: [SYNTH, GEN]
+    rarely: [AUDIT, XFORM]
+    scores:
+      EVAL: 0.95
+      AUDIT: 0.65
+      SYNTH: 0.85
+      VALID: 0.95
+      XFORM: 0.55
+      ELICIT: 0.70
+      GEN: 0.80
+      ORCH: 0.85
+
+  research:
+    description: "Market research, user research, competitive intelligence"
+    primary: [SYNTH, ELICIT]
+    secondary: [AUDIT, VALID]
+    rarely: [EVAL, GEN]
+    scores:
+      EVAL: 0.70
+      AUDIT: 0.75
+      SYNTH: 0.95
+      VALID: 0.80
+      XFORM: 0.70
+      ELICIT: 0.90
+      GEN: 0.65
+      ORCH: 0.75
+
+  security:
+    description: "Security analysis, threat modeling, compliance"
+    primary: [AUDIT, VALID]
+    secondary: [EVAL]
+    rarely: [GEN, ELICIT, SYNTH]
+    scores:
+      EVAL: 0.80
+      AUDIT: 0.95
+      SYNTH: 0.70
+      VALID: 0.85
+      XFORM: 0.60
+      ELICIT: 0.55
+      GEN: 0.60
+      ORCH: 0.75
+
+  data_modeling:
+    description: "Database design, data architecture, schema validation"
+    primary: [AUDIT]
+    secondary: [XFORM, EVAL]
+    rarely: [GEN, SYNTH, VALID]
+    scores:
+      EVAL: 0.70
+      AUDIT: 0.95
+      SYNTH: 0.55
+      VALID: 0.60
+      XFORM: 0.80
+      ELICIT: 0.65
+      GEN: 0.50
+      ORCH: 0.70
+
+  operations:
+    description: "DevOps, SRE, operational excellence"
+    primary: [AUDIT, VALID]
+    secondary: [XFORM, ORCH]
+    rarely: [GEN, SYNTH]
+    scores:
+      EVAL: 0.75
+      AUDIT: 0.90
+      SYNTH: 0.60
+      VALID: 0.80
+      XFORM: 0.80
+      ELICIT: 0.70
+      GEN: 0.55
+      ORCH: 0.85
+
+  content:
+    description: "Documentation, content creation, communication"
+    primary: [XFORM, GEN]
+    secondary: [AUDIT]
+    rarely: [EVAL, VALID, SYNTH]
+    scores:
+      EVAL: 0.50
+      AUDIT: 0.70
+      SYNTH: 0.55
+      VALID: 0.45
+      XFORM: 0.85
+      ELICIT: 0.60
+      GEN: 0.80
+      ORCH: 0.65
+
+# ============================================================================
+# ARCHETYPE DEFINITIONS
+# ============================================================================
+
+archetypes:
+
+  # ==========================================================================
+  # ARCHETYPE: EVAL (Multi-Expert Evaluation)
+  # ==========================================================================
+  EVAL:
+    id: ARCH-EVAL
+    name: "Multi-Expert Evaluation"
+    pattern_reference: "MOE-EVALUATE"
+    detailed_spec: "core/archetype-techniques/moe-decision.yaml"
+
+    purpose: |
+      Choose the best option from multiple alternatives using multi-perspective
+      expert panel deliberation, pairwise tournament ranking, and optional
+      adversarial validation. Produces ranked recommendations with confidence.
+
+    distinction: |
+      EVAL vs VALID: EVAL compares and ranks multiple options to find the best.
+                     VALID stress-tests a single chosen strategy for weaknesses.
+      EVAL vs AUDIT: EVAL evaluates options for decision-making.
+                     AUDIT checks a single artifact for completeness and consistency.
+      EVAL vs GEN:   EVAL ranks existing options.
+                     GEN creates new options.
+
+    ideal_for:
+      - "Choosing between 2-8 viable options"
+      - "Multi-stakeholder decision with competing priorities"
+      - "High-stakes, difficult-to-reverse decisions"
+      - "Subjective judgment required (no objective answer)"
+
+    avoid_when:
+      - "Single obvious answer exists"
+      - "Purely factual/deterministic question"
+      - "More than 10 options (use TOURNAMENT-RANK pattern first)"
+      - "Need to validate strategy, not choose (use VALID)"
+
+    input_contracts:
+      primary: "SOLUTION-CANDIDATES"
+      secondary: ["PROBLEM-STATEMENT"]
+      optional: ["SOLUTION-TAXONOMY"]
+
+    output_contracts:
+      primary: "RANKED-SOLUTION-LIST"
+      secondary: ["EVALUATION-MATRIX", "EXPERT-OPINION"]
+      optional: ["RISK-ASSESSMENT"]
+
+    scoring_rubrics:
+      primary: "BRADLEY-TERRY"
+      alternatives: ["ELO", "WEIGHTED-SUM"]
+      selection_logic: |
+        IF comparison_depth = minimal THEN ELO
+        IF need confidence intervals THEN BRADLEY-TERRY
+        IF criteria-based evaluation THEN WEIGHTED-SUM
+
+    embedded_techniques:
+      perspective_generation:
+        - technique_id: "TECH-PP-MPS"
+          technique_name: "multi_persona_simulation"
+          taxonomy_category: "CAT-PP"
+          taxonomy_subcategory: "CAT-PP-MFS"
+          when_to_use: "When multiple stakeholder perspectives matter"
+          required: true
+
+        - technique_id: "TECH-PP-MLA"
+          technique_name: "multi_lens_analysis"
+          taxonomy_category: "CAT-PP"
+          taxonomy_subcategory: "CAT-PP-MFS"
+          when_to_use: "When multiple frameworks could apply"
+          required: false
+
+        - technique_id: "TECH-PP-MCO"
+          technique_name: "multi_criteria_optimization"
+          taxonomy_category: "CAT-PP"
+          taxonomy_subcategory: "CAT-PP-DP"
+          when_to_use: "When explicit criteria weighting needed"
+          required: false
+
+      tournament_ranking:
+        - technique_id: "TECH-TOURN-PW"
+          technique_name: "pairwise_tournament"
+          taxonomy_category: "CAT-MC"
+          taxonomy_subcategory: "CAT-MC-MS"
+          when_to_use: "Always for ranking options"
+          required: true
+
+        - technique_id: "TECH-TOURN-BT"
+          technique_name: "bradley_terry_aggregation"
+          taxonomy_category: "CAT-PROB"
+          taxonomy_subcategory: "CAT-PROB-CQ"
+          when_to_use: "When confidence intervals needed"
+          required: true
+
+      adversarial_validation:
+        - technique_id: "TECH-UR-TSM"
+          technique_name: "true_steel_manning"
+          taxonomy_category: "CAT-UR"
+          taxonomy_subcategory: "CAT-UR-GAT"
+          when_to_use: "For high-stakes decisions"
+          required: false
+
+        - technique_id: "TECH-UR-ACS"
+          technique_name: "adversarial_collaboration"
+          taxonomy_category: "CAT-UR"
+          taxonomy_subcategory: "CAT-UR-GAT"
+          when_to_use: "When deep debate needed"
+          required: false
+
+        - technique_id: "TECH-UR-DH"
+          technique_name: "disconfirmation_hunt"
+          taxonomy_category: "CAT-UR"
+          taxonomy_subcategory: "CAT-UR-BDM"
+          when_to_use: "When evidence base uncertain"
+          required: false
+
+      synthesis:
+        - technique_id: "TECH-MC-CC"
+          technique_name: "confidence_calibration"
+          taxonomy_category: "CAT-MC"
+          taxonomy_subcategory: "CAT-MC-UM"
+          when_to_use: "Always for final recommendation"
+          required: true
+
+        - technique_id: "TECH-SD-SCQA"
+          technique_name: "scqa_communication"
+          taxonomy_category: "CAT-SD"
+          taxonomy_subcategory: "CAT-SD-CS"
+          when_to_use: "For executive audiences"
+          required: false
+
+    phases:
+      - phase: 1
+        name: "Expert Panel Assembly"
+        purpose: "Select and instantiate relevant expert personas"
+        techniques: ["multi_persona_simulation"]
+        quality_gate: "3-5 experts with orthogonal jurisdictions"
+
+      - phase: 2
+        name: "Perspective Collection"
+        purpose: "Each expert evaluates all options from their lens"
+        techniques: ["multi_lens_analysis", "multi_criteria_optimization"]
+        quality_gate: "Every option evaluated by every expert"
+        output_artifact: "EVALUATION-MATRIX"
+
+      - phase: 3
+        name: "Tournament Ranking"
+        purpose: "Pairwise comparison to produce robust ranking"
+        techniques: ["pairwise_tournament", "bradley_terry_aggregation"]
+        quality_gate: "Position bias checked; 3x pairs minimum"
+        output_artifact: "COMPARISON-PAIR (multiple)"
+
+      - phase: 4
+        name: "Adversarial Validation"
+        purpose: "Stress-test the top 1-2 options"
+        optional: true
+        techniques: ["true_steel_manning", "disconfirmation_hunt"]
+        quality_gate: "At least 3 substantive challenges addressed"
+        output_artifact: "RISK-ASSESSMENT"
+
+      - phase: 5
+        name: "Synthesis & Recommendation"
+        purpose: "Integrate findings into actionable recommendation"
+        techniques: ["confidence_calibration", "scqa_communication"]
+        quality_gate: "Confidence tiers assigned; key assumption stated"
+        output_artifact: "RANKED-SOLUTION-LIST"
+
+    domain_configurations:
+      architecture:
+        expert_panel:
+          - { name: "Security Architect", focus: "Attack surface, compliance, data protection" }
+          - { name: "Platform Engineer", focus: "Operability, scalability, maintainability" }
+          - { name: "Developer Experience", focus: "API usability, documentation, onboarding" }
+          - { name: "Cost Optimizer", focus: "Resource efficiency, TCO" }
+          - { name: "Business Stakeholder", focus: "Time to market, competitive positioning" }
+        criteria:
+          - { name: "Scalability", weight: 0.20, definition: "Ability to handle 10x load" }
+          - { name: "Maintainability", weight: 0.20, definition: "Ease of understanding and modifying" }
+          - { name: "Security", weight: 0.20, definition: "Attack surface, compliance" }
+          - { name: "Cost Efficiency", weight: 0.15, definition: "TCO including operations" }
+          - { name: "Time to Implement", weight: 0.15, definition: "Development effort" }
+          - { name: "Reversibility", weight: 0.10, definition: "Cost to change direction" }
+        include_adversarial: true
+
+      product:
+        expert_panel:
+          - { name: "Power User", focus: "Advanced features, customization, efficiency" }
+          - { name: "Casual User", focus: "Simplicity, immediate value, low friction" }
+          - { name: "Enterprise Buyer", focus: "Risk, compliance, support, integration" }
+          - { name: "Churned User", focus: "Pain points that caused departure" }
+        criteria:
+          - { name: "User Value", weight: 0.25, definition: "Impact on user goals" }
+          - { name: "Business Value", weight: 0.20, definition: "Revenue/retention impact" }
+          - { name: "Feasibility", weight: 0.20, definition: "Technical difficulty" }
+          - { name: "Speed to Market", weight: 0.15, definition: "Time to launch" }
+          - { name: "Strategic Alignment", weight: 0.10, definition: "Fit with vision" }
+          - { name: "Risk", weight: 0.10, definition: "Probability and impact of failure" }
+        include_adversarial: false
+
+      strategy:
+        expert_panel:
+          - { name: "Board Member", focus: "Fiduciary duty, long-term value, governance" }
+          - { name: "Investor", focus: "Growth metrics, competitive moat, exit potential" }
+          - { name: "Employee", focus: "Job security, growth opportunity, mission" }
+          - { name: "Customer", focus: "Value delivery, relationship continuity" }
+          - { name: "Competitor", focus: "Competitive dynamics, market positioning" }
+        include_adversarial: true
+        adversarial_iterations: 4
+
+    anti_patterns:
+      - pattern: "Expert echo chamber"
+        symptom: "All experts agree completely"
+        cause: "Experts too similar or jurisdictions overlapping"
+        fix: "Add adversarial expert or check for homogeneity"
+        prevention: "Ensure expert jurisdictions are orthogonal"
+
+      - pattern: "Scope creep"
+        symptom: "Experts opining outside jurisdiction"
+        cause: "Jurisdiction boundaries not enforced"
+        fix: "Explicitly bound each expert's scope"
+        prevention: "Define in_scope and out_of_scope per expert"
+
+      - pattern: "Tournament without calibration"
+        symptom: "Rankings without confidence intervals"
+        cause: "Skipped Bradley-Terry aggregation"
+        fix: "Use Bradley-Terry for statistical grounding"
+        prevention: "Always include bradley_terry_aggregation"
+
+      - pattern: "Position bias unmitigated"
+        symptom: "First option always wins close comparisons"
+        cause: "No position swapping in pairwise comparisons"
+        fix: "Run swapped comparison for close results"
+        prevention: "Enable position_swap parameter (default: true)"
+
+      - pattern: "Options overload"
+        symptom: "More than 10 options creating combinatorial explosion"
+        cause: "Trying to evaluate too many options at once"
+        fix: "Use TOURNAMENT-RANK pattern first to filter to top 5"
+        prevention: "Check option count before starting"
+
+    quality_attributes:
+      mandatory:
+        - "Each expert provides distinct perspective (no overlap)"
+        - "Every option evaluated by every expert"
+        - "Position bias checked for close comparisons"
+        - "Confidence tiers assigned to final rankings"
+      recommended:
+        - "Pareto analysis identifies non-dominated options"
+        - "Sensitivity analysis shows what would flip winner"
+        - "Adversarial validation on top 2 options"
+        - "Key differentiating assumptions stated"
+
+    token_budgets:
+      minimal:
+        estimate: "3-4K"
+        techniques: ["multi_persona_simulation", "pairwise_tournament", "confidence_calibration"]
+        phases: [1, 3, 5]
+      standard:
+        estimate: "6-8K"
+        techniques: ["multi_persona_simulation", "multi_criteria_optimization", "pairwise_tournament", "bradley_terry_aggregation", "true_steel_manning", "confidence_calibration"]
+        phases: [1, 2, 3, 4, 5]
+      comprehensive:
+        estimate: "10-15K"
+        techniques: ["multi_persona_simulation", "multi_lens_analysis", "multi_criteria_optimization", "pairwise_tournament", "bradley_terry_aggregation", "true_steel_manning", "adversarial_collaboration", "disconfirmation_hunt", "confidence_calibration", "scqa_communication"]
+        phases: [1, 2, 3, 4, 5]
+
+    composition:
+      chains_well_with:
+        - { archetype: "VALID", synergy: 5, purpose: "Stress-test the winner after selection" }
+        - { archetype: "AUDIT", synergy: 4, purpose: "Verify winner addresses all requirements" }
+      can_follow:
+        - { archetype: "GEN", synergy: 5, purpose: "Generate options, then evaluate" }
+        - { archetype: "SYNTH", synergy: 5, purpose: "Synthesize research, then evaluate implications" }
+        - { archetype: "ELICIT", synergy: 4, purpose: "Gather requirements, then evaluate solutions" }
+      anti_composition:
+        - { archetype: "EVAL", reason: "Recursion without new information" }
+
+  # ==========================================================================
+  # ARCHETYPE: AUDIT (Comprehensive Audit)
+  # ==========================================================================
+  AUDIT:
+    id: ARCH-AUDIT
+    name: "Comprehensive Audit"
+    pattern_reference: "MOE-AUDIT, GAP-AUDIT"
+    detailed_spec: "core/archetype-techniques/comprehensive-audit.yaml"
+
+    purpose: |
+      Exhaustively enumerate, verify consistency, identify gaps, and produce
+      prioritized findings with remediation for a single artifact or document.
+      Answers: "Is this complete? Is it consistent? What's missing?"
+
+    distinction: |
+      AUDIT vs EVAL: AUDIT examines one artifact for quality/completeness.
+                     EVAL compares multiple options to select the best.
+      AUDIT vs SYNTH: AUDIT reviews a single artifact.
+                      SYNTH consolidates multiple sources into unified findings.
+      AUDIT vs VALID: AUDIT checks artifact completeness and consistency.
+                      VALID stress-tests strategy/decision logic for weaknesses.
+
+    ideal_for:
+      - "Document review before handoff (PRD, spec, architecture)"
+      - "Compliance or quality gate verification"
+      - "Due diligence on artifact quality"
+      - "Finding contradictions or gaps in documentation"
+
+    avoid_when:
+      - "Need to compare multiple options (use EVAL)"
+      - "Need to consolidate multiple sources (use SYNTH)"
+      - "Need to stress-test strategy logic (use VALID)"
+      - "No reference standard exists"
+
+    input_contracts:
+      primary: "document or artifact"
+      secondary: ["reference_standard", "checklist"]
+      optional: ["PROBLEM-STATEMENT"]
+
+    output_contracts:
+      primary: "GAP-INVENTORY"
+      secondary: ["EXPERT-OPINION"]
+
+    scoring_rubrics:
+      primary: "SEVERITY-SCORING"
+      alternatives: []
+
+    embedded_techniques:
+      scope_inventory:
+        - technique_id: "TECH-SD-MECE"
+          technique_name: "mece_decomposition"
+          taxonomy_category: "CAT-SD"
+          taxonomy_subcategory: "CAT-SD-SP"
+          when_to_use: "Always to structure the audit scope"
+          required: true
+
+        - technique_id: "TECH-PR-CV"
+          technique_name: "completeness_verification"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-GA"
+          when_to_use: "When reference standard exists"
+          required: false
+
+      exhaustive_enumeration:
+        - technique_id: "TECH-PR-CAI"
+          technique_name: "complete_assumption_inventory"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-CE"
+          when_to_use: "For strategy/business documents"
+          required: false
+
+        - technique_id: "TECH-PR-EECE"
+          technique_name: "exhaustive_edge_case_enumeration"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-CE"
+          when_to_use: "For technical/system documents"
+          required: false
+
+        - technique_id: "TECH-PR-FRT"
+          technique_name: "full_requirement_traceability"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-PT"
+          when_to_use: "For specs with requirements"
+          required: false
+
+      consistency_verification:
+        - technique_id: "TECH-PR-FCM"
+          technique_name: "full_consistency_matrix"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-ECR"
+          when_to_use: "For documents with many claims"
+          required: true
+
+        - technique_id: "TECH-PR-IV"
+          technique_name: "invariant_verification"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-IM"
+          when_to_use: "For systems/data models"
+          required: false
+
+        - technique_id: "TECH-MC-LCA"
+          technique_name: "logical_chain_audit"
+          taxonomy_category: "CAT-MC"
+          taxonomy_subcategory: "CAT-MC-RCA"
+          when_to_use: "For arguments/justifications"
+          required: false
+
+        - technique_id: "TECH-PR-CPA"
+          technique_name: "constraint_propagation_analysis"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-IM"
+          when_to_use: "For plans with constraints"
+          required: false
+
+      gap_analysis:
+        - technique_id: "TECH-PR-MGD"
+          technique_name: "mece_gap_detection"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-GA"
+          when_to_use: "Always for gap analysis"
+          required: true
+
+        - technique_id: "TECH-PR-NSA"
+          technique_name: "negative_space_analysis"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-GA"
+          when_to_use: "For strategic documents"
+          required: false
+
+      findings_remediation:
+        - technique_id: "TECH-MC-ESL"
+          technique_name: "epistemic_status_labeling"
+          taxonomy_category: "CAT-MC"
+          taxonomy_subcategory: "CAT-MC-EH"
+          when_to_use: "For research/strategy audits"
+          required: false
+
+        - technique_id: "TECH-SD-PFR"
+          technique_name: "prioritized_findings_report"
+          taxonomy_category: "CAT-SD"
+          taxonomy_subcategory: "CAT-SD-CS"
+          when_to_use: "Always for final output"
+          required: true
+
+    phases:
+      - phase: 1
+        name: "Scope & Inventory"
+        purpose: "Define audit scope and structure enumeration"
+        techniques: ["mece_decomposition", "completeness_verification"]
+        quality_gate: "MECE framework verified; all sections identified"
+
+      - phase: 2
+        name: "Exhaustive Enumeration"
+        purpose: "Extract and catalog all relevant items"
+        techniques: ["complete_assumption_inventory", "exhaustive_edge_case_enumeration", "full_requirement_traceability"]
+        selection_logic: |
+          Use assumption_inventory for strategy/business docs
+          Use edge_case_enumeration for technical/system docs
+          Use requirement_traceability for specs with requirements
+        quality_gate: "All items cataloged without omission"
+
+      - phase: 3
+        name: "Consistency Verification"
+        purpose: "Check internal consistency and cross-reference validity"
+        techniques: ["full_consistency_matrix", "invariant_verification", "logical_chain_audit", "constraint_propagation_analysis"]
+        quality_gate: "All contradictions identified; consistency score computed"
+
+      - phase: 4
+        name: "Gap Analysis"
+        purpose: "Identify what's missing against reference"
+        techniques: ["mece_gap_detection", "negative_space_analysis"]
+        quality_gate: "All gaps classified and prioritized"
+
+      - phase: 5
+        name: "Findings & Remediation"
+        purpose: "Synthesize findings with prioritized remediation"
+        techniques: ["epistemic_status_labeling", "prioritized_findings_report"]
+        quality_gate: "All findings severity-classified; remediation prioritized"
+        output_artifact: "GAP-INVENTORY"
+
+    domain_configurations:
+      architecture:
+        standard_template:
+          sections:
+            - { name: "Context & Goals", required: ["Problem statement", "Quality attributes", "Constraints"] }
+            - { name: "Architecture Overview", required: ["System context", "Container view", "Component view", "Deployment view"] }
+            - { name: "Cross-Cutting Concerns", required: ["Security", "Performance", "Scalability", "Monitoring"] }
+            - { name: "Decision Records", required: ["Key decisions", "Rationale", "Alternatives considered"] }
+            - { name: "Risks & Mitigations", required: ["Identified risks", "Mitigation strategies"] }
+        techniques_emphasis: ["exhaustive_edge_case_enumeration", "invariant_verification", "constraint_propagation_analysis"]
+
+      product:
+        standard_template:
+          sections:
+            - { name: "Problem & Opportunity", required: ["Problem statement", "Target users", "Success metrics", "Business case"] }
+            - { name: "Solution", required: ["User stories", "Acceptance criteria", "Wireframes/Mockups", "Technical approach"] }
+            - { name: "Scope", required: ["In scope", "Out of scope", "Assumptions", "Dependencies"] }
+            - { name: "Go-to-Market", required: ["Launch plan", "Support plan", "Success criteria"] }
+        techniques_emphasis: ["complete_assumption_inventory", "logical_chain_audit"]
+
+      security:
+        standard_template:
+          sections:
+            - { name: "Asset Inventory", required: ["Data classification", "System boundaries", "Third parties"] }
+            - { name: "Threat Model", required: ["Threat actors", "Attack vectors", "STRIDE analysis"] }
+            - { name: "Controls", required: ["Preventive controls", "Detective controls", "Response procedures"] }
+            - { name: "Compliance", required: ["Regulatory requirements", "Control mapping", "Evidence"] }
+        techniques_emphasis: ["exhaustive_edge_case_enumeration", "invariant_verification"]
+
+      data_modeling:
+        standard_template:
+          sections:
+            - { name: "Schema Definition", required: ["Entity definitions", "Relationships", "Constraints"] }
+            - { name: "Data Quality", required: ["Validation rules", "Referential integrity", "Normalization level"] }
+            - { name: "Access Control", required: ["Permissions", "Audit trail", "PII handling"] }
+        techniques_emphasis: ["invariant_verification", "full_consistency_matrix"]
+
+    anti_patterns:
+      - pattern: "Checklist without understanding"
+        symptom: "Superficial presence checks without quality assessment"
+        cause: "Using presence_only verification when quality matters"
+        fix: "Use presence_and_quality or full_evaluation depth"
+        prevention: "Match verification_depth to audit stakes"
+
+      - pattern: "Consistency overload"
+        symptom: "N×N matrix for document with 100+ claims"
+        cause: "Applying full_consistency_matrix to too large a scope"
+        fix: "Partition claims into groups; cross-reference key claims only"
+        prevention: "Check claim count before selecting techniques"
+
+      - pattern: "Gap analysis without reference"
+        symptom: "Unable to determine what's missing without standard"
+        cause: "No explicit reference template or checklist"
+        fix: "Use domain_standard reference or have user provide checklist"
+        prevention: "Verify reference standard exists before gap analysis"
+
+      - pattern: "All findings critical"
+        symptom: "Every gap marked as critical, losing signal"
+        cause: "No severity discrimination applied"
+        fix: "Use SEVERITY-SCORING rubric with domain-appropriate thresholds"
+        prevention: "Always include severity classification in findings"
+
+      - pattern: "Enumeration without scope"
+        symptom: "Unbounded enumeration consuming all context"
+        cause: "Skipped MECE decomposition to bound scope"
+        fix: "Always start with MECE to structure enumeration"
+        prevention: "Phase 1 (MECE) is mandatory"
+
+    quality_attributes:
+      mandatory:
+        - "MECE framework verified (no overlaps, no gaps in structure)"
+        - "All claims cross-referenced for consistency"
+        - "All gaps classified by severity"
+        - "Remediation prioritized by severity/effort"
+      recommended:
+        - "Bidirectional traceability for specs"
+        - "Invariant verification for system designs"
+        - "Negative space analysis for strategic documents"
+
+    token_budgets:
+      minimal:
+        estimate: "4K"
+        techniques: ["completeness_verification", "full_consistency_matrix", "prioritized_findings_report"]
+        phases: [1, 3, 5]
+      standard:
+        estimate: "8K"
+        techniques: ["mece_decomposition", "complete_assumption_inventory", "full_consistency_matrix", "mece_gap_detection", "prioritized_findings_report"]
+        phases: [1, 2, 3, 4, 5]
+      comprehensive:
+        estimate: "15K"
+        techniques: ["mece_decomposition", "completeness_verification", "complete_assumption_inventory", "exhaustive_edge_case_enumeration", "full_requirement_traceability", "full_consistency_matrix", "invariant_verification", "logical_chain_audit", "constraint_propagation_analysis", "mece_gap_detection", "negative_space_analysis", "epistemic_status_labeling", "prioritized_findings_report"]
+        phases: [1, 2, 3, 4, 5]
+
+    composition:
+      chains_well_with:
+        - { archetype: "GEN", synergy: 4, purpose: "Generate remediation plan from gaps" }
+        - { archetype: "VALID", synergy: 3, purpose: "Validate gap assessment" }
+      can_follow:
+        - { archetype: "XFORM", synergy: 4, purpose: "Structure input, then audit" }
+        - { archetype: "SYNTH", synergy: 4, purpose: "Synthesize sources, then audit synthesis" }
+      anti_composition:
+        - { archetype: "AUDIT", reason: "Redundant audit patterns" }
+
+  # ==========================================================================
+  # ARCHETYPE: SYNTH (Research Synthesis)
+  # ==========================================================================
+  SYNTH:
+    id: ARCH-SYNTH
+    name: "Research Synthesis"
+    pattern_reference: "RESEARCH-SYNTHESIZE"
+    detailed_spec: "core/archetype-techniques/research-synthesis.yaml"
+
+    purpose: |
+      Consolidate multi-source research into unified findings with explicit
+      confidence tiering, gap identification, and evidence reconciliation.
+      Answers: "What do multiple sources tell us? Where do they agree/disagree?"
+
+    distinction: |
+      SYNTH vs AUDIT: SYNTH integrates multiple sources into unified findings.
+                      AUDIT reviews one artifact for completeness.
+      SYNTH vs EVAL:  SYNTH consolidates research findings.
+                      EVAL ranks options for decision-making.
+
+    ideal_for:
+      - "Consolidating multi-model AI research outputs"
+      - "Literature review and meta-analysis"
+      - "Competitive intelligence synthesis"
+      - "Reconciling conflicting research findings"
+
+    avoid_when:
+      - "Single authoritative source exists"
+      - "No conflicting information to reconcile"
+      - "Binary fact-checking (true/false)"
+
+    input_contracts:
+      primary: "multiple research documents or sources"
+      secondary: []
+      optional: ["PROBLEM-STATEMENT"]
+
+    output_contracts:
+      primary: "Unified Findings with Confidence Tiers"
+      secondary: ["GAP-INVENTORY"]
+
+    scoring_rubrics:
+      primary: "CONFIDENCE-CALIBRATION"
+      alternatives: ["MOS"]
+
+    embedded_techniques:
+      source_integration:
+        - technique_id: "TECH-PR-SPT"
+          technique_name: "source_provenance_tracking"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-PT"
+          when_to_use: "Always for source attribution"
+          required: true
+
+        - technique_id: "TECH-PP-MHT"
+          technique_name: "multi_hypothesis_tracking"
+          taxonomy_category: "CAT-PP"
+          taxonomy_subcategory: "CAT-PP-MFS"
+          when_to_use: "When sources conflict on interpretation"
+          required: false
+
+      evidence_reconciliation:
+        - technique_id: "TECH-PR-CSCM"
+          technique_name: "cross_source_consistency_matrix"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-ECR"
+          when_to_use: "Always for conflict detection"
+          required: true
+
+        - technique_id: "TECH-UR-EST"
+          technique_name: "evidence_strength_tribunal"
+          taxonomy_category: "CAT-UR"
+          taxonomy_subcategory: "CAT-UR-EE"
+          when_to_use: "To resolve conflicts"
+          required: false
+
+      confidence_tiering:
+        - technique_id: "TECH-MC-CCP"
+          technique_name: "confidence_calibration_protocol"
+          taxonomy_category: "CAT-MC"
+          taxonomy_subcategory: "CAT-MC-UM"
+          when_to_use: "Always for confidence assignment"
+          required: true
+
+        - technique_id: "TECH-MC-UD"
+          technique_name: "uncertainty_decomposition"
+          taxonomy_category: "CAT-MC"
+          taxonomy_subcategory: "CAT-MC-UM"
+          when_to_use: "To understand uncertainty types"
+          required: false
+
+      gap_analysis:
+        - technique_id: "TECH-PR-MGD"
+          technique_name: "mece_gap_detection"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-GA"
+          when_to_use: "Always for coverage analysis"
+          required: true
+
+        - technique_id: "TECH-MC-UUP"
+          technique_name: "unknown_unknowns_probe"
+          taxonomy_category: "CAT-MC"
+          taxonomy_subcategory: "CAT-MC-KSA"
+          when_to_use: "For high-stakes synthesis"
+          required: false
+
+      unified_output:
+        - technique_id: "TECH-MC-ESL"
+          technique_name: "epistemic_status_labeling"
+          taxonomy_category: "CAT-MC"
+          taxonomy_subcategory: "CAT-MC-EH"
+          when_to_use: "Always for output clarity"
+          required: true
+
+        - technique_id: "TECH-SD-SS"
+          technique_name: "synthesis_structuring"
+          taxonomy_category: "CAT-SD"
+          taxonomy_subcategory: "CAT-SD-CS"
+          when_to_use: "Always for final output"
+          required: true
+
+    phases:
+      - phase: 1
+        name: "Source Integration"
+        purpose: "Ingest and normalize multiple research inputs"
+        techniques: ["source_provenance_tracking", "multi_hypothesis_tracking"]
+        quality_gate: "All sources cataloged with reliability assessment"
+
+      - phase: 2
+        name: "Evidence Reconciliation"
+        purpose: "Identify agreement, disagreement, and gaps across sources"
+        techniques: ["cross_source_consistency_matrix", "evidence_strength_tribunal"]
+        quality_gate: "All conflicts identified and resolved"
+
+      - phase: 3
+        name: "Confidence Tiering"
+        purpose: "Classify findings by evidence strength and corroboration"
+        techniques: ["confidence_calibration_protocol", "uncertainty_decomposition"]
+        quality_gate: "Every finding has confidence tier assigned"
+
+      - phase: 4
+        name: "Gap Analysis"
+        purpose: "Identify what's missing, contradictory, or under-evidenced"
+        techniques: ["mece_gap_detection", "unknown_unknowns_probe"]
+        quality_gate: "All gaps documented with research implications"
+
+      - phase: 5
+        name: "Unified Output"
+        purpose: "Produce structured synthesis with clear confidence levels"
+        techniques: ["epistemic_status_labeling", "synthesis_structuring"]
+        quality_gate: "Output structured by confidence tier"
+        output_artifact: "Unified Findings Document"
+
+    domain_configurations:
+      research:
+        calibration_emphasis: ["Reference class accuracy", "Methodology rigor", "Evidence quality weighting"]
+        tier_labels:
+          high: "Well-Established"
+          medium: "Supported"
+          low: "Preliminary/Speculative"
+        source_types: ["peer_reviewed_research", "industry_reports", "ai_model_research", "expert_interviews"]
+
+      competitive_analysis:
+        calibration_emphasis: ["Recency decay", "Source independence", "Historical prediction accuracy"]
+        tier_labels:
+          high: "High Confidence"
+          medium: "Moderate Confidence"
+          low: "Speculative"
+        source_types: ["competitor_filings", "industry_analysts", "customer_reviews", "news_coverage"]
+
+      strategy:
+        calibration_emphasis: ["Expert consensus level", "Data quality", "Assumption sensitivity"]
+        tier_labels:
+          high: "Actionable with High Confidence"
+          medium: "Actionable with Caveats"
+          low: "Requires Validation"
+
+    anti_patterns:
+      - pattern: "Single source synthesis"
+        symptom: "Treating one source as definitive"
+        cause: "Insufficient source diversity"
+        fix: "Use AUDIT for single source; SYNTH requires multiple"
+        prevention: "Check source count before starting"
+
+      - pattern: "Conflict avoidance"
+        symptom: "Ignoring source disagreements"
+        cause: "Skipped cross_source_consistency_matrix"
+        fix: "Use consistency matrix to surface all conflicts"
+        prevention: "Phase 2 consistency check is mandatory"
+
+      - pattern: "Uniform confidence"
+        symptom: "All findings same confidence level"
+        cause: "No differentiation by evidence strength"
+        fix: "Apply confidence_calibration_protocol rigorously"
+        prevention: "Require confidence tiers in output"
+
+      - pattern: "Source conflation"
+        symptom: "Facts attributed to wrong sources"
+        cause: "Weak provenance tracking"
+        fix: "Use source_provenance_tracking throughout"
+        prevention: "Phase 1 provenance is mandatory"
+
+    quality_attributes:
+      mandatory:
+        - "Every fact attributed to source"
+        - "All source conflicts surfaced"
+        - "Confidence tiers assigned to all findings"
+        - "Gaps explicitly documented"
+      recommended:
+        - "Unknown unknowns probed for high-stakes"
+        - "Uncertainty decomposed by type"
+        - "Source reliability assessed"
+
+    token_budgets:
+      minimal:
+        estimate: "4K"
+        techniques: ["source_provenance_tracking", "cross_source_consistency_matrix", "synthesis_structuring"]
+        phases: [1, 2, 5]
+      standard:
+        estimate: "8K"
+        techniques: ["source_provenance_tracking", "cross_source_consistency_matrix", "evidence_strength_tribunal", "confidence_calibration_protocol", "mece_gap_detection", "epistemic_status_labeling", "synthesis_structuring"]
+        phases: [1, 2, 3, 4, 5]
+      comprehensive:
+        estimate: "12K"
+        techniques: ["source_provenance_tracking", "multi_hypothesis_tracking", "cross_source_consistency_matrix", "evidence_strength_tribunal", "confidence_calibration_protocol", "uncertainty_decomposition", "mece_gap_detection", "unknown_unknowns_probe", "epistemic_status_labeling", "synthesis_structuring"]
+        phases: [1, 2, 3, 4, 5]
+
+    composition:
+      chains_well_with:
+        - { archetype: "EVAL", synergy: 5, purpose: "Synthesize research, then evaluate options" }
+        - { archetype: "VALID", synergy: 4, purpose: "Synthesize research, then validate strategy" }
+      can_follow:
+        - { archetype: "ELICIT", synergy: 4, purpose: "Gather research inputs, then synthesize" }
+      anti_composition:
+        - { archetype: "SYNTH", reason: "Recursion without new sources" }
+
+  # ==========================================================================
+  # ARCHETYPE: VALID (Strategy Validation)
+  # ==========================================================================
+  VALID:
+    id: ARCH-VALID
+    name: "Strategy Validation"
+    pattern_reference: "ADVERSARIAL-VALIDATE"
+    detailed_spec: "core/archetype-techniques/strategy-validation.yaml"
+
+    purpose: |
+      Systematic validation of an existing strategy through assumption audit,
+      failure mode analysis, risk quantification, adversarial stress-testing,
+      and pre-committed exit criteria. Answers: "Is this strategy sound?"
+
+    distinction: |
+      VALID vs EVAL: VALID stress-tests a single chosen strategy for weaknesses.
+                     EVAL compares and ranks multiple options.
+      VALID vs AUDIT: VALID challenges strategy logic and assumptions.
+                      AUDIT checks document completeness and consistency.
+
+    ideal_for:
+      - "Stress-testing high-stakes decisions"
+      - "Pre-mortem analysis before commitment"
+      - "Validating business cases and investment decisions"
+      - "Challenging strategies with adversarial thinking"
+
+    avoid_when:
+      - "Still in option-generation phase (use GEN then EVAL)"
+      - "Low stakes, easily reversible decisions"
+      - "Purely operational/tactical execution"
+
+    input_contracts:
+      primary: "strategy document or decision"
+      secondary: ["PROBLEM-STATEMENT"]
+      optional: ["SOLUTION-CANDIDATE"]
+
+    output_contracts:
+      primary: "RISK-ASSESSMENT"
+      secondary: []
+
+    scoring_rubrics:
+      primary: "CONFIDENCE-CALIBRATION"
+      alternatives: ["SEVERITY-SCORING"]
+
+    embedded_techniques:
+      assumption_audit:
+        - technique_id: "TECH-PR-CAI"
+          technique_name: "complete_assumption_inventory"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-CE"
+          when_to_use: "Always to surface hidden assumptions"
+          required: true
+
+        - technique_id: "TECH-UR-CBA"
+          technique_name: "comprehensive_bias_audit"
+          taxonomy_category: "CAT-UR"
+          taxonomy_subcategory: "CAT-UR-BDM"
+          when_to_use: "When emotional investment is high"
+          required: false
+
+        - technique_id: "TECH-UR-BRI"
+          technique_name: "base_rate_integration"
+          taxonomy_category: "CAT-UR"
+          taxonomy_subcategory: "CAT-UR-EE"
+          when_to_use: "When reference class exists"
+          required: false
+
+      failure_mode_analysis:
+        - technique_id: "TECH-SD-PM"
+          technique_name: "pre_mortem"
+          taxonomy_category: "CAT-SD"
+          taxonomy_subcategory: "CAT-SD-INT"
+          when_to_use: "Always for failure identification"
+          required: true
+
+        - technique_id: "TECH-SD-INV"
+          technique_name: "inversion_via_negativa"
+          taxonomy_category: "CAT-SD"
+          taxonomy_subcategory: "CAT-SD-INT"
+          when_to_use: "For goal-oriented strategies"
+          required: false
+
+        - technique_id: "TECH-PP-PFC"
+          technique_name: "parallel_future_cones"
+          taxonomy_category: "CAT-PP"
+          taxonomy_subcategory: "CAT-PP-TP"
+          when_to_use: "For scenario analysis"
+          required: false
+
+      adversarial_testing:
+        - technique_id: "TECH-UR-TSM"
+          technique_name: "true_steel_manning"
+          taxonomy_category: "CAT-UR"
+          taxonomy_subcategory: "CAT-UR-GAT"
+          when_to_use: "Always for adversarial challenge"
+          required: true
+
+        - technique_id: "TECH-UR-DH"
+          technique_name: "disconfirmation_hunt"
+          taxonomy_category: "CAT-UR"
+          taxonomy_subcategory: "CAT-UR-BDM"
+          when_to_use: "To find counter-evidence"
+          required: false
+
+        - technique_id: "TECH-SD-WWHTBT"
+          technique_name: "wwhtbt"
+          taxonomy_category: "CAT-SD"
+          taxonomy_subcategory: "CAT-SD-DR"
+          when_to_use: "To find crux assumptions"
+          required: false
+
+      risk_quantification:
+        - technique_id: "TECH-PROB-EV"
+          technique_name: "expected_value_calculation"
+          taxonomy_category: "CAT-PROB"
+          taxonomy_subcategory: "CAT-PROB-EVA"
+          when_to_use: "For investment decisions"
+          required: false
+
+        - technique_id: "TECH-MC-UD"
+          technique_name: "uncertainty_decomposition"
+          taxonomy_category: "CAT-MC"
+          taxonomy_subcategory: "CAT-MC-UM"
+          when_to_use: "To understand uncertainty types"
+          required: false
+
+        - technique_id: "TECH-MC-CC"
+          technique_name: "confidence_calibration"
+          taxonomy_category: "CAT-MC"
+          taxonomy_subcategory: "CAT-MC-UM"
+          when_to_use: "Always for final assessment"
+          required: true
+
+      decision_hygiene:
+        - technique_id: "TECH-SD-KC"
+          technique_name: "kill_criteria"
+          taxonomy_category: "CAT-SD"
+          taxonomy_subcategory: "CAT-SD-INT"
+          when_to_use: "For major commitments"
+          required: false
+
+        - technique_id: "TECH-SD-DJ"
+          technique_name: "decision_journal"
+          taxonomy_category: "CAT-SD"
+          taxonomy_subcategory: "CAT-SD-DH"
+          when_to_use: "For tracking and learning"
+          required: false
+
+        - technique_id: "TECH-SD-PC"
+          technique_name: "pre_commitment"
+          taxonomy_category: "CAT-SD"
+          taxonomy_subcategory: "CAT-SD-DH"
+          when_to_use: "To prevent sunk cost fallacy"
+          required: false
+
+    phases:
+      - phase: 1
+        name: "Assumption & Evidence Audit"
+        purpose: "Surface all assumptions and evaluate evidence quality"
+        techniques: ["complete_assumption_inventory", "comprehensive_bias_audit", "base_rate_integration"]
+        quality_gate: "All assumption layers identified; load-bearing assumptions flagged"
+
+      - phase: 2
+        name: "Failure Mode Analysis"
+        purpose: "Systematically identify how and why the strategy could fail"
+        techniques: ["pre_mortem", "inversion_via_negativa", "parallel_future_cones"]
+        quality_gate: "5+ failure modes identified with probabilities"
+
+      - phase: 3
+        name: "Adversarial Stress-Testing"
+        purpose: "Attack the strategy from multiple angles"
+        techniques: ["true_steel_manning", "disconfirmation_hunt", "wwhtbt"]
+        quality_gate: "3+ substantive challenges with responses evaluated"
+
+      - phase: 4
+        name: "Risk Quantification"
+        purpose: "Quantify uncertainties and risks with explicit probabilities"
+        techniques: ["expected_value_calculation", "uncertainty_decomposition", "confidence_calibration"]
+        quality_gate: "Risk-adjusted expected value calculated"
+
+      - phase: 5
+        name: "Decision Hygiene & Exit Criteria"
+        purpose: "Pre-commit to stopping conditions and decision tracking"
+        techniques: ["kill_criteria", "decision_journal", "pre_commitment"]
+        quality_gate: "Kill criteria defined; decision documented"
+        output_artifact: "RISK-ASSESSMENT"
+
+    domain_configurations:
+      strategy:
+        opponent_archetypes:
+          - { name: "Skeptical Board Member", focus: "Downside scenarios, capital at risk" }
+          - { name: "Future Regretful Self", focus: "Path dependency, what we'll wish we'd known" }
+          - { name: "Base Rate Statistician", focus: "Reference class outcomes, planning fallacy" }
+        base_rate_categories:
+          - "Startup success rates (~90% fail within 5 years)"
+          - "Corporate transformation success (~70% fail objectives)"
+          - "M&A value creation (~50% destroy value)"
+        always_include: ["complete_assumption_inventory", "pre_mortem", "expected_value_calculation"]
+
+      product:
+        opponent_archetypes:
+          - { name: "Churned Customer", focus: "Why they left, unmet needs" }
+          - { name: "Engineering Lead", focus: "Hidden complexity, tech debt" }
+          - { name: "Finance Lead", focus: "Unit economics, CAC/LTV" }
+        base_rate_categories:
+          - "Feature adoption (~20% of features get regular use)"
+          - "Product-market fit (~10% achieve strong PMF)"
+        always_include: ["complete_assumption_inventory", "pre_mortem"]
+
+      architecture:
+        opponent_archetypes:
+          - { name: "Experienced SRE", focus: "Operational complexity, failure modes" }
+          - { name: "Security Architect", focus: "Attack surface, vulnerabilities" }
+          - { name: "Future Maintainer", focus: "Cognitive load, documentation debt" }
+        always_include: ["complete_assumption_inventory", "pre_mortem", "kill_criteria"]
+
+    anti_patterns:
+      - pattern: "Validation theater"
+        symptom: "Half-hearted devil's advocate without genuine challenge"
+        cause: "Sycophantic steel-manning"
+        fix: "Use true_steel_manning with substantive opponent archetypes"
+        prevention: "Check that challenges would convince a skeptic"
+
+      - pattern: "Optimism unchecked"
+        symptom: "Base rates ignored, inside view dominates"
+        cause: "Skipped base_rate_integration"
+        fix: "Require base rate comparison in Phase 1"
+        prevention: "Include base_rate_integration for major decisions"
+
+      - pattern: "Assumption blind spots"
+        symptom: "Only explicit assumptions examined"
+        cause: "Shallow assumption inventory"
+        fix: "Use 5-layer assumption model (explicit, implicit, structural, temporal, environmental)"
+        prevention: "Require all assumption layers in inventory"
+
+      - pattern: "Kill criteria without teeth"
+        symptom: "Exit criteria defined but never checked"
+        cause: "No review schedule or accountability"
+        fix: "Define review schedule and reviewer in kill criteria"
+        prevention: "Include review_schedule in kill_criteria output"
+
+      - pattern: "Infinite validation regress"
+        symptom: "Validating the validation"
+        cause: "Over-application of VALID archetype"
+        fix: "2-3 validation passes maximum"
+        prevention: "Check anti_composition rules"
+
+    quality_attributes:
+      mandatory:
+        - "All assumption layers surfaced"
+        - "Pre-mortem with 5+ failure modes"
+        - "Steel-man arguments with substantive challenges"
+        - "Confidence calibrated on go/no-go recommendation"
+      recommended:
+        - "Base rates integrated for comparable initiatives"
+        - "Kill criteria with review schedule"
+        - "Expected value calculation for investment decisions"
+        - "Decision journal entry for future learning"
+
+    token_budgets:
+      minimal:
+        estimate: "4K"
+        techniques: ["complete_assumption_inventory", "pre_mortem", "confidence_calibration"]
+        phases: [1, 2, 4]
+      standard:
+        estimate: "8K"
+        techniques: ["complete_assumption_inventory", "comprehensive_bias_audit", "pre_mortem", "true_steel_manning", "expected_value_calculation", "confidence_calibration", "kill_criteria"]
+        phases: [1, 2, 3, 4, 5]
+      comprehensive:
+        estimate: "15K"
+        techniques: ["complete_assumption_inventory", "comprehensive_bias_audit", "base_rate_integration", "pre_mortem", "inversion_via_negativa", "parallel_future_cones", "true_steel_manning", "disconfirmation_hunt", "wwhtbt", "expected_value_calculation", "uncertainty_decomposition", "confidence_calibration", "kill_criteria", "decision_journal", "pre_commitment"]
+        phases: [1, 2, 3, 4, 5]
+
+    composition:
+      chains_well_with:
+        - { archetype: "GEN", synergy: 4, purpose: "Generate alternatives if validation fails" }
+      can_follow:
+        - { archetype: "EVAL", synergy: 5, purpose: "Evaluate options, then validate winner" }
+        - { archetype: "SYNTH", synergy: 4, purpose: "Synthesize research, then validate strategy" }
+      anti_composition:
+        - { archetype: "VALID", reason: "Infinite regress of validation" }
+
+  # ==========================================================================
+  # ARCHETYPE: XFORM (Transform Structure)
+  # ==========================================================================
+  XFORM:
+    id: ARCH-XFORM
+    name: "Transform Structure"
+    pattern_reference: "TRANSFORM-STRUCTURE"
+
+    purpose: |
+      Convert unstructured or semi-structured input into a validated structured
+      artifact. Extracts components, maps to schema, detects contamination,
+      and produces canonical output.
+
+    distinction: |
+      XFORM vs ELICIT: XFORM structures existing input.
+                       ELICIT gathers new information through questions.
+      XFORM vs GEN:    XFORM converts formats without adding content.
+                       GEN creates new content.
+
+    ideal_for:
+      - "Converting meeting notes to structured decisions"
+      - "Extracting problem statements from discussions"
+      - "Normalizing data into canonical format"
+      - "Creating JTBD statements from user feedback"
+
+    avoid_when:
+      - "Need to gather new information (use ELICIT)"
+      - "Need to create original content (use GEN)"
+      - "Input is already well-structured"
+
+    input_contracts:
+      primary: "unstructured text or semi-structured input"
+      secondary: ["target_schema"]
+      optional: []
+
+    output_contracts:
+      primary: "PROBLEM-STATEMENT or SOLUTION-CANDIDATE"
+      secondary: []
+
+    embedded_techniques:
+      input_analysis:
+        - technique_id: "component_extraction"
+          technique_name: "component_extraction"
+          when_to_use: "Always to identify input elements"
+          required: true
+
+        - technique_id: "input_classification"
+          technique_name: "input_classification"
+          when_to_use: "To categorize input type"
+          required: false
+
+      schema_mapping:
+        - technique_id: "schema_mapping"
+          technique_name: "schema_mapping"
+          when_to_use: "Always to map to target format"
+          required: true
+
+        - technique_id: "inference_flagging"
+          technique_name: "inference_flagging"
+          when_to_use: "When filling gaps with inference"
+          required: true
+
+      validation:
+        - technique_id: "contamination_detection"
+          technique_name: "contamination_detection"
+          when_to_use: "For problem statements (detect solution contamination)"
+          required: false
+
+        - technique_id: "completeness_scoring"
+          technique_name: "completeness_scoring"
+          when_to_use: "To assess output quality"
+          required: true
+
+    phases:
+      - phase: 1
+        name: "Input Analysis"
+        purpose: "Extract and classify input components"
+        techniques: ["component_extraction", "input_classification"]
+        quality_gate: "All input components identified"
+
+      - phase: 2
+        name: "Schema Mapping"
+        purpose: "Map components to target schema"
+        techniques: ["schema_mapping", "inference_flagging"]
+        quality_gate: "All required fields populated; inferences flagged"
+
+      - phase: 3
+        name: "Validation"
+        purpose: "Detect contamination and score completeness"
+        techniques: ["contamination_detection", "completeness_scoring"]
+        quality_gate: "Contamination addressed; completeness ≥70%"
+        output_artifact: "Structured artifact"
+
+    anti_patterns:
+      - pattern: "Solution contamination undetected"
+        symptom: "Problem statement includes solutions"
+        cause: "Skipped contamination_detection"
+        fix: "Enable contamination_detection for problem statements"
+        prevention: "Always use for PROBLEM-STATEMENT output"
+
+      - pattern: "Inference without flagging"
+        symptom: "Made-up content presented as extracted"
+        cause: "Filling gaps without marking inferences"
+        fix: "Use inference_flagging for all additions"
+        prevention: "Require inference markers in output"
+
+      - pattern: "Schema mismatch"
+        symptom: "Output doesn't conform to target schema"
+        cause: "No schema validation"
+        fix: "Validate against target contract schema"
+        prevention: "Include completeness_scoring in Phase 3"
+
+    quality_attributes:
+      mandatory:
+        - "All inferences explicitly flagged"
+        - "Completeness score provided"
+        - "Schema conformance validated"
+      recommended:
+        - "Contamination checked for problem statements"
+        - "Original source text preserved for audit"
+
+    token_budgets:
+      minimal:
+        estimate: "1-2K"
+        techniques: ["component_extraction", "schema_mapping", "completeness_scoring"]
+        phases: [1, 2, 3]
+      standard:
+        estimate: "2-4K"
+        techniques: ["component_extraction", "input_classification", "schema_mapping", "inference_flagging", "contamination_detection", "completeness_scoring"]
+        phases: [1, 2, 3]
+
+    composition:
+      chains_well_with:
+        - { archetype: "AUDIT", synergy: 4, purpose: "Structure input, then audit" }
+        - { archetype: "EVAL", synergy: 4, purpose: "Structure options, then evaluate" }
+      can_follow:
+        - { archetype: "ELICIT", synergy: 5, purpose: "Gather info, then structure" }
+
+  # ==========================================================================
+  # ARCHETYPE: ELICIT (Elicit Extract)
+  # ==========================================================================
+  ELICIT:
+    id: ARCH-ELICIT
+    name: "Elicit Extract"
+    pattern_reference: "ELICIT-EXTRACT"
+
+    purpose: |
+      Adaptive knowledge extraction through structured questioning. Identifies
+      gaps, generates targeted questions, integrates responses, and synthesizes
+      into documented knowledge.
+
+    distinction: |
+      ELICIT vs XFORM: ELICIT gathers new information through questions.
+                       XFORM structures existing input without adding.
+
+    ideal_for:
+      - "Requirements gathering and discovery"
+      - "Interview-style knowledge extraction"
+      - "Clarifying vague or incomplete requests"
+      - "Stakeholder need identification"
+
+    avoid_when:
+      - "Information already exists (use XFORM to structure)"
+      - "User prefers direct action over questions"
+      - "Time constraints prevent iterative Q&A"
+
+    input_contracts:
+      primary: "initial context or request"
+      secondary: []
+      optional: []
+
+    output_contracts:
+      primary: "PROBLEM-STATEMENT or documented knowledge"
+      secondary: []
+
+    embedded_techniques:
+      gap_identification:
+        - technique_id: "gap_identification"
+          technique_name: "gap_identification"
+          when_to_use: "Always to identify missing information"
+          required: true
+
+      question_generation:
+        - technique_id: "progressive_disclosure_questioning"
+          technique_name: "progressive_disclosure_questioning"
+          when_to_use: "To structure question sequence"
+          required: true
+
+        - technique_id: "follow_up_branching"
+          technique_name: "follow_up_branching"
+          when_to_use: "For adaptive follow-up"
+          required: false
+
+      response_integration:
+        - technique_id: "context_synthesis"
+          technique_name: "context_synthesis"
+          when_to_use: "To integrate responses"
+          required: true
+
+      completion_check:
+        - technique_id: "completion_criteria_check"
+          technique_name: "completion_criteria_check"
+          when_to_use: "To determine when to stop"
+          required: true
+
+    phases:
+      - phase: 1
+        name: "Initial Assessment"
+        purpose: "Identify gaps in provided context"
+        techniques: ["gap_identification"]
+        quality_gate: "Key gaps prioritized"
+
+      - phase: 2
+        name: "Question Generation"
+        purpose: "Generate targeted questions"
+        techniques: ["progressive_disclosure_questioning", "follow_up_branching"]
+        quality_gate: "Questions address priority gaps"
+
+      - phase: 3
+        name: "Response Integration"
+        purpose: "Integrate user responses into context"
+        techniques: ["context_synthesis"]
+        quality_gate: "Responses incorporated accurately"
+
+      - phase: 4
+        name: "Completion Check"
+        purpose: "Verify sufficient information gathered"
+        techniques: ["completion_criteria_check"]
+        quality_gate: "Completeness threshold met"
+        output_artifact: "PROBLEM-STATEMENT or documented knowledge"
+
+    anti_patterns:
+      - pattern: "Question fatigue"
+        symptom: "Too many questions overwhelm user"
+        cause: "No question limit"
+        fix: "Limit to max_questions parameter (default: 10)"
+        prevention: "Set max_questions appropriately"
+
+      - pattern: "Redundant questions"
+        symptom: "Asking for already-provided information"
+        cause: "Poor gap identification"
+        fix: "Cross-reference questions with existing context"
+        prevention: "Review context before each question"
+
+      - pattern: "Leading questions"
+        symptom: "Questions suggest the answer"
+        cause: "Confirmation bias in questioning"
+        fix: "Use neutral, open-ended question phrasing"
+        prevention: "Review questions for bias"
+
+    quality_attributes:
+      mandatory:
+        - "Questions address actual gaps"
+        - "Responses accurately integrated"
+        - "Completion criteria defined"
+      recommended:
+        - "Question count limited"
+        - "Progressive disclosure (simple to complex)"
+        - "Adaptive follow-up based on responses"
+
+    token_budgets:
+      minimal:
+        estimate: "2-3K"
+        techniques: ["gap_identification", "progressive_disclosure_questioning", "completion_criteria_check"]
+        phases: [1, 2, 4]
+      standard:
+        estimate: "4-6K"
+        techniques: ["gap_identification", "progressive_disclosure_questioning", "follow_up_branching", "context_synthesis", "completion_criteria_check"]
+        phases: [1, 2, 3, 4]
+
+    composition:
+      chains_well_with:
+        - { archetype: "XFORM", synergy: 5, purpose: "Gather info, then structure" }
+        - { archetype: "EVAL", synergy: 4, purpose: "Gather requirements, then evaluate solutions" }
+      can_follow:
+        - { archetype: "SYNTH", synergy: 3, purpose: "Synthesize research, then elicit gaps" }
+
+  # ==========================================================================
+  # ARCHETYPE: GEN (Multi-Expert Generation)
+  # ==========================================================================
+  GEN:
+    id: ARCH-GEN
+    name: "Multi-Expert Generation"
+    pattern_reference: "MOE-GENERATE"
+
+    purpose: |
+      Expert-informed ideation and diverse solution generation. Uses multiple
+      expert perspectives to generate options without premature convergence,
+      then deduplicates and categorizes.
+
+    distinction: |
+      GEN vs EVAL: GEN creates new options.
+                   EVAL ranks existing options.
+      GEN vs XFORM: GEN creates original content.
+                    XFORM converts existing content.
+
+    ideal_for:
+      - "Brainstorming strategic options"
+      - "Generating solution alternatives"
+      - "Creative ideation across perspectives"
+      - "Avoiding anchoring on first idea"
+
+    avoid_when:
+      - "Options already exist (use EVAL to rank)"
+      - "Single correct answer exists"
+      - "Tight constraints limit options"
+
+    input_contracts:
+      primary: "PROBLEM-STATEMENT"
+      secondary: []
+      optional: ["constraints"]
+
+    output_contracts:
+      primary: "SOLUTION-CANDIDATES"
+      secondary: ["SOLUTION-TAXONOMY"]
+
+    embedded_techniques:
+      problem_framing:
+        - technique_id: "TECH-PP-MLA"
+          technique_name: "multi_lens_analysis"
+          taxonomy_category: "CAT-PP"
+          taxonomy_subcategory: "CAT-PP-MFS"
+          when_to_use: "To frame problem from multiple angles"
+          required: false
+
+      expert_ideation:
+        - technique_id: "TECH-PP-MPS"
+          technique_name: "multi_persona_simulation"
+          taxonomy_category: "CAT-PP"
+          taxonomy_subcategory: "CAT-PP-MFS"
+          when_to_use: "For diverse idea generation"
+          required: true
+
+        - technique_id: "divergent_thinking"
+          technique_name: "divergent_thinking"
+          when_to_use: "To maximize option diversity"
+          required: true
+
+      synthesis:
+        - technique_id: "category_mapping"
+          technique_name: "category_mapping"
+          when_to_use: "To organize generated options"
+          required: true
+
+        - technique_id: "similarity_detection"
+          technique_name: "similarity_detection"
+          when_to_use: "To deduplicate similar options"
+          required: true
+
+      coverage_assessment:
+        - technique_id: "TECH-PR-MGD"
+          technique_name: "mece_gap_detection"
+          taxonomy_category: "CAT-PR"
+          taxonomy_subcategory: "CAT-PR-GA"
+          when_to_use: "To verify solution space coverage"
+          required: false
+
+    phases:
+      - phase: 1
+        name: "Problem Framing"
+        purpose: "Frame problem from multiple angles"
+        techniques: ["multi_lens_analysis"]
+        quality_gate: "Problem understood from 3+ perspectives"
+
+      - phase: 2
+        name: "Expert Ideation"
+        purpose: "Generate options from each perspective independently"
+        techniques: ["multi_persona_simulation", "divergent_thinking"]
+        quality_gate: "Each expert generates 3+ distinct options"
+
+      - phase: 3
+        name: "Synthesis & Deduplication"
+        purpose: "Combine, categorize, and deduplicate options"
+        techniques: ["category_mapping", "similarity_detection"]
+        quality_gate: "Options categorized; duplicates merged"
+
+      - phase: 4
+        name: "Coverage Assessment"
+        purpose: "Verify solution space adequately explored"
+        techniques: ["mece_gap_detection"]
+        quality_gate: "No obvious category gaps"
+        output_artifact: "SOLUTION-CANDIDATES"
+
+    domain_configurations:
+      product:
+        expert_panel:
+          - { name: "User Advocate", focus: "User needs, pain points, jobs to be done" }
+          - { name: "Tech Lead", focus: "Technical feasibility, architecture" }
+          - { name: "Business Strategist", focus: "Market fit, competitive advantage" }
+          - { name: "Wild Card", focus: "Unconventional approaches, analogies from other domains" }
+        divergence_target: "15+ raw options before deduplication"
+
+      strategy:
+        expert_panel:
+          - { name: "Growth Strategist", focus: "Expansion opportunities" }
+          - { name: "Risk Manager", focus: "Conservative approaches, hedging" }
+          - { name: "Disruptor", focus: "Radical alternatives" }
+          - { name: "Incrementalist", focus: "Evolutionary improvements" }
+        divergence_target: "12+ raw options before deduplication"
+
+      architecture:
+        expert_panel:
+          - { name: "Simplicity Advocate", focus: "Minimal viable solutions" }
+          - { name: "Scalability Expert", focus: "Future-proof designs" }
+          - { name: "Operations Champion", focus: "Operability, maintainability" }
+          - { name: "Innovation Scout", focus: "Emerging patterns, new technologies" }
+        divergence_target: "10+ raw options before deduplication"
+
+    anti_patterns:
+      - pattern: "Premature convergence"
+        symptom: "Ideas cluster around first suggestion"
+        cause: "Cross-contamination between experts"
+        fix: "Generate from each expert independently, then merge"
+        prevention: "Isolate expert ideation in Phase 2"
+
+      - pattern: "Duplicate solutions"
+        symptom: "Same idea in different words"
+        cause: "No deduplication step"
+        fix: "Include similarity_detection in Phase 3"
+        prevention: "Always run deduplication"
+
+      - pattern: "Narrow framing"
+        symptom: "All solutions in same category"
+        cause: "Single-lens problem framing"
+        fix: "Use multi_lens_analysis in Phase 1"
+        prevention: "Frame from 3+ perspectives"
+
+      - pattern: "Quantity over quality"
+        symptom: "Many trivial or infeasible options"
+        cause: "Divergence without constraints"
+        fix: "Apply basic feasibility filter"
+        prevention: "Include constraint awareness in ideation"
+
+    quality_attributes:
+      mandatory:
+        - "Options generated from multiple perspectives"
+        - "Similar options merged"
+        - "Options categorized"
+      recommended:
+        - "Solution space coverage verified"
+        - "Wild card perspective included"
+        - "15+ raw options before deduplication"
+
+    token_budgets:
+      minimal:
+        estimate: "3-4K"
+        techniques: ["multi_persona_simulation", "divergent_thinking", "category_mapping"]
+        phases: [2, 3]
+      standard:
+        estimate: "5-8K"
+        techniques: ["multi_lens_analysis", "multi_persona_simulation", "divergent_thinking", "category_mapping", "similarity_detection", "mece_gap_detection"]
+        phases: [1, 2, 3, 4]
+
+    composition:
+      chains_well_with:
+        - { archetype: "EVAL", synergy: 5, purpose: "Generate options, then evaluate" }
+        - { archetype: "VALID", synergy: 4, purpose: "Generate strategies, then validate" }
+      can_follow:
+        - { archetype: "ELICIT", synergy: 4, purpose: "Gather requirements, then generate solutions" }
+        - { archetype: "SYNTH", synergy: 4, purpose: "Synthesize research, then generate options" }
+      anti_composition:
+        - { archetype: "GEN", reason: "Recursion without new input" }
+
+  # ==========================================================================
+  # ARCHETYPE: ORCH (Orchestration)
+  # ==========================================================================
+  ORCH:
+    id: ARCH-ORCH
+    name: "Orchestration"
+    is_meta: true
+
+    purpose: |
+      Compose and sequence other archetypes into multi-step workflows.
+      Manages handoffs, state, and conditional branching between skills.
+
+    distinction: |
+      ORCH is meta-archetype that coordinates other archetypes.
+      Use single archetype for single-purpose tasks.
+
+    ideal_for:
+      - "End-to-end workflows requiring multiple archetypes"
+      - "Complex processes with conditional branching"
+      - "Pipelines with artifact handoffs"
+
+    avoid_when:
+      - "Single archetype can accomplish task"
+      - "Overhead exceeds benefit"
+      - "Simple linear process"
+
+    composes: [EVAL, AUDIT, SYNTH, VALID, XFORM, ELICIT, GEN]
+
+    common_workflows:
+      research_to_decision:
+        chain: [ELICIT, SYNTH, GEN, EVAL]
+        description: "Gather requirements, synthesize research, generate options, evaluate"
+        handoffs:
+          - { from: "ELICIT", to: "SYNTH", artifact: "research requirements" }
+          - { from: "SYNTH", to: "GEN", artifact: "synthesized findings" }
+          - { from: "GEN", to: "EVAL", artifact: "SOLUTION-CANDIDATES" }
+
+      strategy_formulation:
+        chain: [GEN, EVAL, VALID]
+        description: "Generate strategies, select best, validate chosen strategy"
+        handoffs:
+          - { from: "GEN", to: "EVAL", artifact: "SOLUTION-CANDIDATES" }
+          - { from: "EVAL", to: "VALID", artifact: "winning strategy" }
+
+      document_creation:
+        chain: [ELICIT, XFORM, AUDIT]
+        description: "Gather requirements, structure document, audit for quality"
+        handoffs:
+          - { from: "ELICIT", to: "XFORM", artifact: "documented knowledge" }
+          - { from: "XFORM", to: "AUDIT", artifact: "structured document" }
+
+      competitive_analysis:
+        chain: [SYNTH, EVAL, VALID]
+        description: "Synthesize competitive intel, evaluate positioning, validate strategy"
+        handoffs:
+          - { from: "SYNTH", to: "EVAL", artifact: "competitive synthesis" }
+          - { from: "EVAL", to: "VALID", artifact: "positioning recommendation" }
+
+    anti_patterns:
+      - pattern: "Orchestration overkill"
+        symptom: "ORCH used for 2-step linear process"
+        cause: "Over-engineering"
+        fix: "Chain archetypes directly without ORCH"
+        prevention: "Use ORCH only for 3+ archetypes or conditional branching"
+
+      - pattern: "Infinite loop"
+        symptom: "Same archetype called repeatedly"
+        cause: "Missing termination condition"
+        fix: "Add iteration limits and exit conditions"
+        prevention: "Check anti_composition rules"
+
+      - pattern: "Artifact mismatch"
+        symptom: "Receiving archetype can't use passed artifact"
+        cause: "Contract incompatibility"
+        fix: "Verify input/output contracts match"
+        prevention: "Check contract compatibility before chaining"
+
+      - pattern: "State loss"
+        symptom: "Context lost between archetypes"
+        cause: "No state serialization"
+        fix: "Explicitly pass context between archetypes"
+        prevention: "Define handoff artifacts"
+
+    quality_attributes:
+      mandatory:
+        - "Handoff artifacts defined"
+        - "Termination conditions specified"
+        - "Contract compatibility verified"
+      recommended:
+        - "Rollback strategy for failures"
+        - "Iteration limits specified"
+        - "State checkpoints"
+
+# ============================================================================
+# TECHNIQUE SELECTION PROTOCOL
+# ============================================================================
+
+technique_selection_protocol:
+
+  archetype_selection:
+    - question: "What is the primary task?"
+      routes:
+        compare_options: "EVAL"
+        review_artifact: "AUDIT"
+        consolidate_sources: "SYNTH"
+        stress_test_strategy: "VALID"
+        structure_input: "XFORM"
+        gather_information: "ELICIT"
+        generate_ideas: "GEN"
+        multi_step_workflow: "ORCH"
+
+  depth_selection:
+    - question: "What depth is needed?"
+      routes:
+        time_constrained: "minimal budget"
+        standard_analysis: "standard budget"
+        high_stakes: "comprehensive budget"
+
+  optional_technique_selection:
+    - condition: "Sources conflict"
+      add: ["cross_source_consistency_matrix", "evidence_strength_tribunal"]
+    - condition: "High uncertainty"
+      add: ["confidence_calibration", "uncertainty_decomposition"]
+    - condition: "High stakes decision"
+      add: ["true_steel_manning", "adversarial_collaboration", "disconfirmation_hunt"]
+    - condition: "Executive audience"
+      add: ["scqa_communication", "prioritized_findings_report"]
+
+  compatibility_rules:
+    required_pairs:
+      - { a: "pairwise_tournament", b: "bradley_terry_aggregation", reason: "Tournament needs aggregation for confidence" }
+      - { a: "mece_decomposition", b: "mece_gap_detection", reason: "MECE structure enables gap detection" }
+      - { a: "source_provenance_tracking", b: "cross_source_consistency_matrix", reason: "Provenance enables consistency checking" }
+
+    high_synergy:
+      - { a: "multi_persona_simulation", b: "multi_lens_analysis", benefit: "Richer perspectives from combined frameworks and personas" }
+      - { a: "true_steel_manning", b: "disconfirmation_hunt", benefit: "Evidence-backed adversarial challenges" }
+      - { a: "complete_assumption_inventory", b: "pre_mortem", benefit: "Assumptions inform failure modes" }
+      - { a: "mece_gap_detection", b: "negative_space_analysis", benefit: "Both structural and strategic gaps identified" }
+
+    conflicts:
+      - { a: "rapid_iteration", b: "exhaustive_enumeration", reason: "Speed vs thoroughness trade-off" }
+      - { a: "minimal_budget", b: "adversarial_collaboration", reason: "Adversarial debate requires token budget" }
+
+# ============================================================================
+# CROSS-ARCHETYPE TECHNIQUE REFERENCE
+# ============================================================================
+
+technique_archetype_map:
+  # Parallel Processing (CAT-PP)
+  multi_persona_simulation: [EVAL, GEN]
+  multi_lens_analysis: [EVAL, GEN]
+  multi_criteria_optimization: [EVAL]
+  multi_hypothesis_tracking: [SYNTH]
+  parallel_future_cones: [VALID]
+
+  # Perfect Recall (CAT-PR)
+  source_provenance_tracking: [SYNTH]
+  cross_source_consistency_matrix: [SYNTH]
+  complete_assumption_inventory: [AUDIT, VALID]
+  completeness_verification: [AUDIT]
+  mece_gap_detection: [AUDIT, SYNTH, GEN]
+  full_consistency_matrix: [AUDIT]
+  full_requirement_traceability: [AUDIT]
+  exhaustive_edge_case_enumeration: [AUDIT]
+  invariant_verification: [AUDIT]
+  negative_space_analysis: [AUDIT]
+  constraint_propagation_analysis: [AUDIT]
+
+  # Unbiased Reasoning (CAT-UR)
+  true_steel_manning: [EVAL, VALID]
+  disconfirmation_hunt: [EVAL, VALID]
+  adversarial_collaboration: [EVAL]
+  evidence_strength_tribunal: [SYNTH]
+  comprehensive_bias_audit: [VALID]
+  base_rate_integration: [VALID]
+
+  # Meta-Cognitive (CAT-MC)
+  confidence_calibration: [EVAL, SYNTH, VALID]
+  uncertainty_decomposition: [SYNTH, VALID]
+  epistemic_status_labeling: [SYNTH, AUDIT]
+  logical_chain_audit: [AUDIT]
+  unknown_unknowns_probe: [SYNTH]
+
+  # Probabilistic (CAT-PROB)
+  pairwise_tournament: [EVAL]
+  bradley_terry_aggregation: [EVAL]
+  expected_value_calculation: [VALID]
+
+  # Structured Decomposition (CAT-SD)
+  mece_decomposition: [AUDIT]
+  scqa_communication: [EVAL]
+  pre_mortem: [VALID]
+  inversion_via_negativa: [VALID]
+  wwhtbt: [VALID]
+  kill_criteria: [VALID]
+  decision_journal: [VALID]
+  pre_commitment: [VALID]
+  prioritized_findings_report: [AUDIT]
+  synthesis_structuring: [SYNTH]
+
+# ============================================================================
+# ANTI-PATTERN SUMMARY (GLOBAL)
+# ============================================================================
+
+global_anti_patterns:
+  - pattern: "Archetype recursion"
+    symptom: "Same archetype called twice in chain"
+    archetypes: [EVAL, SYNTH, VALID, GEN]
+    fix: "Add new information between calls or use different archetype"
+
+  - pattern: "Context explosion"
+    symptom: ">12 techniques in execution"
+    fix: "Split into multiple skills with artifact handoffs"
+
+  - pattern: "Reflection without revision"
+    symptom: "Quality gates that never halt or redirect"
+    fix: "Gates must have power to stop execution"
+
+  - pattern: "Confidence cosplay"
+    symptom: "Percentages without calibration methodology"
+    fix: "Use actual confidence_calibration technique"
+
+  - pattern: "Gap-free claims"
+    symptom: "Complete analysis without limitations"
+    fix: "Always acknowledge what's not covered"
+
+# ============================================================================
+# VERSION HISTORY
+# ============================================================================
+
+version_history:
+  - version: "1.0"
+    date: "2026-02-01"
+    changes:
+      - "Initial release with 8 archetypes"
+      - "Keyword routing with confidence levels"
+      - "Domain-to-archetype routing matrix (8 domains)"
+      - "Full archetype definitions with embedded techniques"
+      - "Anti-pattern catalog per archetype"
+      - "Quality attributes (mandatory/recommended) per archetype"
+      - "Token budget guidance (minimal/standard/comprehensive)"
+      - "Technique selection protocol with compatibility rules"
+      - "Cross-reference to technique-taxonomy.yaml IDs"

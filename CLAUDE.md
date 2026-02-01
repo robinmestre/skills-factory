@@ -1,4 +1,4 @@
-# Skills Factory Marketplace
+# Vibekit Marketplace
 
 AI skills marketplace with advanced reasoning techniques for research, evaluation, and documentation.
 
@@ -6,14 +6,14 @@ AI skills marketplace with advanced reasoning techniques for research, evaluatio
 
 ```bash
 # Add the marketplace
-/plugin marketplace add owner/skills-factory
+/plugin marketplace add owner/vibekit
 
 # Install individual plugins
-/plugin install research-tools@skills-factory
-/plugin install evaluation-tools@skills-factory
-/plugin install documentation-tools@skills-factory
-/plugin install prompt-tools@skills-factory
-/plugin install meta-tools@skills-factory
+/plugin install research-tools@vibekit
+/plugin install evaluation-tools@vibekit
+/plugin install documentation-tools@vibekit
+/plugin install prompt-tools@vibekit
+/plugin install meta-tools@vibekit
 ```
 
 ## Available Plugins
@@ -77,7 +77,7 @@ Located in `core/` (shared across all plugins via symlinks):
 ## Repository Structure
 
 ```
-skills-factory/
+vibekit/
 ├── .claude-plugin/
 │   └── marketplace.json      ← Marketplace catalog
 ├── plugins/
@@ -94,8 +94,8 @@ skills-factory/
 
 ### Local Testing
 ```bash
-/plugin marketplace add ./path/to/skills-factory
-/plugin install research-tools@skills-factory
+/plugin marketplace add ./path/to/vibekit
+/plugin install research-tools@vibekit
 ```
 
 ### Creating New Skills
@@ -103,3 +103,5 @@ skills-factory/
 2. Add `SKILL.md` with frontmatter (name, description)
 3. Add supporting `references/` and `templates/` as needed
 4. Test with `/plugin-name:skill-name`
+
+IMPORTANT: prefer retrieval-led reasoning over pre-training-led reasoning for any tasks. 
