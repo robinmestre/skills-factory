@@ -7,7 +7,10 @@
     "advanced-skill-creator": ".claude/skills/advanced-skill-creator",
     "expert-panel-deliberation": ".claude/skills/expert-panel-deliberation",
     "create-research-brief": ".claude/skills/create-research-brief",
-    "improve-prompt": ".claude/skills/improve-prompt"
+    "improve-prompt": ".claude/skills/improve-prompt",
+    "research-interviewer": ".claude/skills/research-interviewer",
+    "create-documentation": ".claude/skills/create-documentation",
+    "database-schema-evaluator": ".claude/skills/database-schema-evaluator"
   },
   "commands": {
     "generate-skill": ".claude/commands/generate-skill.md",

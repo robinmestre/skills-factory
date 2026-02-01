@@ -23,6 +23,7 @@ Located in `core/`:
 
 ### Evaluation
 - **expert-panel-deliberation** — Multi-expert evaluation and consensus
+- **database-schema-evaluator** — Multi-expert database schema analysis (5 perspectives: Data Architect, Performance Engineer, Data Integrity Guardian, Evolution Strategist, Operations Specialist)
 - **generate-ideas** — Structured ideation with tournament ranking
 
 ### Research
@@ -59,7 +60,10 @@ Located in `core/`:
 - **consolidate-research** — Synthesize multi-source findings
 
 ### Documentation
-- **create-documentation** — Diátaxis-aligned documentation
+- **create-documentation** — Diátaxis-aligned documentation with cognitive load management
+  - 4 document types: Tutorial, How-To, Explanation, Reference
+  - Reader personas: Anxious Novice, Developer, Scanning Executive
+  - Multi-layer validation (structural, content, reader experience)
 
 ### Prompts
 - **improve-prompt** — Optimize prompts for Claude
