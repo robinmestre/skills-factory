@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "research-tools",
-      "source": "./plugins/research-tools",
+      "source": "research-tools",
       "description": "Research workflow: systematic interviewing → research brief design → multi-source consolidation",
       "version": "1.0.0",
       "category": "research",
@@ -19,7 +19,7 @@
     },
     {
       "name": "evaluation-tools",
-      "source": "./plugins/evaluation-tools",
+      "source": "evaluation-tools",
       "description": "Multi-expert evaluation and deliberation patterns for structured analysis",
       "version": "1.0.0",
       "category": "evaluation",
@@ -27,7 +27,7 @@
     },
     {
       "name": "documentation-tools",
-      "source": "./plugins/documentation-tools",
+      "source": "documentation-tools",
       "description": "Diátaxis-aligned documentation with cognitive load management",
       "version": "1.0.0",
       "category": "documentation",
@@ -35,7 +35,7 @@
     },
     {
       "name": "prompt-tools",
-      "source": "./plugins/prompt-tools",
+      "source": "prompt-tools",
       "description": "Prompt engineering and optimization for Claude",
       "version": "1.0.0",
       "category": "prompts",
@@ -43,7 +43,7 @@
     },
     {
       "name": "meta-tools",
-      "source": "./plugins/meta-tools",
+      "source": "meta-tools",
       "description": "Generate domain-specific skills using advanced reasoning techniques",
       "version": "1.0.0",
       "category": "meta",
@@ -51,7 +51,7 @@
     },
     {
       "name": "python-tools",
-      "source": "./plugins/python-tools",
+      "source": "python-tools",
       "description": "Python 3.13 patterns with Pydantic V2, async, pytest, type hints",
       "version": "1.0.0",
       "category": "development",
@@ -59,7 +59,7 @@
     },
     {
       "name": "adk-tools",
-      "source": "./plugins/adk-tools",
+      "source": "adk-tools",
       "description": "Google ADK agent development with Vertex AI SDK",
       "version": "1.0.0",
       "category": "agents",
@@ -67,7 +67,7 @@
     },
     {
       "name": "frontend-tools",
-      "source": "./plugins/frontend-tools",
+      "source": "frontend-tools",
       "description": "Next.js 14+, React, TypeScript, Firebase, Tailwind, Zustand patterns",
       "version": "1.0.0",
       "category": "frontend",
@@ -75,7 +75,7 @@
     },
     {
       "name": "gcp-tools",
-      "source": "./plugins/gcp-tools",
+      "source": "gcp-tools",
       "description": "GCP deployment, Cloud Run, CI/CD, Infrastructure as Code",
       "version": "1.0.0",
       "category": "devops",
@@ -83,7 +83,7 @@
     },
     {
       "name": "mcp-tools",
-      "source": "./plugins/mcp-tools",
+      "source": "mcp-tools",
       "description": "Model Context Protocol server development patterns",
       "version": "1.0.0",
       "category": "development",
@@ -91,7 +91,7 @@
     },
     {
       "name": "quality-tools",
-      "source": "./plugins/quality-tools",
+      "source": "quality-tools",
       "description": "Testing, code review, linting, coverage analysis",
       "version": "1.0.0",
       "category": "quality",
@@ -99,7 +99,7 @@
     },
     {
       "name": "observability-tools",
-      "source": "./plugins/observability-tools",
+      "source": "observability-tools",
       "description": "Logging, tracing, error tracking, alerting, OpenTelemetry",
       "version": "1.0.0",
       "category": "operations",
@@ -107,7 +107,7 @@
     },
     {
       "name": "performance-tools",
-      "source": "./plugins/performance-tools",
+      "source": "performance-tools",
       "description": "Frontend and backend performance optimization patterns",
       "version": "1.0.0",
       "category": "performance",
@@ -115,7 +115,7 @@
     },
     {
       "name": "rag-tools",
-      "source": "./plugins/rag-tools",
+      "source": "rag-tools",
       "description": "[STUB] RAG pipeline development with Vertex AI RAG Engine",
       "version": "0.1.0",
       "category": "agents",
@@ -123,7 +123,7 @@
     },
     {
       "name": "security-tools",
-      "source": "./plugins/security-tools",
+      "source": "security-tools",
       "description": "[STUB] Security audit, OWASP, authentication, compliance",
       "version": "0.1.0",
       "category": "security",
@@ -131,7 +131,7 @@
     },
     {
       "name": "architecture-tools",
-      "source": "./plugins/architecture-tools",
+      "source": "architecture-tools",
       "description": "[STUB] C4 diagrams, OpenAPI specs, architectural decisions",
       "version": "0.1.0",
       "category": "architecture",

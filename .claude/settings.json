@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "research-tools@vibekit": true,
+    "evaluation-tools@vibekit": true
+  }
+}
